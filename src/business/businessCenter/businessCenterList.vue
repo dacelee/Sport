@@ -159,7 +159,7 @@
         }
         .business-center-list-item {
             margin-top: 20px;
-            width: 750px;
+            width: 100%;
             height: 260px;
             background-color: #ffffff;
             padding: 25px 25px 25px;
@@ -196,14 +196,14 @@
             margin-top: 10px;
             overflow: hidden;
             .recommend-goods-item {
-                width: 370px;
+                width: calc(50% - 5px);
                 background-color: #ffffff;
                 margin-top: 10px;
                 .recommend-goods-img {
-                    width: 370px;
+                    width: 100%;
                     height: 370px;
                     img {
-                        width: 370px;
+                        width: 100%;
                         height: 370px;
                     }
                 }

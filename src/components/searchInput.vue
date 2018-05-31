@@ -35,13 +35,13 @@
 
 <style lang="scss">
     .search-input {
-        width: 690px;
+        width: calc(100% - 60px);
         height: 80px;
         position: relative;
         margin: 0 auto;
         .search-input-container {
             height: 80px;
-            width: 690px;
+            width: 100%;
             background-color: #33333a;
             padding-left: 80px;
             -webkit-border-radius: 10px;

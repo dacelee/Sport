@@ -149,7 +149,7 @@
         }
         .short-menu {
             padding: 40px 0 50px;
-            width: 690px;
+            width: calc(100% - 60px);
             border-bottom: 1px solid #000000;
             margin: 0 auto;
             .short-menu-item {
