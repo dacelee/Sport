@@ -60,7 +60,7 @@
                 $('.banner .banner-images').stop().animate({left: -_this.currentNum * 10 + 'rem'}, 500)
                 $(this).stop().addClass('on').siblings().removeClass('on')
                 $('.banner .banner-num li').eq(_this.currentNum).addClass('on').siblings().removeClass('on')
-            },
+            }
         }
     }
 </script>
@@ -91,17 +91,17 @@
         }
         .banner-num {
             position: absolute;
-            bottom: 10px;
+            bottom: 20px;
             left: 0;
             font-size: 0;
             width: 10rem;
             text-align: center;
             li {
-                width: 5px;
-                height: 5px;
+                width: 20px;
+                height: 20px;
                 border-radius: 50%;
                 background: #8f8f89;
-                margin: 0 2px;
+                margin: 0 4px;
                 display: inline-block;
                 &.on {
                     background: #3673ff;

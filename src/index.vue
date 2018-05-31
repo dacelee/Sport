@@ -1,7 +1,6 @@
 <template>
     <div id="index">
         <div class="view-container">
-            <l-headTitle :name="$route.meta.title"/>
             <router-view @change="changeRoute"/>
         </div>
     </div>
@@ -23,10 +22,13 @@
     }
 </script>
 
-<style>
+<style lang="scss">
     @import "./style/common.scss";
     
     .view-container {
         overflow: hidden;
+        > div:nth-child(1) {
+            padding-bottom: 110px;;
+        }
     }
 </style>
