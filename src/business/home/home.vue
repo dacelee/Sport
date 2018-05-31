@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div class="home">
+        <div class="head-title text-center">
+            首页
+        </div>
         <div class="home-container">
             <div class="home-head">
                 <l-banner/>
@@ -107,6 +110,23 @@
 </script>
 
 <style lang="scss">
+    .home {
+        .head-title {
+            height: 80px;
+            line-height: 80px;
+            font-size: 34px;
+            background: #404049;
+            position: relative;
+            .icons {
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                z-index: 2;
+                margin: 25px 0;
+            }
+        }
+    }
+    
     .home-container {
         overflow: hidden;
         .home-head {

@@ -1,5 +1,9 @@
 <template>
     <div class="personalCenter">
+        <div class="head-title text-center">
+            我的
+            <l-icon name="shezhi" class="setting"/>
+        </div>
         <div class="personalCenter-head-info">
             <div class="left-head-photo pull-left">
                 <img :src="headPhoto" alt="">
@@ -125,7 +129,24 @@
     .personalCenter {
         overflow: hidden;
         background-color: #25252B;
-        padding-bottom: 115px;
+        
+        .head-title {
+            height: 80px;
+            line-height: 80px;
+            font-size: 34px;
+            background: #404049;
+            position: relative;
+            .icons {
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                z-index: 2;
+                margin: 25px 0;
+                &.setting {
+                    right: 20px;
+                }
+            }
+        }
         .personalCenter-head-info {
             background-color: #404049;
             height: 220px;
@@ -160,6 +181,7 @@
                 .user-description {
                     overflow: hidden;
                     height: 68px;
+                    line-height: 34px;
                 }
             }
         }

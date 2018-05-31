@@ -6,6 +6,7 @@
 
 <script>
     import '../assets/font'
+    import '../assets/font-colorful'
     
     export default {
         name: 'icon',

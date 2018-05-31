@@ -15,12 +15,7 @@ html {
 }
 
 body {
-    font-size: 12px;
-    font-size: 1.2rem;
-}
-
-body {
-    background: #333339;
+    background: #25252B;
     font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, Hiragino Sans GB, Source Han Sans, Noto Sans CJK Sc, Microsoft YaHei, Microsoft Jhenghei, sans-serif;
     color: #ffffff;
 }
@@ -67,4 +62,8 @@ ul {
 
 .text-right {
     text-align: right !important;
+}
+
+.text-white {
+    color: #ffffff;
 }
