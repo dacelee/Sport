@@ -2,13 +2,14 @@
 
 > 一款WEB端的健身APP
 
+> 如果需要使用，请先更改 `config\index.js host地址,但是这个文件你不需提交。切记！`
 ## Build Setup
 
 ``` bash
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# serve with hot reload at 192.168.2.109:1111
 npm run dev
 
 # build for production with minification
