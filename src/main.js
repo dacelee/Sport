@@ -5,11 +5,20 @@ import index from './index.vue'
 import router from './router'
 import component from './components'
 import VueWeChatTitle from 'vue-wechat-title'
+import api from './api'
 import 'lib-flexible'
 
+let eCharts = require('./assets/echarts.js');
 Vue.config.productionTip = false
 Vue.use(component)
 Vue.use(VueWeChatTitle)
+
+window.App = {
+    api, extend(sources) {
+        Object.assign(this, sources)
+    }
+}
+App.eCharts = eCharts
 /* eslint-disable no-new */
 new Vue({
     el: '#app',
