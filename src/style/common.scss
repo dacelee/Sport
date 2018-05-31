@@ -1,0 +1,70 @@
+html, body, div, span, applet, object, iframe, p, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, s, samp, small, strike, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, menu, nav, output, ruby, section, summary, time, mark, audio, video, input, textarea {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    vertical-align: baseline;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    outline: none;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-size: 12px;
+    font-size: 1.2rem;
+}
+
+body {
+    background: #333339;
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, Hiragino Sans GB, Source Han Sans, Noto Sans CJK Sc, Microsoft YaHei, Microsoft Jhenghei, sans-serif;
+    color: #ffffff;
+}
+
+button, textarea, input {
+    outline: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+ul {
+
+}
+
+.pull-left {
+    float: left !important;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.pointer {
+    cursor: pointer !important;
+}
+
+.not-allowed {
+    cursor: not-allowed !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
