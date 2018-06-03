@@ -16,7 +16,8 @@
                 </div>
             </div>
             <div class="short-menu">
-                <div class="short-menu-item text-center" v-for="item in shortMenuList">
+                <div class="short-menu-item text-center" v-for="item in shortMenuList"
+                     @click="toShortMenu(item.router)">
                     <l-icon :name="item.icons" class="short-menu-icon"/>
                     <div class="short-menu-label">{{ item.name }}</div>
                 </div>
@@ -81,7 +82,7 @@
             getShortMenuList() {
                 _this.shortMenuList = [
                     {
-                        id: 'team',
+                        router: 'teamList',
                         name: '组队',
                         icons: 'zudui'
                     },
@@ -104,6 +105,9 @@
             },
             showStepDetails() {
                 this.$router.push('stepDetails')
+            },
+            toShortMenu(router) {
+                this.$router.push(router)
             }
         }
     }

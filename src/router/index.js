@@ -6,6 +6,8 @@ import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
+import teamList from '@/business/team/teamList.vue'
+import createTeam from '@/business/team/createTeam.vue'
 
 Vue.use(Router)
 
@@ -26,6 +28,22 @@ export default new Router({
             component: stepDetails,
             meta: {
                 title: '今日步数'
+            }
+        },
+        {
+            path: '/teamList',
+            name: 'teamList',
+            component: teamList,
+            meta: {
+                title: '组队'
+            }
+        },
+        {
+            path: '/createTeam',
+            name: 'createTeam',
+            component: createTeam,
+            meta: {
+                title: '创建队伍'
             }
         },
         {
