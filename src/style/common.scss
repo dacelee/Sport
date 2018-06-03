@@ -67,3 +67,25 @@ ul {
 .text-white {
     color: #ffffff;
 }
+
+.head-title {
+    height: 80px;
+    line-height: 80px;
+    font-size: 34px;
+    background: #404049;
+    position: relative;
+    margin-bottom: 20px;
+    .icons {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        z-index: 2;
+        margin: 25px 0;
+        &.right-icons {
+            right: 20px;
+        }
+        &.left-icons {
+            left: 20px;
+        }
+    }
+}

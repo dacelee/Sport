@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import home from '@/business/home/home.vue'
+import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
@@ -17,6 +18,14 @@ export default new Router({
             component: home,
             meta: {
                 title: '首页'
+            }
+        },
+        {
+            path: '/stepDetails',
+            name: 'stepDetails',
+            component: stepDetails,
+            meta: {
+                title: '今日步数'
             }
         },
         {

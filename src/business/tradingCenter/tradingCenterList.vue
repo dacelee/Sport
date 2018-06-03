@@ -12,10 +12,7 @@
                 <div class="right-value pull-left">{{ item.value }}</div>
             </div>
         </div>
-        <div class="trading-tabs">
-            <div class="trading-tabs-item text-center active">我要买</div>
-            <div class="trading-tabs-item text-center">我要卖</div>
-        </div>
+        <l-menuTabs :currentMenu="currentMenu" :list="tabsList" @change="changeTabs"/>
         <div class="search-area">
             <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
         </div>
@@ -114,12 +111,26 @@
                         lessCount: (Math.random() * 1000).toFixed(0),
                         tradingNum: (Math.random() * 5000).toFixed(0)
                     }
+                ],
+                currentMenu: 'buy',
+                tabsList: [
+                    {
+                        id: 'buy',
+                        name: '我要买'
+                    },
+                    {
+                        id: 'sell',
+                        name: '我要卖'
+                    }
                 ]
             }
         },
         methods: {
             reset() {
             
+            },
+            changeTabs(res) {
+                this.currentMenu = res
             },
             setChartsData() {
                 let option = {
@@ -243,23 +254,8 @@
                 }
             }
         }
-        .trading-tabs {
+        .search-area {
             margin: 20px auto;
-            width: calc(100% - 62px);
-            height: 56px;
-            line-height: 56px;
-            -webkit-border-radius: 10px;
-            -moz-border-radius: 10px;
-            border-radius: 10px;
-            border: 2px solid #8e8e90;
-            display: flex;
-            justify-content: space-between;
-            .trading-tabs-item {
-                width: 50%;
-                &.active {
-                    background-color: #8e8e90;
-                }
-            }
         }
         .trading-center-list-business {
             margin: 0 auto;
