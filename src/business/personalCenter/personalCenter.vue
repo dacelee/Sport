@@ -129,7 +129,6 @@
     .personalCenter {
         overflow: hidden;
         background-color: #25252B;
-        
         .head-title {
             height: 80px;
             line-height: 80px;

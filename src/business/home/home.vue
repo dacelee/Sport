@@ -25,7 +25,7 @@
                 <div class="left-people">
                     <img src="static/img/home/men.png" alt="">
                 </div>
-                <div class="right-step-info text-center">
+                <div class="right-step-info text-center" @click="showStepDetails">
                     <div class="step-num-info">
                         {{ stepNum }} <span class="steps">步</span>
                     </div>
@@ -34,9 +34,21 @@
             </div>
             <div class="reward-info text-center">奖励糖果:{{ rewardNum }}</div>
             <div class="user-basic-info">
-                <div class="text-center user-basic-info-list" v-for="item in basicList">
-                    <div class="basic-info-value" :class="{'isVip':item.isVip}">{{ item.value }}</div>
-                    <div class="basic-info-label">{{ item.label }}</div>
+                <div class="text-center user-basic-info-list">
+                    <div class="basic-info-value isVip">{{ 'Lv.'+vipLevel }}</div>
+                    <div class="basic-info-label">会员等级</div>
+                </div>
+                <div class="text-center user-basic-info-list">
+                    <div class="basic-info-value">{{ activity }}</div>
+                    <div class="basic-info-label">活跃度</div>
+                </div>
+                <div class="text-center user-basic-info-list">
+                    <div class="basic-info-value">{{ totalReward }}</div>
+                    <div class="basic-info-label">总糖果</div>
+                </div>
+                <div class="text-center user-basic-info-list">
+                    <div class="basic-info-value">{{ contribution }}</div>
+                    <div class="basic-info-label">贡献值</div>
                 </div>
             </div>
         </div>
@@ -55,25 +67,10 @@
                 stepNum: 26984,
                 stepHeat: 256,
                 rewardNum: '1.032132187784',
-                basicList: [
-                    {
-                        label: '会员等级',
-                        value: 'LV.1',
-                        isVip: true
-                    },
-                    {
-                        label: '活跃度',
-                        value: 50
-                    },
-                    {
-                        label: '总糖果',
-                        value: 150
-                    },
-                    {
-                        label: '贡献值',
-                        value: 1800
-                    }
-                ]
+                vipLevel: 1,
+                activity: 50,
+                totalReward: 150,
+                contribution: 1500,
             }
         },
         mounted() {
@@ -104,6 +101,9 @@
                         icons: 'zixun'
                     }
                 ]
+            },
+            showStepDetails() {
+                this.$router.push('stepDetails')
             }
         }
     }
@@ -215,7 +215,7 @@
         }
         .user-basic-info {
             margin-top: 50px;
-            padding: 0 60px 120px 60px;
+            padding: 0 60px 0 60px;
             display: flex;
             justify-content: space-between;
             text-align: center;
