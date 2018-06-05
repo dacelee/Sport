@@ -87,17 +87,17 @@
                         icons: 'zudui'
                     },
                     {
-                        id: 'task',
+                        router: 'task',
                         name: '任务',
                         icons: 'renwu'
                     },
                     {
-                        id: 'doing',
+                        router: 'doing',
                         name: '活动',
                         icons: 'huodong'
                     },
                     {
-                        id: 'news',
+                        router: 'newsList',
                         name: '资讯',
                         icons: 'zixun'
                     }

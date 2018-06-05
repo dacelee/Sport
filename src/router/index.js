@@ -8,12 +8,49 @@ import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
 import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
+import newsList from '@/business/news/news.vue'
+import login from '@/business/login/login.vue'
+import register from '@/business/register/register.vue'
+import forgetPassword from '@/business/register/forgetPassword.vue'
+import selectGender from '@/business/register/selectGender.vue'
 
 Vue.use(Router)
 
 export default new Router({
     mode: 'history',
     routes: [
+        {
+            path: '/login',
+            name: 'login',
+            component: login,
+            meta: {
+                title: '登录'
+            }
+        },
+        {
+            path: '/register',
+            name: 'register',
+            component: register,
+            meta: {
+                title: '注册'
+            }
+        },
+        {
+            path: '/register/selectGender',
+            name: 'selectGender',
+            component: selectGender,
+            meta: {
+                title: '选择性别'
+            }
+        },
+        {
+            path: '/register/forgetPassword',
+            name: 'forgetPassword',
+            component: forgetPassword,
+            meta: {
+                title: '忘记密码'
+            }
+        },
         {
             path: '/',
             name: 'home',
@@ -22,6 +59,7 @@ export default new Router({
                 title: '首页'
             }
         },
+
         {
             path: '/stepDetails',
             name: 'stepDetails',
@@ -44,6 +82,14 @@ export default new Router({
             component: createTeam,
             meta: {
                 title: '创建队伍'
+            }
+        },
+        {
+            path: '/newsList',
+            name: 'newsList',
+            component: newsList,
+            meta: {
+                title: '资讯'
             }
         },
         {

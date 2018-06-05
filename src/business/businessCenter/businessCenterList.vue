@@ -2,7 +2,7 @@
     <div class="business-center-list">
         <div class="head-title text-center">
             商圈
-            <l-icon name="gouwuche"/>
+            <l-icon name="gouwuche" class="right-icons"/>
         </div>
         <div class="head-menu">
             <div class="head-menu-item text-center" v-for="item in menuList">
@@ -119,20 +119,6 @@
 <style lang="scss">
     .business-center-list {
         background-color: #F5F5F5;
-        .head-title {
-            height: 80px;
-            line-height: 80px;
-            font-size: 34px;
-            background: #404049;
-            position: relative;
-            .icons {
-                position: absolute;
-                right: 20px;
-                top: 25px;
-                width: 30px;
-                height: 30px;
-            }
-        }
         .head-menu {
             background-color: #ffffff;
             height: 200px;

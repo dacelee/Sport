@@ -1,24 +1,24 @@
 <template>
-    <div class="register-container">
+    <div class="forget-password-container">
         <div class="head-title text-center">
             <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/login')"/>
-            注册
+            忘记密码
         </div>
-        <div class="register-form">
-            <div class="register-form-item">
+        <div class="forget-password-form">
+            <div class="forget-password-form-item">
                 <input type="text" placeholder="手机号">
             </div>
-            <div class="register-form-item">
+            <div class="forget-password-form-item">
                 <input type="text" placeholder="验证码" class="validate-code-input">
                 <div class="btn-validate-code text-center pull-right">获取验证码</div>
             </div>
-            <div class="register-form-item">
-                <input type="password" placeholder="密码">
+            <div class="forget-password-form-item">
+                <input type="password" placeholder="新密码">
             </div>
-            <div class="register-form-item">
-                <input type="text" placeholder="推荐人">
+            <div class="forget-password-form-item">
+                <input type="password" placeholder="确认新密码">
             </div>
-            <div class="register-form-item register-btn">
+            <div class="forget-password-form-item register-btn">
                 <div class="btn-register text-center" @click="submitForm">提&emsp;交</div>
             </div>
         </div>
@@ -27,17 +27,17 @@
 
 <script>
     export default {
-        name: 'register',
+        name: 'forget-password',
         methods: {
             submitForm() {
-                this.$router.push('/register/selectGender')
+            
             }
         }
     }
 </script>
 
 <style lang="scss">
-    .register-container {
+    .forget-password-container {
         background: url("../../../static/img/index/bg.png") no-repeat;
         width: 750px;
         height: 100%;
@@ -49,10 +49,10 @@
         .head-title {
             background-color: transparent;
         }
-        .register-form {
+        .forget-password-form {
             width: 580px;
             margin: 80px auto 0;
-            .register-form-item {
+            .forget-password-form-item {
                 margin-bottom: 40px;
                 input {
                     font-size: 28px;
