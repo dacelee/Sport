@@ -1,5 +1,5 @@
 <template>
-    <div class="news">
+    <div class="news-container">
         <div class="head-title text-center">
             <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/')"/>
             资讯
@@ -58,6 +58,30 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+    .news-container {
+        padding-bottom: 0 !important;
+        background-color: #ffffff;
+        height: 100%;
+        .head-title {
+            margin-bottom: 0;
+        }
+        .short-menu-tabs {
+            background-color: #404148;
+            display: flex;
+            justify-content: center;
+            .short-menu-item {
+                font-size: 28px;
+                line-height: 28px;
+                padding: 30px 0 27px;
+                border-bottom: 3px solid #404148;
+                color: #999999;
+                margin: 0 36px;
+                &.active {
+                    border-color: #F8C513;
+                    color: #ffffff;
+                }
+            }
+        }
+    }
 </style>

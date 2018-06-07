@@ -9,6 +9,7 @@ import club from '@/business/club/clubList.vue'
 import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
 import newsList from '@/business/news/news.vue'
+import newsDetails from '@/business/news/newsDetails.vue'
 import login from '@/business/login/login.vue'
 import register from '@/business/register/register.vue'
 import forgetPassword from '@/business/register/forgetPassword.vue'
@@ -90,6 +91,14 @@ export default new Router({
             component: newsList,
             meta: {
                 title: '资讯'
+            }
+        },
+        {
+            path: '/newsList/newsDetails/:id',
+            name: 'newsDetails',
+            component: newsDetails,
+            meta: {
+                title: '详情'
             }
         },
         {
