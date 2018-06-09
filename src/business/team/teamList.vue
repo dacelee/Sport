@@ -5,7 +5,7 @@
             组队
             <div class="text-white" @click="createTeam" slot="right-item">创建</div>
         </l-head>
-        <l-menuTabs class="team-menu" :currentMenu="currentMenu" :list="menuList" @change="changeTabs"/>
+        <l-shortMenu class="team-menu" :currentRoute="currentMenu" :list="menuList" @change="changeTabs"/>
         <div class="team-container">
             <component :is="currentMenu"/>
         </div>

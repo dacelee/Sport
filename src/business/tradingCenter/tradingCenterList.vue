@@ -12,7 +12,7 @@
                 <div class="right-value pull-left">{{ item.value }}</div>
             </div>
         </div>
-        <l-menuTabs :currentMenu="currentMenu" :list="tabsList" @change="changeTabs"/>
+        <l-shortMenu :currentRoute="currentMenu" :list="tabsList" @change="changeTabs"/>
         <div class="search-area">
             <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
         </div>

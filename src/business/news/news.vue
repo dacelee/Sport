@@ -4,11 +4,7 @@
             <l-icon name="fanhui" @click.native="$router.push('/')" slot="left-item"/>
             资讯
         </l-head>
-        <div class="short-menu-tabs">
-            <div class="short-menu-item" v-for="item in list" :class="{'active':item.route === currentRoute}"
-                 @click="changeRoute(item.route)">{{ item.name }}
-            </div>
-        </div>
+        <l-tabs :list="list" :current="currentRoute" @change="changeRoute"/>
         <div class="news-container">
             <component :is="currentRoute"/>
         </div>
@@ -32,15 +28,15 @@
             return {
                 list: [
                     {
-                        route: 'healthy',
+                        id: 'healthy',
                         name: '健康学堂'
                     },
                     {
-                        route: 'industry',
+                        id: 'industry',
                         name: '行业快讯'
                     },
                     {
-                        route: 'share',
+                        id: 'share',
                         name: '玩家分享'
                     }
                 ],
@@ -63,22 +59,5 @@
         padding-bottom: 0 !important;
         background-color: #ffffff;
         height: 100%;
-        .short-menu-tabs {
-            background-color: #404148;
-            display: flex;
-            justify-content: center;
-            .short-menu-item {
-                font-size: 28px;
-                line-height: 28px;
-                padding: 30px 0 27px;
-                border-bottom: 3px solid #404148;
-                color: #999999;
-                margin: 0 36px;
-                &.active {
-                    border-color: #F8C513;
-                    color: #ffffff;
-                }
-            }
-        }
     }
 </style>

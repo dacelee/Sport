@@ -32,11 +32,11 @@
             </div>
         </div>
         <div class="news-short-menu">
-            <div class="news-short-menu-item text-center">
+            <div class="news-short-menu-item text-center" @click="evaluationFn">
                 <l-icon name="bianji"/>
                 吐槽
             </div>
-            <div class="news-short-menu-item text-center">
+            <div class="news-short-menu-item text-center" @click="rewardFn">
                 <l-icon name="huodong"/>
                 打赏
             </div>
@@ -45,14 +45,35 @@
                 分享
             </div>
         </div>
+        <div class="news-details-popup" v-if="showPopup" @click="showPopup = false">
+            <div class="container" v-if="popupType === 'reward'" @click.stop="">
+                <div class="title text-center">正在打赏</div>
+                <div class="less-num text-center">当前糖果余额:{{ lessNum }}</div>
+                <div class="reward-num">
+                    <input type="text" placeholder="最少打赏0.01">
+                </div>
+                <div class="operation-btn">
+                    <div class="btn btn-cancel text-center" @click="showPopup = false">取&emsp;消</div>
+                    <div class="btn btn-confirm text-center">确&emsp;定</div>
+                </div>
+            </div>
+            <div class="evaluation" v-if="popupType === 'evaluation'" @click.stop="">
+                <textarea placeholder="请输入吐槽内容"></textarea>
+                <div class="btn btn-confirm pull-right">发送</div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+    let _this
     export default {
         name: 'news-details',
         data() {
             return {
+                popupType: '',
+                showPopup: false,
+                lessNum: '321.211',
                 newsDetails: {
                     title: '运动后恶心想吐怎么办 运动后恶心想吐的原因',
                     author: 'Louis',
@@ -85,17 +106,30 @@
                     }
                 ]
             }
+        },
+        methods: {
+            rewardFn() {
+                _this.popupType = 'reward'
+                _this.showPopup = true
+            },
+            evaluationFn() {
+                _this.popupType = 'evaluation'
+                _this.showPopup = true
+            }
+        },
+        mounted() {
+            _this = this
         }
     }
 </script>
 
 <style lang="scss">
     .news-details {
-        padding-bottom: 0 !important;
         background-color: #f5f5f5;
-        .head-title {
-            margin-bottom: 0;
-        }
+        position: absolute;
+        overflow: hidden;
+        padding-bottom: 100px !important;
+        min-height: 100%;
         .news-details-container {
             color: #000;
             background-color: #ffffff;
@@ -189,6 +223,9 @@
             justify-content: space-between;
             height: 90px;
             padding: 5px 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
             .news-short-menu-item {
                 width: 250px;
                 line-height: 80px;
@@ -197,6 +234,100 @@
             }
             .news-short-menu-item:nth-last-child(1) {
                 border-right: none;
+            }
+        }
+        .news-details-popup {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            .container {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                background-color: #25252B;
+                width: 750px;
+                height: 630px;
+                padding-top: 110px;
+                .title {
+                    font-size: 34px;
+                    line-height: 34px;
+                }
+                .less-num {
+                    font-size: 24px;
+                    line-height: 24px;
+                    margin-top: 40px;
+                    color: #999999;
+                }
+                .reward-num {
+                    width: 510px;
+                    margin: 70px auto;
+                    input {
+                        width: 510px;
+                        font-size: 34px;
+                        line-height: 34px;
+                        padding: 25px 20px 25px 20px;
+                        background-color: #333339;
+                        -webkit-border-radius: 8px;
+                        -moz-border-radius: 8px;
+                        border-radius: 8px;
+                        color: #ffffff;
+                    }
+                }
+                .operation-btn {
+                    width: 750px;
+                    height: 100px;
+                    display: flex;
+                    justify-content: space-between;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    .btn {
+                        width: 375px;
+                        line-height: 100px;
+                        font-size: 32px;
+                        &.btn-cancel {
+                            background-color: #404148;
+                        }
+                        &.btn-confirm {
+                            background-color: #F8C513;
+                            color: #25252B;
+                        }
+                    }
+                }
+            }
+            .evaluation {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 750px;
+                background-color: #25252B;
+                padding: 30px 30px 80px 30px;
+                textarea {
+                    width: 690px;
+                    height: 160px;
+                    -webkit-border-radius: 8px;
+                    -moz-border-radius: 8px;
+                    border-radius: 8px;
+                    background-color: #333339;
+                    font-size: 30px;
+                    line-height: 40px;
+                    padding: 20px 20px 20px;
+                    color: #ffffff;
+                }
+                .btn-confirm {
+                    font-size: 32px;
+                    line-height: 32px;
+                    padding: 14px 50px;
+                    background-color: #F8C513;
+                    color: #25252B;
+                    -webkit-border-radius: 8px;
+                    -moz-border-radius: 8px;
+                    border-radius: 8px;
+                    margin-top: 30px;
+                }
             }
         }
     }
