@@ -1,8 +1,8 @@
 <template>
     <div class="home">
-        <div class="head-title text-center">
+        <l-head>
             首页
-        </div>
+        </l-head>
         <div class="home-container">
             <div class="home-head">
                 <l-banner/>

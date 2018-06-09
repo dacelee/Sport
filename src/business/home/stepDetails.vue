@@ -1,10 +1,10 @@
 <template>
     <div class="step-details">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" class="left-icons" @click.native="backToHome"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="backToHome" slot="left-item"/>
             今日步数
-            <l-icon name="fenxiang" class="right-icons" @click.native="share" v-if="currentMenu === 'trackMotion'"/>
-        </div>
+            <l-icon name="fenxiang" @click.native="share" v-if="currentMenu === 'trackMotion'" slot="right-item"/>
+        </l-head>
         <div class="menu-step-way">
             <l-menuTabs :currentMenu="currentMenu" :list="menuList" @change="changeTabs"/>
         </div>
@@ -83,6 +83,9 @@
 
 <style lang="scss">
     .step-details {
+        .menu-step-way {
+            margin-top: 20px;
+        }
         .track-share-container {
             width: 100%;
             height: 100%;

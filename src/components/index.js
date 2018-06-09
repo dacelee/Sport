@@ -4,6 +4,7 @@ import banner from './banner'
 import searchInput from './searchInput'
 import menuTabs from './menu-tabs'
 import selecter from './selecter'
+import headMenu from './headMenu'
 
 export default {
     install: function (Vue) {
@@ -13,5 +14,6 @@ export default {
         Vue.component('l-search', searchInput)
         Vue.component('l-menuTabs', menuTabs)
         Vue.component('l-select', selecter)
+        Vue.component('l-head', headMenu)
     }
 }

@@ -1,9 +1,9 @@
 <template>
     <div class="news-details">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/newsList')"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('/newsList')" slot="left-item"/>
             详情
-        </div>
+        </l-head>
         <div class="news-details-container">
             <div class="news-details-title">{{ newsDetails.title }}</div>
             <div class="news-details-info">

@@ -1,9 +1,9 @@
 <template>
     <div class="register-container">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/login')"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('/login')" slot="left-item"/>
             注册
-        </div>
+        </l-head>
         <div class="register-form">
             <div class="register-form-item">
                 <input type="text" placeholder="手机号">

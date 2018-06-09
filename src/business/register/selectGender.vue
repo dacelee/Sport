@@ -1,9 +1,9 @@
 <template>
     <div class="select-gender">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/register')"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('/register')" slot="left-item"/>
             选择性别
-        </div>
+        </l-head>
         <div class="select-gender-form">
             <div class="select-gender-item" @click="toHome">
                 <l-icon name="woshimeinv" class="text-center"/>

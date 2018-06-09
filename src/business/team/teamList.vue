@@ -1,11 +1,11 @@
 <template>
     <div class="team-list">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" @click.native="$router.push('/')" class="left-icons"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('/')" slot="left-item"/>
             组队
-            <div class="create-team" @click="createTeam">创建</div>
-        </div>
-        <l-menuTabs :currentMenu="currentMenu" :list="menuList" @change="changeTabs"/>
+            <div class="text-white" @click="createTeam" slot="right-item">创建</div>
+        </l-head>
+        <l-menuTabs class="team-menu" :currentMenu="currentMenu" :list="menuList" @change="changeTabs"/>
         <div class="team-container">
             <component :is="currentMenu"/>
         </div>
@@ -55,12 +55,8 @@
 <style lang="scss">
     .team-list {
         padding-bottom: 10px !important;
-        .create-team {
-            position: absolute;
-            top: 28px;
-            right: 20px;
-            font-size: 24px;
-            line-height: 24px;
+        .team-menu {
+            margin-top: 20px;
         }
     }
 </style>

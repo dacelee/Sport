@@ -1,8 +1,8 @@
 <template>
     <div class="trading-center-list">
-        <div class="head-title text-center">
+        <l-head>
             交易中心
-        </div>
+        </l-head>
         <div class="trading-charts">
             <div class="charts" id="trading-charts"></div>
         </div>

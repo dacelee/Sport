@@ -1,9 +1,9 @@
 <template>
     <div class="business-center-list">
-        <div class="head-title text-center">
+        <l-head>
             商圈
-            <l-icon name="gouwuche" class="right-icons"/>
-        </div>
+            <l-icon name="gouwuche" slot="right-item"/>
+        </l-head>
         <div class="head-menu">
             <div class="head-menu-item text-center" v-for="item in menuList">
                 <l-icon :name="item.icons"/>

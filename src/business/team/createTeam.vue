@@ -1,9 +1,9 @@
 <template>
     <div class="create-team">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" @click.native="$router.push('teamList')" class="left-icons"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('teamList')" slot="left-item"/>
             创建组队
-        </div>
+        </l-head>
         <div class="team-item mt-20">
             <div class="left-label pull-left">名称</div>
             <div class="right-input pull-left">
