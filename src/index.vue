@@ -18,8 +18,13 @@
             changeRoute() {
             
             }
+        },
+        mounted() {
+            let clientHeight = document.documentElement.clientHeight
+            $('.view-container').css('min-height', clientHeight)
         }
     }
+
 </script>
 
 <style lang="scss">
