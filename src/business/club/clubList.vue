@@ -1,9 +1,9 @@
 <template>
     <div class="club-list">
-        <div class="head-title text-center">
+        <l-head>
             俱乐部
-            <div class="btn text-white">创建</div>
-        </div>
+            <div class="btn text-white" slot="right-item">创建</div>
+        </l-head>
         <div class="search-area">
             <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
         </div>

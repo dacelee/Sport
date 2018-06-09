@@ -54,7 +54,7 @@
             $('html').click(function () {
                 _this.showSelectList = false
             })
-            $('.l-select').click(function (e) {
+            $(_this.$el).click(function (e) {
                 e.stopPropagation()
             })
         }

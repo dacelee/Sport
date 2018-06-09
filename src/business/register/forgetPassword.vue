@@ -1,9 +1,9 @@
 <template>
     <div class="forget-password-container">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/login')"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('/login')" slot="left-item"/>
             忘记密码
-        </div>
+        </l-head>
         <div class="forget-password-form">
             <div class="forget-password-form-item">
                 <input type="text" placeholder="手机号">

@@ -1,9 +1,9 @@
 <template>
     <div class="news-container">
-        <div class="head-title text-center">
-            <l-icon name="fanhui" class="left-icons" @click.native="$router.push('/')"/>
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('/')" slot="left-item"/>
             资讯
-        </div>
+        </l-head>
         <div class="short-menu-tabs">
             <div class="short-menu-item" v-for="item in list" :class="{'active':item.route === currentRoute}"
                  @click="changeRoute(item.route)">{{ item.name }}
@@ -63,9 +63,6 @@
         padding-bottom: 0 !important;
         background-color: #ffffff;
         height: 100%;
-        .head-title {
-            margin-bottom: 0;
-        }
         .short-menu-tabs {
             background-color: #404148;
             display: flex;
