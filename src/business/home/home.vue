@@ -92,7 +92,7 @@
                         icons: 'renwu'
                     },
                     {
-                        router: 'doing',
+                        router: 'activity',
                         name: '活动',
                         icons: 'huodong'
                     },
