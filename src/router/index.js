@@ -14,8 +14,8 @@ import login from '@/business/login/login.vue'
 import register from '@/business/register/register.vue'
 import forgetPassword from '@/business/register/forgetPassword.vue'
 import selectGender from '@/business/register/selectGender.vue'
-import doing from '@/business/doing/doing.vue'
-import task from '@/business/task/taskList.vue'
+import activity from '@/business/activity/activity.vue'
+import task from '@/business/task/task.vue'
 
 Vue.use(Router)
 
@@ -136,9 +136,9 @@ export default new Router({
             }
         },
         {
-            path: '/doing',
-            name: 'doing',
-            component: doing,
+            path: '/activity',
+            name: 'activity',
+            component: activity,
             meta: {
                 title: '活动'
             }

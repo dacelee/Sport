@@ -1,10 +1,10 @@
 <template>
-    <div class="doing-list">
+    <div class="activity-list">
         <l-head>
             <l-icon name="fanhui" slot="left-item" @click.native="$router.push('/')"/>
             活动
         </l-head>
-        <div class="doing-list-item" v-for="item in list">
+        <div class="activity-list-item" v-for="item in list">
             <div class="item-bg">
                 <img :src="item.imgPath" alt="">
             </div>
@@ -31,7 +31,7 @@
 
 <script>
     export default {
-        name: 'doing',
+        name: 'activity',
         data() {
             return {
                 list: [
@@ -69,8 +69,8 @@
 </script>
 
 <style lang="scss">
-    .doing-list {
-        .doing-list-item {
+    .activity-list {
+        .activity-list-item {
             width: 750px;
             height: 365px;
             position: relative;
