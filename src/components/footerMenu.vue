@@ -72,11 +72,8 @@
         position: fixed;
         bottom: 0;
         display: flex;
-        justify-content: space-between;
-        padding: 0 40px;
-        padding-top: 10px;
-        padding-bottom: constant(safe-area-inset-bottom);
-        padding-bottom: env(safe-area-inset-bottom);
+        justify-content: space-around;
+        padding: 10px 40px 0;
         width: 100%;
         background: #404049;
         .menu-list-item {

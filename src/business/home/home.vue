@@ -115,20 +115,7 @@
 
 <style lang="scss">
     .home {
-        .head-title {
-            height: 80px;
-            line-height: 80px;
-            font-size: 34px;
-            background: #404049;
-            position: relative;
-            .icons {
-                position: absolute;
-                width: 30px;
-                height: 30px;
-                z-index: 2;
-                margin: 25px 0;
-            }
-        }
+    
     }
     
     .home-container {
@@ -219,12 +206,12 @@
         }
         .user-basic-info {
             margin-top: 50px;
-            padding: 0 60px 0 60px;
+            padding: 0 40px 0 40px;
             display: flex;
             justify-content: space-between;
             text-align: center;
             .user-basic-info-list {
-                width: 96px;
+                width: 120px;
                 .basic-info-value {
                     margin-bottom: 20px;
                     height: 48px;
@@ -235,7 +222,7 @@
                         color: #000000;
                         height: 40px;
                         line-height: 40px;
-                        margin: 4px 0 24px 0;
+                        margin: 4px auto 24px;
                         font-size: 36px;
                         -webkit-border-radius: 25px;
                         -moz-border-radius: 25px;
