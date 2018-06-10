@@ -5,7 +5,7 @@
             创建成功
         </l-head>
        <div class='createClubSuccess-top'>
-           <l-icon name="camera" class="text-center"/>
+           <l-icon name="camera" class="text-center"/>5555
            <div class="text-center">恭喜，俱乐部创建成功</div>
        </div>
        <div class=''>
