@@ -1,55 +1,64 @@
 <template>
-    <div class="create-club">
+    <div class="clubCertification">
         <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            创建俱乐部
+            <l-icon name="fanhui" @click.native="$router.push('createClubSuccess')" slot="left-item"/>
+            实体店认证
         </l-head>
+
         <div class="select-upload" @click="toHome">
+         <h4 class="title">营业执照</h4>
             <div class="upload-box text-center">
-                <l-icon name="shangchuantouxiang"/>
-                </div>
-                <div class="select-upload-label text-center">上传俱乐部头像</div>
+            <l-icon name="shimingrenzheng"/>
+            <div class="select-upload-label text-center">上传营业执照</div>
+            </div>
         </div>
         <div class="club-item mt-20">
-            <div class="left-label pull-left">名称</div>
+            <div class="left-label pull-left">姓名</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入俱乐部名称">
+                <input type="text" placeholder="请输入">
             </div>
         </div>
         <div class="club-item">
-            <div class="left-label pull-left">地区</div>
+            <div class="left-label pull-left">身份证</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入地区名称(xx市xx区)">
+                <input type="text" placeholder="请输入">
             </div>
         </div>
-        <div class="club-item text-area">
-            <div class="left-label pull-left">简介</div>
+        <div class="club-item">
+            <div class="left-label pull-left">电话</div>
             <div class="right-input pull-left">
-                <textarea placeholder="在此输入俱乐部简介"></textarea>
+                <input type="text" placeholder="请输入">
             </div>
         </div>
-        <div class="select-pic text-center" @click="toHome">
+         <div class="club-item">
+            <div class="left-label pull-left">地址</div>
+            <div class="right-input pull-left">
+                <input type="text" placeholder="请输入">
+            </div>
+        </div>
+        <div class="select-pic" @click="toHome">
+         <h3 class="title">俱乐部介绍</h3>
                 <div class="upload-box">
-                  <div class="upload-pic">
+                  <div class="upload-pic text-center">
                    <l-icon name="shangchuantupian"/>
                   </div>
-                <div class="select-upload-label">上传图片 0/1</div>
+                <div class="select-upload-label text-center">上传图片 0/1</div>
                 </div>
         </div>
-        <div class="save-btn text-center" @click="createClubSuccess">提交</div>
+        <div class="save-btn text-center" @click="clubCertificationSuccess">提交</div>
     </div>
 </template>
 
 <script>
 let _this
     export default {
-        name: 'create-club',
+        name: 'clubCertification',
         methods: {
             reset() {
                 console.log(this.filterName)
             },
-            createClubSuccess() {
-                _this.$router.push('createClubSuccess')
+            clubCertificationSuccess() {
+                _this.$router.push('clubCertificationSuccess')
             }
         },
         mounted() {
@@ -59,38 +68,40 @@ let _this
 </script>
 
 <style lang="scss">
-    .create-club {
+    .clubCertification {
+        
         .select-upload {
         width:100%;
         background-color:#33333a;
-        padding:50px 0;
+        padding:10px 0  30px 0;
         margin-bottom:40px;
+        .title{padding-left:30px;font-size:30px;color:#999}
         .upload-box{ 
             background-color:#25252B;
-            width:140px;
-            height:140px;
-            margin:0 auto 0;
-            border-radius:50%;
-            display: flex;
-            justify-content:center;
-            align-items:Center;
+            width:auto;
+            height:400px;
+            margin:0 30px;
+            border-radius:10px;
             .icons {
-            width: 50px;
-            height: 44px;
+            width: 100px;
+            height: 100px;
             color: #999999;
+            margin-top:130px;
              }
         }
         .select-upload-label {
             color: #999999;
-            font-size: 30px;
+            font-size:30px;
             line-height: 30px;
             margin-top:20px;
             }
      }
      .select-pic {
-        margin-bottom:0px;
+        .title{font-size:30px;color:#999}
+        margin-bottom:0;
+        margin-top:20px;
         background-color: #33333a;
-        padding:30px 0 140px 30px;
+        padding:10px 0 140px 30px;
         .upload-box{ 
             background-color:#25252B;
             width:210px;
