@@ -1,34 +1,22 @@
 <template>
-    <div class="create-club">
+    <div class="publishActivity">
         <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            创建俱乐部
+            <l-icon name="fanhui" @click.native="$router.push('activityList')" slot="left-item"/>
+            发布活动
         </l-head>
-        <div class="select-upload" @click="toHome">
-            <div class="upload-box text-center">
-                <l-icon name="shangchuantouxiang"/>
-                </div>
-                <div class="select-upload-label text-center">上传俱乐部头像</div>
-        </div>
         <div class="club-item mt-20">
             <div class="left-label pull-left">名称</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入俱乐部名称">
-            </div>
-        </div>
-        <div class="club-item">
-            <div class="left-label pull-left">地区</div>
-            <div class="right-input pull-left">
-                <input type="text" placeholder="请输入地区名称(xx市xx区)">
+                <input type="text" placeholder="请输入活动名称">
             </div>
         </div>
         <div class="club-item text-area">
             <div class="left-label pull-left">简介</div>
             <div class="right-input pull-left">
-                <textarea placeholder="在此输入俱乐部简介"></textarea>
+                <textarea placeholder="在此输入活动内容"></textarea>
             </div>
         </div>
-        <div class="select-pic text-center" @click="toHome">
+        <div class="select-pic text-center">
                 <div class="upload-box">
                   <div class="upload-pic">
                    <l-icon name="shangchuantupian"/>
@@ -36,21 +24,18 @@
                 <div class="select-upload-label">上传图片 0/1</div>
                 </div>
         </div>
-        <div class="save-btn text-center" @click="createClubSuccess">提交</div>
+        <div class="save-btn text-center" >发布</div>
     </div>
 </template>
 
 <script>
 let _this
     export default {
-        name: 'create-club',
+        name: 'publishActivity',
         methods: {
             reset() {
                 console.log(this.filterName)
             },
-            createClubSuccess() {
-                _this.$router.push('createClubSuccess')
-            }
         },
         mounted() {
             _this = this
@@ -59,7 +44,7 @@ let _this
 </script>
 
 <style lang="scss">
-    .create-club {
+    .publishActivity {
         .select-upload {
         width:100%;
         background-color:#33333a;
@@ -103,12 +88,6 @@ let _this
             color: #999999;
              }
         }
-        .select-upload-label {
-            color: #999999;
-            font-size: 24px;
-            line-height: 15px;
-            margin-top:20px;
-            }
      }
         padding-bottom: 60px;
         .club-item {
@@ -164,7 +143,7 @@ let _this
             width: 750px;
         }
         .mt-20 {
-            margin-top: -20px;
+            margin-top:0;
         }
     }
 </style>

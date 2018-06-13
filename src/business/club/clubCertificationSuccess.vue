@@ -1,16 +1,16 @@
 <template>
-    <div class="createClubSuccess">
+    <div class="clubCertificationSuccess">
         <l-head>
             <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            创建成功
+            实体店认证
         </l-head>
        <div class='createClubSuccess-top'>
            <l-icon name="chenggong" class="text-center"/>
-           <div class="label text-center">恭喜，俱乐部创建成功</div>
+           <div class="label text-center">提交成功</div>
        </div>
        <div class='createClubSuccessM'>
-       <div class="select-upload-label text-center">您可以对俱乐部进行实体店认证 认证后可以享受更多权益</div>
-        <div class="save-btn text-center" @click="clubCertification">实体店认证</div>
+       <div class="select-upload-label text-center">您的俱乐部实体认证资料已提交 我们工作人员会尽快审核</div>
+        
       </div>
     </div>
 </template> 
@@ -18,14 +18,11 @@
 <script>
 let _this
     export default {
-        name: 'createClubSuccess',
+        name: 'clubCertificationSuccess',
         methods: {
             reset() {
                 console.log(this.filterName)
             },
-            clubCertification() {
-                _this.$router.push('clubCertification')
-            }
         },
         mounted() {
             _this = this
@@ -34,7 +31,7 @@ let _this
 </script>
 
 <style lang="scss">
-.createClubSuccess{
+.clubCertificationSuccess{
     .createClubSuccess-top{
         margin:120px auto 30px;
         font-size:34px;
