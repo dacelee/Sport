@@ -12,6 +12,8 @@ import clubCertification from '@/business/club/clubCertification.vue'
 import clubCertificationSuccess from '@/business/club/clubCertificationSuccess.vue'
 import clubDetails from '@/business/club/clubDetails.vue'
 import clubTeams from '@/business/club/clubTeams.vue'
+import activityList from '@/business/club/activityList.vue'
+import publishActivity from '@/business/club/publishActivity.vue'
 import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
 import newsList from '@/business/news/news.vue'
@@ -179,6 +181,22 @@ export default new Router({
             component: clubTeams,
             meta: {
                 title: '成员'
+            }
+        },
+        {
+            path: '/activityList',
+            name: 'activityList',
+            component: activityList,
+            meta: {
+                title: '活动'
+            }
+        },
+        {
+            path: '/publishActivity',
+            name: 'publishActivity',
+            component: publishActivity,
+            meta: {
+                title: '发布活动'
             }
         },
         {
