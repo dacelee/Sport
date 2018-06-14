@@ -1,22 +1,16 @@
 <template>
     <div class="team-list">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('/')" slot="left-item"/>
-            组队
-            <div class="text-white" @click="createTeam" slot="right-item">创建</div>
-        </l-head>
         <l-shortMenu class="team-menu" :currentRoute="currentMenu" :list="menuList" @change="changeTabs"/>
         <div class="team-container">
             <component :is="currentMenu"/>
         </div>
     </div>
 </template>
-
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.0&key=15934dbe4d83af9637f6fd067e86a2df"></script>
 <script>
     let _this
     import myTeam from './myTeam'
     import nearbyTeam from './nearbyTeam'
-    
     export default {
         name: 'team-list',
         components: {
@@ -40,9 +34,11 @@
         },
         methods: {
             changeTabs(res) {
-                _this.currentMenu = res
+                _this.currentMenu = res;
+
+
             },
-            createTeam() {
+            editEvent() {
                 _this.$router.push('createTeam')
             }
         },

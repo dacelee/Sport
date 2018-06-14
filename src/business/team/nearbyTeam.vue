@@ -33,8 +33,41 @@
                         address: '长沙市天心区',
                         personalCount: 24
                     }
-                ]
+                ],
+                param:{
+                    x:0,
+                    y:0,
+                    page:1,
+                    pageSize:10
+                }
             }
+        }, methods: {
+            nearbyTeam(page,pageSize){
+                //附近组队
+                if(this.param.x ==0|| this.param.y==0){
+                    this.appUtil.location(function(ret){
+                        if(!ret.status){
+                            _this.$toast("定位失败,请开启GPS后再试试");
+                            return;
+                        }
+                        this.param.x = ret.lon;
+                        this.param.y = ret.lat;
+                        this.param.page = page;
+                        this.loadData();
+                    },false);
+                }else{
+                    this.loadData();
+                }
+            },
+            loadData(){
+                this.axios.post(this.session.nearteam, this.param, function (data) {
+                    var datalist = data.dataList;
+                },function(data){
+                    _this.$toast(data.msg);
+                });
+            }
+        }, mounted() {
+            _this = this
         }
     }
 </script>

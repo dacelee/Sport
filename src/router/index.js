@@ -22,20 +22,20 @@ import login from '@/business/login/login.vue'
 import register from '@/business/register/register.vue'
 import forgetPassword from '@/business/register/forgetPassword.vue'
 import selectGender from '@/business/register/selectGender.vue'
+//import faceapp from '@/business/face/faceapp.vue'
 import activity from '@/business/activity/activity.vue'
 import task from '@/business/task/task.vue'
 
 Vue.use(Router)
 
 export default new Router({
-    mode: 'history',
     routes: [
         {
             path: '/login',
             name: 'login',
             component: login,
             meta: {
-                title: '登录'
+                title: false
             }
         },
         {
@@ -43,7 +43,7 @@ export default new Router({
             name: 'register',
             component: register,
             meta: {
-                title: '注册'
+                title: false
             }
         },
         {
@@ -51,7 +51,7 @@ export default new Router({
             name: 'selectGender',
             component: selectGender,
             meta: {
-                title: '选择性别'
+                title: 'false'
             }
         },
         {
@@ -59,7 +59,7 @@ export default new Router({
             name: 'forgetPassword',
             component: forgetPassword,
             meta: {
-                title: '忘记密码'
+                title: false
             }
         },
         {
@@ -76,7 +76,8 @@ export default new Router({
             name: 'stepDetails',
             component: stepDetails,
             meta: {
-                title: '今日步数'
+                title: '今日步数',
+                back:"/",
             }
         },
         {
@@ -84,7 +85,9 @@ export default new Router({
             name: 'teamList',
             component: teamList,
             meta: {
-                title: '组队'
+                title: '组队',
+                back:"/",
+                rightTitle:'创建'
             }
         },
         {
@@ -92,7 +95,8 @@ export default new Router({
             name: 'createTeam',
             component: createTeam,
             meta: {
-                title: '创建队伍'
+                title: '创建组队',
+                back:'teamList'
             }
         },
         {
@@ -124,7 +128,8 @@ export default new Router({
             name: 'businessCenter',
             component: businessCenter,
             meta: {
-                title: '商圈'
+                title: '商圈',
+                rightIcon:'gouwuche'
             }
         },
         {
@@ -132,7 +137,8 @@ export default new Router({
             name: 'club',
             component: club,
             meta: {
-                title: '俱乐部'
+                title: '俱乐部',
+                rightTitle:'创建'
             }
         },
         {
@@ -204,7 +210,8 @@ export default new Router({
             name: 'personalCenter',
             component: personalCenter,
             meta: {
-                title: '我的'
+                title: '我的',
+                rightIcon:'shezhi'
             }
         },
         {
@@ -222,6 +229,19 @@ export default new Router({
             meta: {
                 title: '任务'
             }
+        },
+        //{
+        //    path: '/face/faceapp',
+        //    name: 'faceapp',
+        //    component: faceapp,
+        //    meta: {
+        //        title: '人脸识别'
+        //    }
+        //},
+    ],scrollBehavior (to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition
         }
-    ]
+        return { x: 0, y: 0 }
+    }
 })
