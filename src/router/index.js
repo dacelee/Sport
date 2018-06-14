@@ -6,6 +6,14 @@ import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
+import createClub from '@/business/club/createClub.vue'
+import createClubSuccess from '@/business/club/createClubSuccess.vue'
+import clubCertification from '@/business/club/clubCertification.vue'
+import clubCertificationSuccess from '@/business/club/clubCertificationSuccess.vue'
+import clubDetails from '@/business/club/clubDetails.vue'
+import clubTeams from '@/business/club/clubTeams.vue'
+import activityList from '@/business/club/activityList.vue'
+import publishActivity from '@/business/club/publishActivity.vue'
 import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
 import newsList from '@/business/news/news.vue'
@@ -125,6 +133,70 @@ export default new Router({
             component: club,
             meta: {
                 title: '俱乐部'
+            }
+        },
+        {
+            path: '/createClub',
+            name: 'createClub',
+            component: createClub,
+            meta: {
+                title: '创建俱乐部'
+            }
+        },
+        {
+            path: '/createClubSuccess',
+            name: 'createClubSuccess',
+            component: createClubSuccess,
+            meta: {
+                title: '创建成功'
+            }
+        },
+        {
+            path: '/clubCertification',
+            name: 'clubCertification',
+            component: clubCertification,
+            meta: {
+                title: '实体店认证'
+            }
+        },
+        {
+            path: '/clubCertificationSuccess',
+            name: 'clubCertificationSuccess',
+            component: clubCertificationSuccess,
+            meta: {
+                title: '实体店认证成功'
+            }
+        },
+        {
+            path: '/clubDetails',
+            name: 'clubDetails',
+            component: clubDetails,
+            meta: {
+                title: '俱乐部详情'
+            }
+        },
+        {
+            path: '/clubTeams',
+            name: 'clubTeams',
+            component: clubTeams,
+            meta: {
+                title: '成员'
+            }
+        },
+        {
+            path: '/activityList',
+            name: 'activityList',
+            component: activityList,
+            meta: {
+                title: '活动'
+            }
+        },
+        {
+            path: '/publishActivity',
+            name: 'publishActivity',
+            component: publishActivity,
+            meta: {
+                title: '发布活动'
             }
         },
         {

@@ -1,5 +1,5 @@
 <template>
-    <div class="club-list">
+    <div class="clubTeams">
         <l-head>
             俱乐部
             <div class="btn text-white" slot="right-item" @click="createClub">创建</div>
@@ -38,7 +38,7 @@
 <script>
 let _this
     export default {
-        name: 'club-list',
+        name: 'clubTeams',
         data() {
             return {
                 route: 'club',
@@ -98,7 +98,7 @@ let _this
 </script>
 
 <style lang="scss">
-    .club-list {
+    .clubTeams {
         .head-title {
             height: 80px;
             line-height: 80px;
