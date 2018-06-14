@@ -1,4 +1,3 @@
-
 export default {
     indexinfo:"/member/indexinfo" ,
     todaystepinfo:'/member/todaystepinfo',//今日步数基本信息
@@ -9,12 +8,13 @@ export default {
     region:"/member/region",
     teamCreate:"/team/create",
     nearteam:"/team/nearteam",
-
+    regionGetall:"/region/getall",
 
     getMemberID:function(){
         return 1;
     },
     isLogin:function(){//是否登录
+        return true;
         var loginUser = $api.getStorage('loginUser');
         if(!loginUser){
             return false;
@@ -24,4 +24,5 @@ export default {
     loginSuccess:function(user){
         $api.setStorage('loginUser',user);
     }
+
 }
