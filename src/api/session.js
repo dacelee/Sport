@@ -9,7 +9,10 @@ export default {
     teamCreate:"/team/create",
     nearteam:"/team/nearteam",
     regionGetall:"/region/getall",
-
+    isAPPRuntime:function(){
+        //用于处理非apicloud运行环境
+        return  $api.getStorage('appRun');
+    },
     getMemberID:function(){
         return 1;
     },
@@ -23,6 +26,12 @@ export default {
     },
     loginSuccess:function(user){
         $api.setStorage('loginUser',user);
+    },
+    appCache:function(key,val){
+        if(val){
+            $api.setStorage(key,val);
+        }else{
+            $api.getStorage(key);
+        }
     }
-
 }

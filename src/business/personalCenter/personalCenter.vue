@@ -1,9 +1,5 @@
 <template>
     <div class="personalCenter">
-        <l-head>
-            我的
-            <l-icon name="shezhi" slot="right-item"/>
-        </l-head>
         <div class="personalCenter-head-info">
             <div class="left-head-photo pull-left">
                 <img :src="headPhoto" alt="">

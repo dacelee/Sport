@@ -3,28 +3,70 @@
         <div class="login-form">
             <div class="login-form-item user-phone">
                 <l-icon name="shoujihao"/>
-                <input type="text" placeholder="手机号" v-model="userInfo.phone">
+                <input type="text" placeholder="手机号" v-verify="userInfo.phone"  v-model="userInfo.phone">
             </div>
             <div class="login-form-item user-password">
                 <l-icon name="mima"/>
-                <input type="password" placeholder="密码" v-model="userInfo.password">
+                <input type="password" placeholder="密码" v-verify="userInfo.password" v-model="userInfo.password">
             </div>
             <div class="forget-password text-right text-white" @click="$router.push('/register/forgetPassword')">忘记密码
             </div>
-            <div class="btn-login text-center">登&emsp;录</div>
+            <div class="btn-login text-center" @click="login">登&emsp;录</div>
             <div class="btn-register text-center" @click="$router.push('/register')">注&emsp;册</div>
         </div>
     </div>
 </template>
-
 <script>
+    import Vue from 'vue'
+    import verify from "vue-verify-plugin";
+
+
+    Vue.use(verify);
+    var _this;
     export default {
         name: 'login',
         data() {
             return {
                 userInfo: {
-                    phone: null,
-                    password: null
+                    phone: "",
+                    password: ""
+                }
+            }
+        }, verify: {
+            userInfo: {
+                phone: [{minLength:1,  message: "手机号码必须填写"},"mobile"],
+                password:[ {minLength:6, message: "密码不得小于6位"}]
+            }
+        }, mounted() {
+            _this = this;
+            if(this.session.isLogin()){
+                _this.$router.replace('/');
+            }
+        }, methods: {
+            login(){
+                if(!this.$verify.check()){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    this.$toast(errMsg);
+                }else{
+                    //登录
+                    this.axios.post(this.session.login,
+                            {
+                                'mobile': this.userInfo.phone,
+                                'loginpwd': this.userInfo.password
+                            },
+                            function (data) {
+                                console.log(data);
+                                _this.$toast(data.msg);
+                                var user = data.data;
+                                _this.session.loginSuccess(user);
+                                this.$router.replace('/')
+                            }, function (data) {
+                                console.log(data);
+                                _this.$toast(data.msg);
+                                _this.session.loginSuccess(true);
+                                _this.$router.replace('/')
+                            });
+                    return;
                 }
             }
         }

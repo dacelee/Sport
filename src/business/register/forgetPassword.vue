@@ -5,18 +5,21 @@
             忘记密码
         </l-head>
         <div class="forget-password-form">
+
+
             <div class="forget-password-form-item">
-                <input type="text" placeholder="手机号">
+                <input type="text" placeholder="手机号"   v-model="userInfo.mobile" v-verify.mobile="userInfo.mobile" v-verify="userInfo.mobile">
             </div>
             <div class="forget-password-form-item">
-                <input type="text" placeholder="验证码" class="validate-code-input">
-                <div class="btn-validate-code text-center pull-right">获取验证码</div>
+                <input type="text" placeholder="验证码" class="validate-code-input" v-model="userInfo.smscode" v-verify="userInfo.smscode">
+                <div class="btn-validate-code text-center pull-right" @click="getSmsCode">{{ codeSend }}</div>
             </div>
             <div class="forget-password-form-item">
-                <input type="password" placeholder="新密码">
+                <input type="password" placeholder="新密码"  v-verify="userInfo.loginpwd" v-model="userInfo.loginpwd">
             </div>
+
             <div class="forget-password-form-item">
-                <input type="password" placeholder="确认新密码">
+                <input type="password" placeholder="确认新密码"  v-verify="userInfo.loginpwd2" v-model="userInfo.loginpwd2">
             </div>
             <div class="forget-password-form-item register-btn">
                 <div class="btn-register text-center" @click="submitForm">提&emsp;交</div>
@@ -24,13 +27,91 @@
         </div>
     </div>
 </template>
-
 <script>
+    import Vue from 'vue'
+    import verify from "vue-verify-plugin";
+    Vue.use(verify);
+    var _this;
     export default {
         name: 'forget-password',
+        data() {
+            return {
+                codeSend:"获取验证码",
+                userInfo: {
+                    mobile: "",
+                    loginpwd: "",
+                    loginpwd2: "",
+                    smscode: ""
+                },
+                timer:0,
+                show:true,
+            }
+        } ,verify: {
+            userInfo: {
+                mobile: [{minLength:1,  message: "手机号码必须填写"},"mobile"],
+                loginpwd:[ {minLength:6, message: "新密码不得小于6位"}],
+                loginpwd2:[ {minLength:6, message: "确认密码不得小于6位"}],
+                smscode:[{minLength:1,  message: "验证码必须填写"}]
+            }
+        }, mounted() {
+            _this = this;
+        },
         methods: {
             submitForm() {
-            
+                if(!this.$verify.check()){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    this.$toast(errMsg);
+                }else{
+                    clearInterval(_this.timer);
+                    //
+                    if(this.userInfo.loginpwd2!=this.userInfo.loginpwd){
+                        this.$toast("两次密码输入不一致");
+                        return;
+                    }
+                    var param = JSON.parse(JSON.stringify(this.userInfo));
+                    delete param.loginpwd2;
+                    this.axios.post(_this.session.findpwd,
+                            param,function(data){
+                                _this.$toast("密码已经重置");
+                                _this.$router.replace('/login')
+                            },function(data){
+                                _this.$toast(data.msg);
+                            });
+                }
+            },getCode(){
+                const TIME_COUNT = 60;
+                var count = TIME_COUNT;
+                this.show = false;
+                this.timer = setInterval(function(){
+                    if (count > 0 && count <= TIME_COUNT) {
+                        count--;
+                        _this.codeSend = count+"s";
+                        console.log(_this.codeSend);
+                    } else {
+                        this.show = true;
+                        clearInterval(_this.timer);
+                        this.timer = null;
+                        _this.codeSend = "获取验证码";
+                    }
+                }, 1000);
+            },
+            getSmsCode(){
+                if(!this.show){
+                    return;
+                }
+                if(!this.$verify.check("mobile")){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    this.$toast(errMsg);
+                }else{
+                    this.getCode();
+                    this.axios.post(this.session.sendsmscode, {'mobile':this.userInfo.mobile},function(data){
+//                        console.log(data);
+                        _this.$toast(data.msg);
+                    },function(data){
+//                        console.log(data);
+                        _this.$toast(data.msg);
+                    });
+                }
             }
         }
     }
