@@ -1,8 +1,5 @@
 <template>
     <div class="home">
-        <l-head>
-            首页
-        </l-head>
         <div class="home-container">
             <div class="home-head">
                 <l-banner/>
@@ -56,8 +53,7 @@
         <l-footerMenu :currentRoute.sync="route"/>
     </div>
 </template>
-
-<script>
+<script type="text/javascript">
     let _this
     export default {
         name: 'home',
@@ -65,18 +61,36 @@
             return {
                 route: 'home',
                 shortMenuList: [],
-                stepNum: 26984,
-                stepHeat: 256,
-                rewardNum: '1.032132187784',
-                vipLevel: 1,
-                activity: 50,
-                totalReward: 150,
-                contribution: 1500,
+                stepNum: 0,
+                stepHeat: 0,
+                rewardNum: '0',
+                vipLevel: 'Lv0',
+                activity: 0,
+                totalReward: 0,
+                contribution: 0,
             }
         },
         mounted() {
             _this = this
             _this.getShortMenuList()
+
+        },created () {
+            //登录检测
+            if(this.session.isLogin()){
+                this.axios.post(this.session.indexinfo, {'memberid':this.session.getMemberID()},function(json){
+                    var data = json.data;
+                    _this.vipLevel = data.memberLevel;
+                    _this.activity = data.activity;
+                    _this.totalReward = data.cointotal;
+                    _this.contribution = data.contributionvalue;
+
+                });
+                this.axios.post(this.session.todaystepinfo, {'memberid':this.session.getMemberID()},function(json){
+                    var data = json.data;
+                    _this.stepNum = data.steptotal;
+                    _this.stepHeat = data.distance;
+                });
+            }
         },
         methods: {
             getShortMenuList() {
@@ -105,12 +119,29 @@
             },
             showStepDetails() {
                 this.$router.push('stepDetails')
+//                this.$router.push('/face/faceapp')
+//                var demo = api.require('baiduFaceLive');
+//                demo.openFaceDetectView(function(ret, err){
+//                    if(ret.evenType=='success'){
+//                        //由于base64数据量大，请不要用JSON.stringify(ret)调试
+//                        alert(ret.data.bestImage);
+//                        demo.closeFaceDetectView(function(ret, err){
+//                            //alert(JSON.stringify(ret));
+//                        });
+//                    }else{
+//                        demo.continueFaceDetect(function(ret, err){
+////                            api.toast(JSON.stringify(ret));
+//                        });
+//                        api.toast({ msg : JSON.stringify(ret) +"  "+JSON.stringify(err)});
+//                    }
+//                });
             },
             toShortMenu(router) {
                 this.$router.push(router)
             }
         }
     }
+
 </script>
 
 <style lang="scss">
