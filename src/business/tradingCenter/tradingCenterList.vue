@@ -36,7 +36,7 @@
 </template>
 
 <script>
-    let chartsEl
+    let chartsEl,_this;
     export default {
         name: 'trading-center-list',
         data() {
@@ -187,11 +187,25 @@
                     ]
                 }
                 chartsEl.setOption(option)
+            },
+            loadData(page){
+                this.axios.post(this.session.coinSalelist, {"page":page,"pageSize":10,"type":1}, function (json) {
+                    var data = [];
+                    $(json.dataList).each(function(index,item){
+                        data.push( {
+
+                        });
+                    });
+                    _this.list = data;
+                },function(json){
+
+                });
             }
         },
         mounted() {
             chartsEl = App.eCharts.echarts.init(document.getElementById('trading-charts'))
-            this.setChartsData()
+            this.setChartsData();
+            _this = this;
         }
     }
 </script>

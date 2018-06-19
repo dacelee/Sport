@@ -19,21 +19,25 @@ Vue.prototype.session = session
 Vue.prototype.appUtil = appUtil
 Vue.config.productionTip = false
 Vue.use(component)
-import {Alert, Confirm, Toast} from 'wc-messagebox'
-import 'wc-messagebox/style.css'
-var options = {
-    title: '',  // 默认标题为 '提示'
-    btn: {
-        text: '',
-        style: {} // 可以通过 style 来修改按钮的样式, 比如说粗细, 颜色
-    },
-    durtaion: 300,
-    location: 'center',
-    toastStyle:{'padding': '20px 10px','font-size':"2vh","line-height":"3vh"}
-}
-Vue.use(Alert, options)
-Vue.use(Confirm, options)
-Vue.use(Toast,options)
+import Mui from 'vue-awesome-mui'
+import 'vue-awesome-mui/mui/dist/css/mui.css'
+// mount with global
+Vue.use(Mui)
+//import {Alert, Confirm, Toast} from 'wc-messagebox'
+//import 'wc-messagebox/style.css'
+//var options = {
+//    title: '',  // 默认标题为 '提示'
+//    btn: {
+//        text: '',
+//        style: {} // 可以通过 style 来修改按钮的样式, 比如说粗细, 颜色
+//    },
+//    durtaion: 300,
+//    location: 'center',
+//    toastStyle:{'padding': '20px 10px','font-size':"0.4rem","line-height":"0.6rem"}
+//}
+//Vue.use(Alert, options)
+//Vue.use(Confirm, options)
+//Vue.use(Toast,options)
 let eCharts = require('./assets/echarts.js')
 let $api = require('./public/api.js')
 Vue.use(VueWeChatTitle)

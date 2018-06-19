@@ -12,27 +12,27 @@
                     {{ item.personalCount }}
                 </div>
             </div>
-            <div class="nearby-join pull-left">加入</div>
+            <div class="nearby-join pull-left" @click="join(item.id)">加入</div>
         </div>
     </div>
 </template>
-
 <script>
+    let _this;
     export default {
         name: 'nearby-team',
         data() {
             return {
                 list: [
-                    {
-                        name: '一起去跑步',
-                        address: '长沙市岳麓区',
-                        personalCount: 15
-                    },
-                    {
-                        name: '减肥俱乐部',
-                        address: '长沙市天心区',
-                        personalCount: 24
-                    }
+//                    {
+//                        name: '一起去跑步',
+//                        address: '长沙市岳麓区',
+//                        personalCount: 15
+//                    },
+//                    {
+//                        name: '减肥俱乐部',
+//                        address: '长沙市天心区',
+//                        personalCount: 24
+//                    }
                 ],
                 param:{
                     x:0,
@@ -41,33 +41,50 @@
                     pageSize:10
                 }
             }
+        }, mounted() {
+            _this = this
+            this.nearbyTeam(1,10);
         }, methods: {
             nearbyTeam(page,pageSize){
                 //附近组队
-                if(this.param.x ==0|| this.param.y==0){
+                if(_this.param.x ==0|| _this.param.y==0){
                     this.appUtil.location(function(ret){
                         if(!ret.status){
-                            _this.$toast("定位失败,请开启GPS后再试试");
+                            mui.toast("定位失败,请开启GPS后再试试");
                             return;
                         }
-                        this.param.x = ret.lon;
-                        this.param.y = ret.lat;
-                        this.param.page = page;
-                        this.loadData();
+                        _this.param.x = ret.lon;
+                        _this.param.y = ret.lat;
+                        _this.param.page = page;
+                        _this.loadData();
                     },false);
                 }else{
                     this.loadData();
                 }
             },
             loadData(){
-                this.axios.post(this.session.nearteam, this.param, function (data) {
-                    var datalist = data.dataList;
-                },function(data){
-                    _this.$toast(data.msg);
+                this.axios.post(this.session.nearReam, this.param, function (json) {
+                    var data = [];
+                    $(json.dataList).each(function(index,item){
+                        data.push(  {
+                            id:item.id,
+                            name:item.name,
+                            address: item.address,
+                            personalCount: item.memberCount
+                        });
+                    });
+                    _this.list = data;
+
+                });
+            },
+            join(id){
+                var memberid = this.session.getMemberID();
+                this.axios.post(this.session.nearReam, {"memberid":memberid,"teamid":id}, function (json) {
+                    mui.toast(json.msg);
+                },function(json){
+                    mui.toast(json.msg);
                 });
             }
-        }, mounted() {
-            _this = this
         }
     }
 </script>

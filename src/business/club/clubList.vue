@@ -1,9 +1,5 @@
 <template>
     <div class="club-list">
-        <l-head>
-            俱乐部
-            <div class="btn text-white" slot="right-item" @click="createClub">创建</div>
-        </l-head>
         <div class="search-area">
             <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
         </div>
@@ -83,7 +79,7 @@ let _this
             reset() {
                 console.log(this.filterName)
             },
-            createClub() {
+            editEvent() {
                 _this.$router.push('createClub')
             },
             toDetails(item) {

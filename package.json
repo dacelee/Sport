@@ -61,7 +61,7 @@
         "qs":"^6.5.2",
         "vue-verify-plugin":"^2.0.3",
         "superagent": "^3.8.2",
-        "wc-messagebox":"^1.9.9"
+        "vue-awesome-mui":"^1.7.3"
     },
     "engines": {
         "node": ">= 6.0.0",

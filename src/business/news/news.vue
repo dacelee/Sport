@@ -1,9 +1,5 @@
 <template>
     <div class="news-container">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('/')" slot="left-item"/>
-            资讯
-        </l-head>
         <l-tabs :list="list" :current="currentRoute" @change="changeRoute"/>
         <div class="news-container">
             <component :is="currentRoute"/>

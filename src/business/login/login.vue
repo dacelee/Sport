@@ -18,10 +18,7 @@
 </template>
 <script>
     import Vue from 'vue'
-    import verify from "vue-verify-plugin";
 
-
-    Vue.use(verify);
     var _this;
     export default {
         name: 'login',
@@ -46,7 +43,7 @@
             login(){
                 if(!this.$verify.check()){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    this.$toast(errMsg);
+                    mui.toast(errMsg);
                 }else{
                     //登录
                     this.axios.post(this.session.login,
@@ -54,15 +51,19 @@
                                 'mobile': this.userInfo.phone,
                                 'loginpwd': this.userInfo.password
                             },
-                            function (data) {
-                                console.log(data);
-                                _this.$toast(data.msg);
-                                var user = data.data;
+                            function (json) {
+//                                console.log(json);
+                                mui.toast(json.msg);
+                                var user = json.data;
                                 _this.session.loginSuccess(user);
+                                //开启计步
+                                if(this.session.isAPPRuntime()){
+                                    this.appUtil.pedometer();
+                                }
                                 this.$router.replace('/')
                             }, function (data) {
                                 console.log(data);
-                                _this.$toast(data.msg);
+                                mui.toast(data.msg);
                                 _this.session.loginSuccess(true);
                                 _this.$router.replace('/')
                             });

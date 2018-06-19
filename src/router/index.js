@@ -29,6 +29,7 @@ import task from '@/business/task/task.vue'
 Vue.use(Router)
 
 export default new Router({
+    mode: 'history',
     routes: [
         {
             path: '/login',
@@ -77,7 +78,7 @@ export default new Router({
             component: stepDetails,
             meta: {
                 title: '今日步数',
-                back:"/",
+                back:"/"
             }
         },
         {
@@ -104,7 +105,8 @@ export default new Router({
             name: 'newsList',
             component: newsList,
             meta: {
-                title: '资讯'
+                title: '资讯',
+                back:'/'
             }
         },
         {
@@ -112,7 +114,8 @@ export default new Router({
             name: 'newsDetails',
             component: newsDetails,
             meta: {
-                title: '详情'
+                title: '详情',
+                back:'-1'
             }
         },
         {
@@ -194,7 +197,8 @@ export default new Router({
             name: 'activityList',
             component: activityList,
             meta: {
-                title: '活动'
+                title: '活动',
+                back:'/'
             }
         },
         {
@@ -219,7 +223,8 @@ export default new Router({
             name: 'activity',
             component: activity,
             meta: {
-                title: '活动'
+                title: '活动',
+                back:'/'
             }
         },
         {
@@ -227,7 +232,8 @@ export default new Router({
             name: 'task',
             component: task,
             meta: {
-                title: '任务'
+                title: '任务',
+                back:'/'
             }
         },
         //{
@@ -238,7 +244,8 @@ export default new Router({
         //        title: '人脸识别'
         //    }
         //},
-    ],scrollBehavior (to, from, savedPosition) {
+    ]
+    ,scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
         }

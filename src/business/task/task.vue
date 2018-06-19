@@ -1,9 +1,5 @@
 <template>
     <div class="task-list">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('/')" slot="left-item"/>
-            任务
-        </l-head>
         <l-shortMenu :list="list" :currentRoute="currentRoute" @change="changeRoute"/>
         <div class="task-activity">
             <div class="activity-item">今日活跃度:{{ activity }}</div>
@@ -53,6 +49,7 @@
             changeRoute(route) {
                 _this.currentRoute = route
             }
+
         },
         mounted() {
             _this = this

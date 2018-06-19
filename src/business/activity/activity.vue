@@ -1,14 +1,10 @@
 <template>
     <div class="activity-list">
-        <l-head>
-            <l-icon name="fanhui" slot="left-item" @click.native="$router.push('/')"/>
-            活动
-        </l-head>
         <div class="activity-list-item" v-for="item in list">
             <div class="item-bg">
                 <img :src="item.imgPath" alt="">
             </div>
-            <div class="item-container-bg">
+            <div class="item-container-bg" @click="detail(item.id)">
                 <div class="item-head">
                     <div class="item-type pull-left text-center" v-if="item.type === 2">
                         赛事
@@ -30,6 +26,7 @@
 </template>
 
 <script>
+    let _this;
     export default {
         name: 'activity',
         data() {
@@ -64,6 +61,33 @@
                     }
                 ]
             }
+        },mounted(){
+            _this = this;
+            this.loadData(1);
+        },methods:{
+            loadData(page){
+                this.axios.post(this.session.articleList, {"page":page,"pageSize":10,"type":2}, function (json) {
+                    var data = [];
+                    $(json.dataList).each(function(index,item){
+                        data.push( {
+                            id: item.id,
+                            type: 1,
+                            typeDesc: '',
+                            name: item.title,
+                            personNum: 24213,
+                            imgPath:item.logo,
+                            status: 2
+                        });
+                    });
+                    _this.list = data;
+                },function(json){
+
+                });
+            },
+            detail(id){
+                this.$router.push({name: 'newsDetails', params: {id: id}})
+            }
+
         }
     }
 </script>

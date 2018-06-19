@@ -63,7 +63,7 @@
             submitForm() {
                 if(!this.$verify.check()){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    this.$toast(errMsg);
+                    mui.toast(errMsg);
                 }else{
                     clearInterval(_this.timer);
 //                    console.log( this.userInfo.mobile);
@@ -93,15 +93,15 @@
                 }
                 if(!this.$verify.check("mobile")){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    this.$toast(errMsg);
+                    mui.toast(errMsg);
                 }else{
                     this.getCode();
                     this.axios.post(this.session.sendsmscode, {'mobile':this.userInfo.mobile},function(data){
 //                        console.log(data);
-                        _this.$toast(data.msg);
+                        _mui.toast(data.msg);
                     },function(data){
 //                        console.log(data);
-                        _this.$toast(data.msg);
+                        _mui.toast(data.msg);
                     });
                 }
             }

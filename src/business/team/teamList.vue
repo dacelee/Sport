@@ -35,8 +35,6 @@
         methods: {
             changeTabs(res) {
                 _this.currentMenu = res;
-
-
             },
             editEvent() {
                 _this.$router.push('createTeam')
