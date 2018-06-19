@@ -52,9 +52,9 @@ function apiAxios (method, url, params, success, failure) {
             } else {
                 if (failure){
                     failure(res.data);
-
                 } else {
-                    console.error(res);
+                    //console.error(res);
+                    mui.toast(res.data.msg);
                     //window.alert('error: ' + JSON.stringify(res))
                 }
             }

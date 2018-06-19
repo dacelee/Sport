@@ -36,11 +36,11 @@
                 this.axios.post(this.session.reg,
                         param,function(data){
 //                        console.log(data);
-                            _this.$toast(data.msg);
+                            mui.toast(data.msg);
                             _this.$router.replace('/login')
                         },function(data){
 //                        console.log(data);
-                            _this.$toast(data.msg);
+                            mui.toast(data.msg);
                             _this.$router.replace("/register");
 
                         });

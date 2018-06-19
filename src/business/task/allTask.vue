@@ -12,14 +12,14 @@
                         <div class="task-details-info-item">奖励糖果：{{ item.rewardSugar }}枚</div>
                         <div class="task-details-info-item">所需步数：{{ item.steps }}</div>
                     </div>
-                    <div class="task-details-btn">兑换</div>
+                    <div class="task-details-btn" @click="buy(item.id)">兑换</div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
 <script>
+    var _this;
     export default {
         name: 'all-task',
         data() {
@@ -31,50 +31,42 @@
                         rewardSugar: 11,
                         steps: 3000,
                         activity: 1
-                    },
-                    {
-                        name: '初级任务',
-                        needSugar: 10,
-                        rewardSugar: 11,
-                        steps: 3000,
-                        activity: 2
-                    },
-                    {
-                        name: '中级任务',
-                        needSugar: 10,
-                        rewardSugar: 11,
-                        steps: 3000,
-                        activity: 3
-                    },
-                    {
-                        name: '高级任务',
-                        needSugar: 10,
-                        rewardSugar: 11,
-                        steps: 3000,
-                        activity: 4
-                    },
-                    {
-                        name: '超级任务',
-                        needSugar: 10,
-                        rewardSugar: 11,
-                        steps: 3000,
-                        activity: 5
-                    },
-                    {
-                        name: '挑战任务',
-                        needSugar: 10,
-                        rewardSugar: 11,
-                        steps: 3000,
-                        activity: 6
-                    },
-                    {
-                        name: '终极任务',
-                        needSugar: 10,
-                        rewardSugar: 11,
-                        steps: 3000,
-                        activity: 7
                     }
                 ]
+            }
+        },mounted(){
+            _this = this;
+            this.loadTask();
+        }
+        ,methods:{
+            loadTask(){
+                this.axios.get(this.session.taskAll, null, function (json) {
+                    var list = json.dataList;
+                    var data = [];
+                    $(list).each(function(index,item){
+                        data.push(
+                                {
+                                    id:item.id,
+                                    name: item.name,
+                                    needSugar: item.coinprice,
+                                    rewardSugar: item.coinget,
+                                    steps: item.steps,
+                                    activity: item.activity
+                                }
+                        );
+                    })
+                    _this.list = data;
+                },function(json){
+
+                });
+            },
+            buy(id){
+                var memberid = _this.session.getMemberID();
+                this.axios.get(this.session.buyTask, {"memberid":memberid,"taskid":id}, function (json) {
+                    mui.toast(json.msg);
+                },function(json){
+                    mui.toast(json.msg);
+                });
             }
         }
     }

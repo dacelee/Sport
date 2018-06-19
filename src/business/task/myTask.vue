@@ -19,6 +19,7 @@
 </template>
 
 <script>
+    var _this;
     export default {
         name: 'my-task',
         data() {
@@ -62,6 +63,38 @@
                     }
                 ]
             }
+        },mounted(){
+            _this = this;
+            this.loadTask();
+        },methods:{
+            loadTask(){
+                var memberid= this.session.getMemberID();
+                this.axios.post(this.session.myTask, {"memberid":memberid}, function (json) {
+                    var data = [];
+                    $(list).each(function(index,item){
+                        data.push(
+                                {
+                                    id:item.id,
+                                    name: item.name,
+                                    currentStep:  item.name,
+                                    targetStep: item.steps,
+                                    activity: item.activity,
+                                    hanselActivity: item.activityadd,
+                                    needSugar: item.coinprice,
+                                    rewardSugar: item.coinget,
+                                    hanselSugar: 0,
+                                    dateTime: _this.appUtil.dateFormat(itme.begintime,"yyyy.MM.dd")+"-"+
+                                    _this.appUtil.dateFormat(itme.endtime,"yyyy.MM.dd"),
+                                    code: '—'
+                                }
+                        );
+                    })
+                    _this.list = data;
+                },function(json){
+                    mui.toast(json.msg)
+                });
+            }
+
         }
     }
 </script>

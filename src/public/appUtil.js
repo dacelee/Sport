@@ -7,26 +7,36 @@ function AppUtil() {
     this.location = function (callback, getAddress) {
         //封装apiCloud aMap定位;
         var aMap = api.require('aMap');
+        //mui.toast("定位中...");
+        var locationCount = 0;
         aMap.getLocation(function (ret, err) {
+            locationCount++;
             if (ret.status) {
+                aMap.stopLocation();
                 if (getAddress) {
                     var lon = ret.lon;
                     var lat = ret.lat;
                     aMap.getNameFromCoords({
-                        lon: ret.lon,
-                        lat: ret.lat
+                        lon: lon,
+                        lat: lat
                     }, function (ret, err) {
                         if (ret.status) {
                             ret.lon = lon;
                             ret.lat = lat;
                         }
+                        //mui.toast("定位成功");
+                        //alert(JSON.stringify(ret));
                         callback(ret);
                     });
                 } else {
+                    //mui.toast("定位成功");
                     callback(ret);
                 }
                 //alert(JSON.stringify(ret));
             } else {
+                if(locationCount>=3){
+                    aMap.stopLocation();
+                }
                 callback(ret);
                 //alert(JSON.stringify(err));
             }
@@ -55,24 +65,50 @@ function AppUtil() {
     //计步
     this.pedometer=function (){
         var pedometer = api.require('pedometer');
+        var _this = this;
         pedometer.startCount(function(ret) {
-            alert(ret.steps);
+            //alert(ret.steps);
+            _this.pedometerRes(ret);
         });
+    }
+    this.pedometerRes= function(ret){
+        var _this = this;
+        var stepsData = session.appCache("stepsData");
+        var date = new Date().format("yyyy/MM/dd");
+        var time = new Date().getTime();
+        if(stepsData==null){
+            session.appCache("stepsData",{"date":date,"time":time});
+            return;
+        }
+        //判断当前时间,推送昨日步数
+        if(stepsData.date!=date){
+            var pedometer = api.require('pedometer');
+            var steps = pedometer.getSteps();
+            var memberid = session.getMemberID;
+            axios.post(session.toDayStepInfo,{'memberid':memberid,'steps':steps}, function () {
+                session.clearCache("steps");
+                var pedometer = api.require('pedometer');
+                pedometer.stopCount();
+                pedometer.startCount(function(ret) {
+                    _this.pedometerRes(ret);
+                });
+            });
+        }
     }
     this.bulidJSONCity=(callback)=>{
         var _this = this;
-        var UIActionSelectorJSON =session.appCache("regionGetall");
-        if(UIActionSelectorJSON!=null){
-            callback({"code":1,"data":UIActionSelectorJSON});
+        var selectorJSON = session.appCache("regionAll");
+        if(selectorJSON!=null){
+            callback({"code":1,"data":selectorJSON});
             return;
         }else{
             axios.post(session.regionGetall,null, function (data) {
                 //获取全部区域数据
                 var citys = data.data;
                 //封装成控件所需的json
-                UIActionSelectorJSON = _this.getChildCity(citys);
-                session.appCache("regionGetall",UIActionSelectorJSON);
-                callback({"code":1,"data":UIActionSelectorJSON});
+                selectorJSON = _this.getChildCity(citys);
+                session.appCache("regionAll",selectorJSON);
+                callback({"code":1,"data":selectorJSON});
             },function(data){
                 callback({"code":0});
             });
@@ -127,8 +163,39 @@ function AppUtil() {
             }
         })
     }
+    this.dateFormat=(time,format)=>{
+        return new Date(parseInt(time)).format(format);
+    },
+    this.findRegion=(region,regions)=>{
+         //根据位置匹配数据库数据
+        var res = null;//$api.getStorage("regionAll");
+        var selectorJSON = session.appCache("regionAll");
+        if(selectorJSON==null){
+             return null;
+         }else{
+            if(regions){
 
-
+                $(regions).each(function(index,item){
+                    if(region.indexOf(item.name)!=-1){
+                        res = {};
+                        res.id = item.id;
+                        res.sub = item.sub;
+                        return;
+                    }
+                })
+            }else{
+                $(selectorJSON).each(function(index,item){
+                    if(region.indexOf(item.name)!=-1){
+                        res = {};
+                        res.id = item.id;
+                        res.sub=item.sub;
+                        return;
+                    }
+                });
+            }
+            return res;
+         }
+     }
 };
 var appUtil = new AppUtil();
 export default {
@@ -143,6 +210,32 @@ export default {
     },
     actionSelector: function (dataJson,callback) {
         return appUtil.actionSelector(dataJson,callback);
+    },
+    dateFormat: function (time,format) {
+        return appUtil.dateFormat(time,format);
+    },
+    findRegion:function(region,regions){
+        return appUtil.findRegion(region,regions);
     }
+}
 
+Date.prototype.format = function(fmt) {
+    var o = {
+        "M+" : this.getMonth()+1,                 //月份
+        "d+" : this.getDate(),                    //日
+        "h+" : this.getHours(),                   //小时
+        "m+" : this.getMinutes(),                 //分
+        "s+" : this.getSeconds(),                 //秒
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度
+        "S"  : this.getMilliseconds()             //毫秒
+    };
+    if(/(y+)/.test(fmt)) {
+        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    }
+    for(var k in o) {
+        if(new RegExp("("+ k +")").test(fmt)){
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        }
+    }
+    return fmt;
 }

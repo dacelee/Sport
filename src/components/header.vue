@@ -7,7 +7,7 @@
                {{ meta.rightTitle }}
             </div>
             <div class="create"  v-else-if="meta.rightIcon" @click="myEvent">
-                <l-icon class="right-icons"  @click="myEvent" :name="name" />
+                <l-icon class="right-icons"  @click="myEvent" :name="meta.rightIcon" />
             </div>
         </div>
     </header>
@@ -23,17 +23,14 @@
             return {
                 name:""
             };
-        },mounted(){
-            if (this.meta.rightIcon) {
-                this.name = this.meta.rightIcon;
-            }
-        },updated(){
-            if (this.meta.rightIcon) {
-                this.name = this.meta.rightIcon;
-            }
         } , methods: {
             native:function(){
-                this.$router.push(this.meta.back);
+                if(this.meta.back==="-1"){
+                    this.$router.go(-1);
+                }else{
+                    this.$router.push(this.meta.back);
+                }
+
             },
             myEvent(){
                 this.$emit('my-event')//触发父组件事件

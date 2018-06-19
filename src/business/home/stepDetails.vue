@@ -1,12 +1,7 @@
 <template>
     <div class="step-details">
-        <l-head>
-            <l-icon name="fanhui" @click.native="backToHome" slot="left-item"/>
-            今日步数
-            <l-icon name="fenxiang" @click.native="share" v-if="currentMenu === 'trackMotion'" slot="right-item"/>
-        </l-head>
         <div class="menu-step-way">
-            <l-menuTabs :currentMenu="currentMenu" :list="menuList" @change="changeTabs"/>
+            <l-shortMenu :currentRoute="currentMenu" :list="menuList" @change="changeTabs"/>
         </div>
         <div class="step-detail">
             <component :is="currentMenu"/>
@@ -69,12 +64,18 @@
         },
         methods: {
             changeTabs(res) {
-                this.currentMenu = res
+                this.currentMenu = res;
+                if(res==="stepStatistics"){
+                    this.$emit('changeRightTitle',null);
+                }else{
+                    this.$emit('changeRightTitle',"fenxiang");
+                }
+
             },
             backToHome() {
                 this.$router.push('/')
             },
-            share() {
+            editEvent() {
                 this.showShareList = true
             }
         }

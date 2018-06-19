@@ -7,7 +7,6 @@
             </div>
             <div class="team-info">
                 <div class="address">地点:{{ myTeamInfo.address }}</div>
-                <div class="distance">跑步距离:{{ myTeamInfo.distance }}</div>
             </div>
             <div class="team-description">{{ myTeamInfo.description }}</div>
         </div>
@@ -22,11 +21,11 @@
                         <img :src="item.imgPath" alt="">
                     </div>
                     <div class="personal-name pull-left">{{ item.name }}</div>
-                    <div class="personal-operation pull-left captain" v-if="item.status===0">
+                    <div class="personal-operation pull-left captain" v-if="item.status===1">
                         <l-icon name="duichang" class="pull-left"/>
                         <div class="label">队长</div>
                     </div>
-                    <div class="personal-operation pull-left" v-if="item.status !== 0">请出队伍</div>
+                    <div class="personal-operation pull-left" v-if="item.status === 0" @click="delMember(item.id)">请出队伍</div>
                 </div>
             </div>
         </div>
@@ -34,15 +33,16 @@
 </template>
 
 <script>
+    let _this;
     export default {
         name: 'my-team',
         data() {
             return {
                 myTeamInfo: {
+                    teamid:0,
                     name: '骚骚跑跑步',
                     dateTime: '2018/06/03 19:30',
                     address: '沿江风光带',
-                    distance: '4.8km',
                     description: '今晚8点，不见不散。今晚8点，不见不散。'
                 },
                 teamInfo: {
@@ -50,46 +50,104 @@
                 },
                 teamMembers: [
                     {
+                        id:0,
                         imgPath: 'static/img/club/1.jpg',
                         name: 'Louis',
+                        status: 1
+                    },
+                    {
+                        id:1,
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Judy',
+                        status: 0
+                    },
+                    {
+                        id:2,
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Hansen',
                         status: 0
                     },
                     {
                         imgPath: 'static/img/personal/default.jpg',
-                        name: 'Judy',
-                        status: 1
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hansen',
-                        status: 1
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
                         name: 'Merry',
-                        status: 1
+                        status: 0
                     },
                     {
                         imgPath: 'static/img/personal/default.jpg',
                         name: 'Hill',
-                        status: 1
+                        status: 0
                     },
                     {
                         imgPath: 'static/img/personal/default.jpg',
                         name: 'Mountain',
-                        status: 1
+                        status: 0
                     },
                     {
                         imgPath: 'static/img/personal/default.jpg',
                         name: 'Fish',
-                        status: 1
+                        status: 0
                     },
                     {
                         imgPath: 'static/img/personal/default.jpg',
                         name: 'Roi',
-                        status: 1
+                        status: 0
                     }
                 ]
+            }
+        }, mounted() {
+            _this = this
+            this.getMyTeam();
+        },
+        methods: {
+            getMyTeam(){
+                var memberid = this.session.getMemberID();
+                this.axios.post(this.session.teamDetail, {"memberid":memberid}, function (json) {
+                    var team = json.data;
+                    _this.myTeamInfo.teamid = team.teamid;
+                    _this.myTeamInfo.name = team.name;
+                    _this.myTeamInfo.dateTime = _this.appUtil.dateFormat(team.addtime,"yyyy/MM/dd hh:mm");
+                    _this.myTeamInfo.address = team.areaname;
+                    _this.myTeamInfo.description = team.intro;
+                    _this.loadTeamMember(team.teamid,1);
+                },function(json){
+                    _this.teamInfo.personalCount = 0;
+                    _this.teamMembers = [];
+                    _this.myTeamInfo = {name:"暂无组队"};
+                    mui.toast(json.msg);
+                });
+            },
+            loadTeamMember(teamid,page){
+                this.axios.post(this.session.teamMember, {"teamid":teamid,"page":page,'pageSize':10}, function (json) {
+                    var teamList = json.dataList;
+                    _this.teamInfo.personalCount = teamList?teamList.length:0;
+                    var teamMembers = [];
+                    $(teamList).each(function(index,item){
+                        teamMembers.push(
+                            {
+                                id:item.teammemberid,
+                                imgPath: item.logo,
+                                name: item.nikename,
+                                status: item.level
+                            }
+                        );
+                    });
+                    _this.teamMembers = teamMembers;
+                },function(json){
+                    _this.teamMembers = [];
+                    mui.toast(json.msg);
+                });
+            },
+            delMember(id){
+                this.axios.post(this.session.teamDelMember, {"id":id}, function (json) {
+                    mui.toast(json.msg);
+                    if(json.code==1){
+                        $(_this.teamMembers).each(function(index,item){
+                            if(item.id==id){
+                                delete _this.teamMembers[index];
+                            }
+                        });
+                    }
+                });
             }
         }
     }

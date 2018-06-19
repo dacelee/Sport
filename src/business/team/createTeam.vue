@@ -9,7 +9,7 @@
         <div class="team-item">
             <div class="left-label pull-left">地区</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请选择地区" readonly v-model="area" @click="selCity">
+                <input type="text" placeholder="活动位置" v-model="area" @click="selCity">
             </div>
         </div>
         <div class="team-item text-area">
@@ -26,8 +26,11 @@
     export default {
         name: 'create-team',
         data() {
+            var memberid = this.session.getMemberID();
             return{
-                formDate:{ name:"",
+                formDate:{
+                    memberid:memberid,
+                    name:"",
                     proid:"",
                     cityid:"",
                     areaid:"",
@@ -35,6 +38,7 @@
                     x:"",
                     y:""},
                 area:"",
+                ret:{},//定位数据
 //                province:[],
                 selectorJSON:null
             }
@@ -45,8 +49,9 @@
         }, mounted() {
             _this = this;
             _this.loadCity();
-            window.apiready = function() {
-                _this.location();
+        },activated(){
+            if(_this.session.isAPPRuntime()&&this.area == ''){
+                _this.location();//定位
             }
         },methods: {
             loadCity(){
@@ -54,38 +59,74 @@
                     if(json.code==1){
                         _this.selectorJSON = json.data;
                     }else{
-                        _this.$toast("加载城市数据失败");
+                        miu.toast("加载城市数据失败");
                     }
-
-                })
+                });
             },
             location(){
                 this.appUtil.location(function(ret){
                     if(!ret.status){
-                        _this.$toast("定位失败请开启GPS后再试试");
+                        mui.toast("定位失败请开启GPS后再试试");
                         return;
                     }
-                    this.formDate.x = ret.lon;
-                    this.formDate.y = ret.lat;
-                    //匹配城市id
+                    _this.formDate.x = ret.lon;
+                    _this.formDate.y = ret.lat;
+                    _this.ret = ret;
+                    var state =  ret.state;
+                    var city = ret.city;
+                    var district = ret.district;
+                    var street = ret.street;
+                    var address = ret.address;
+                    var thoroughfare = ret.thoroughfare;
+                    if(thoroughfare==""){
+                        _this.area = address.replace(state,"").replace(city,"").replace(district,"");
+                    }else{
+                        _this.area = thoroughfare;
+                    }
                 },true);
             },
             submitDate(){
-                if(!this.$verify.check()){
-                    var errMsg = this.$appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    this.$toast(errMsg);
+                var ret = _this.ret;
+                var state =  ret.state;
+                var city = ret.city;
+                var district = ret.district;
+                if(!state){
+                    _this.location();
+                    return;
+                }
+                var stateJSON = _this.appUtil.findRegion(state);
+                if(stateJSON==null){
+                    mui.toast("获取【"+state+"】位置数据错误");
+                    return;
+                }
+                _this.formDate.proid = stateJSON.id;
+                var cityJSON = _this.appUtil.findRegion(city,stateJSON.sub);
+                if(cityJSON==null){
+                    mui.toast("获取【"+city+"】位置数据错误");
+                    return;
+                }
+                _this.formDate.cityid = cityJSON.id;
+                var districtJSON = _this.appUtil.findRegion(district,cityJSON.sub);
+                if(districtJSON==null){
+                    mui.toast("获取【"+district+"】位置数据错误");
+                    return;
+                }
+                _this.formDate.areaid = districtJSON.id;
+                if(!_this.$verify.check()){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    mui.toast(errMsg);
                 }else{
                     this.axios.post(this.session.teamCreate,this.formDate, function (data) {
-                        _this.$toast(data.msg);
+                        mui.toast(data.msg);
                         _this.$router.replace('/teamList');
                     },function(data){
-                        _this.$toast(data.msg);
+                        mui.toast(data.msg);
                     });
                 }
             },selCity(){
                 //调用apicloud选择城市
                 if( _this.selectorJSON==null){
-                    _this.$toast("正在加载城市数据,请稍后...");
+                    mui.toast("正在加载城市数据...");
                     return;
                 }
                 _this.appUtil.actionSelector(_this.selectorJSON,function (ret){

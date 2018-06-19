@@ -1,9 +1,5 @@
 <template>
     <div class="business-center-list">
-        <l-head>
-            商圈
-            <l-icon name="gouwuche" slot="right-item"/>
-        </l-head>
         <div class="head-menu">
             <div class="head-menu-item text-center" v-for="item in menuList">
                 <l-icon :name="item.icons"/>
@@ -34,6 +30,8 @@
 </template>
 
 <script>
+    import goods from '../../api/goods.js'
+    let _this;
     export default {
         name: 'business-center-list',
         data() {
@@ -59,59 +57,27 @@
                 ],
                 list: [
                     {
-                        imgPath: 'static/img/goods/1.jpg',
+                        imgPath: '',
                         name: '雷霆战靴-王者归来',
                         price: '5231.00',
                         equal: '500'
                     },
-                    {
-                        imgPath: 'static/img/goods/2.jpg',
-                        name: '抵抗之靴',
-                        price: '760.00',
-                        equal: '120'
-                    },
-                    {
-                        imgPath: 'static/img/goods/3.jpg',
-                        name: '冷静之靴',
-                        price: '760.00',
-                        equal: '120'
-                    },
-                    {
-                        imgPath: 'static/img/goods/4.jpg',
-                        name: '急速之靴',
-                        price: '760.00',
-                        equal: '120'
-                    },
-                    {
-                        imgPath: 'static/img/goods/5.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '15231.00',
-                        equal: '800'
-                    }
+
                 ],
                 recommendList: [
                     {
-                        imgPath: 'static/img/goods/1.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    },
-                    {
-                        imgPath: 'static/img/goods/2.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    },
-                    {
-                        imgPath: 'static/img/goods/3.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    },
-                    {
-                        imgPath: 'static/img/goods/4.jpg',
+                        imgPath: '',
                         name: '我也不知道是么子孩子',
                         price: '760.00'
                     }
                 ]
             }
+        },mounted(){
+            _this = this;
+            //热门
+            goods.loadGoods(this,"list",0,2,"addtime","desc",1,5);
+            //推荐
+            goods.loadGoods(this,"recommendList",0,1,"addtime","desc",1,4);
         }
     }
 </script>

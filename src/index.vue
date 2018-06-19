@@ -3,7 +3,7 @@
         <l-header :meta="meta" @my-event="getMyEvent" />
         <div class="view-container">
             <keep-alive>
-                <router-view ref="router"/>
+                <router-view ref="router" @changeRightTitle = "changeRightTitle"/>
             </keep-alive>
         </div>
     </div>
@@ -23,6 +23,7 @@
             quitApp = true;
             This = this;
             window.apiready = function() {
+                $api.setStorage('appRuntime',true);
                 var header = $api.dom('header');
                 // 1.修复开启沉浸式效果带来的顶部Header与手机状态栏重合的问题，最新api.js方法已支持适配iPhoneX；
                 // 2.默认已开启了沉浸式效果 config.xml中 <preference name="statusBarAppearance" value="true"/>
@@ -34,6 +35,8 @@
                 //退出app监听
                 exitApp();
             }
+            let clientHeight = document.documentElement.clientHeight
+            $('.view-container').css('min-height', clientHeight)
         },beforeUpdate(){
             var meta = this.getMeta();
             $.extend(true,this.meta, meta);
@@ -64,11 +67,10 @@
                     rightTitle : this.$route.meta.rightTitle?this.$route.meta.rightTitle:false,
                     rightIcon : this.$route.meta.rightIcon?this.$route.meta.rightIcon:false
                 }
+            },
+            changeRightTitle(rightTitle){
+                this.meta.rightIcon = rightTitle;
             }
-        },
-        mounted() {
-            let clientHeight = document.documentElement.clientHeight
-            $('.view-container').css('min-height', clientHeight)
         }
     }
     function exitApp() {

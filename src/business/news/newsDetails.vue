@@ -1,13 +1,9 @@
 <template>
     <div class="news-details">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('/newsList')" slot="left-item"/>
-            详情
-        </l-head>
         <div class="news-details-container">
             <div class="news-details-title">{{ newsDetails.title }}</div>
             <div class="news-details-info">
-                <div class="news-author pull-left">作者:{{ newsDetails.author }}</div>
+                <div class="news-author pull-left" v-if="newsDetails.author!=''">作者:{{ newsDetails.author }}</div>
                 <div class="news-time pull-left">发布时间:{{ newsDetails.dateTime }}</div>
             </div>
             <div class="news-details-content" v-html="newsDetails.content"></div>
@@ -115,10 +111,32 @@
             evaluationFn() {
                 _this.popupType = 'evaluation'
                 _this.showPopup = true
+            },
+            loadData(){
+                var param = this.$route.params;
+                this.axios.post(this.session.articleDetail, {"id":param.id}, function (json) {
+                    var data = json.data;
+                    _this.newsDetails= {
+                        title: data.title,
+                        author: '',
+                        dateTime: _this.appUtil.dateFormat(data.addtime,"yyyy/MM/dd hh:ss"),
+                       content: data.content
+                    }
+                    _this.rewardInfo={
+                        complain: data.bads,
+                        admiration: data.goods,
+                        reward: data.rewards
+                    }
+                },function(json){
+
+                });
             }
         },
+        activated(){
+            this.loadData();
+        },
         mounted() {
-            _this = this
+            _this = this;
         }
     }
 </script>
