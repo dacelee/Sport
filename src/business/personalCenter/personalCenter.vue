@@ -116,6 +116,9 @@
         methods: {
             toDetailsPage(route) {
             
+            },
+            editEvent() {
+                this.$router.push('/personalSetting')
             }
         }
     }
@@ -147,9 +150,12 @@
                 height: 160px;
                 color: #999999;
                 font-size: 24px;
+                line-height: 24px;
+                padding-top: 20px;
                 overflow: hidden;
                 .user-name {
                     font-size: 32px;
+                    line-height: 32px;
                     color: #ffffff;
                     margin-bottom: 6px;
                 }
