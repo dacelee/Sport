@@ -73,7 +73,7 @@
         bottom: 0;
         display: flex;
         justify-content: space-around;
-        padding: 10px 40px 0;
+        padding: 10px 40px 10px;
         width: 100%;
         background: #404049;
         .menu-list-item {
@@ -84,6 +84,8 @@
             }
             .footer-menu-name {
                 font-size: 24px;
+                line-height: 24px;
+                padding-top: 10px;
                 -webkit-transform: scale(10/12);
                 -ms-transform: scale(10/12);
                 transform: scale(10/12);

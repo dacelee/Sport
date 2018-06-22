@@ -4,6 +4,11 @@ import home from '@/business/home/home.vue'
 import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
+import personalSetting from '@/business/personalCenter/personalSetting.vue'
+import tradingPassword from '@/business/personalCenter/tradingPassword.vue'
+import loginPassword from '@/business/personalCenter/loginPassword.vue'
+import feedbackList from '@/business/personalCenter/feedbackList.vue'
+import feedback from '@/business/personalCenter/feedback.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
 import createClub from '@/business/club/createClub.vue'
@@ -78,7 +83,7 @@ export default new Router({
             component: stepDetails,
             meta: {
                 title: '今日步数',
-                back:"/"
+                back: '/'
             }
         },
         {
@@ -87,8 +92,8 @@ export default new Router({
             component: teamList,
             meta: {
                 title: '组队',
-                back:"/",
-                rightTitle:'创建'
+                back: '/',
+                rightTitle: '创建'
             }
         },
         {
@@ -97,7 +102,7 @@ export default new Router({
             component: createTeam,
             meta: {
                 title: '创建组队',
-                back:'teamList'
+                back: 'teamList'
             }
         },
         {
@@ -106,7 +111,7 @@ export default new Router({
             component: newsList,
             meta: {
                 title: '资讯',
-                back:'/'
+                back: '/'
             }
         },
         {
@@ -115,7 +120,7 @@ export default new Router({
             component: newsDetails,
             meta: {
                 title: '详情',
-                back:'-1'
+                back: '-1'
             }
         },
         {
@@ -132,7 +137,7 @@ export default new Router({
             component: businessCenter,
             meta: {
                 title: '商圈',
-                rightIcon:'gouwuche'
+                rightIcon: 'gouwuche'
             }
         },
         {
@@ -141,7 +146,7 @@ export default new Router({
             component: club,
             meta: {
                 title: '俱乐部',
-                rightTitle:'创建'
+                rightTitle: '创建'
             }
         },
         {
@@ -198,7 +203,7 @@ export default new Router({
             component: activityList,
             meta: {
                 title: '活动',
-                back:'/'
+                back: '/'
             }
         },
         {
@@ -215,7 +220,52 @@ export default new Router({
             component: personalCenter,
             meta: {
                 title: '我的',
-                rightIcon:'shezhi'
+                rightIcon: 'shezhi'
+            }
+        },
+        {
+            path: '/personalSetting',
+            name: 'personalSetting',
+            component: personalSetting,
+            meta: {
+                title: '设置',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/tradingPassword',
+            name: 'tradingPassword',
+            component: tradingPassword,
+            meta: {
+                title: '修改交易密码',
+                back: '/personalSetting'
+            }
+        },
+        {
+            path: '/loginPassword',
+            name: 'loginPassword',
+            component: loginPassword,
+            meta: {
+                title: '修改登录密码',
+                back: '/personalSetting'
+            }
+        },
+        {
+            path: '/feedbackList',
+            name: 'feedbackList',
+            component: feedbackList,
+            meta: {
+                title: '问题反馈',
+                back: '/personalSetting'
+            }
+        },
+        {
+            path: '/feedback',
+            name: 'feedback',
+            component: feedback,
+            meta: {
+                title: '提问',
+                back: '/feedbackList'
             }
         },
         {
@@ -224,7 +274,7 @@ export default new Router({
             component: activity,
             meta: {
                 title: '活动',
-                back:'/'
+                back: '/'
             }
         },
         {
@@ -233,7 +283,7 @@ export default new Router({
             component: task,
             meta: {
                 title: '任务',
-                back:'/'
+                back: '/'
             }
         },
         //{
@@ -245,10 +295,10 @@ export default new Router({
         //    }
         //},
     ]
-    ,scrollBehavior (to, from, savedPosition) {
+    , scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
         }
-        return { x: 0, y: 0 }
+        return {x: 0, y: 0}
     }
 })
