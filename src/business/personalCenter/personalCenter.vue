@@ -35,7 +35,8 @@
                     <div class="left-label">{{ item.name }}</div>
                     <l-icon name="fanhui" class="link-icons"/>
                 </li>
-                <li class="user-menu-list-item team" @click="toDetailsPage(item.id)" :class="{'mt10':index === 0}" v-for="(item,index) in teamMenuList">
+                <li class="user-menu-list-item team" @click="toDetailsPage(item.id)" :class="{'mt10':index === 0}"
+                    v-for="(item,index) in teamMenuList">
                     <l-icon :name="item.icons" class="left-icons"/>
                     <div class="left-label">{{ item.name }}</div>
                     <l-icon name="fanhui" class="link-icons"/>
@@ -65,12 +66,12 @@
                     {
                         value: 24,
                         label: '活跃度',
-                        route: 'activity'
+                        route: 'activityRecords'
                     },
                     {
                         value: 2600,
                         label: '贡献值',
-                        route: 'contribution'
+                        route: 'contributionRecords'
                     }
                 ],
                 candyNum: 123213.00312312,
@@ -81,12 +82,12 @@
                         icons: 'jibenziliao'
                     },
                     {
-                        id: 'verified',
+                        id: 'verifiedForm',
                         name: '实名认证',
                         icons: 'shimingrenzheng'
                     },
                     {
-                        id: 'identity',
+                        id: 'identityInformation',
                         name: '身份信息',
                         icons: 'shenfenxinxi'
                     }

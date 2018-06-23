@@ -16,6 +16,16 @@ import editNick from '@/business/personalCenter/editNick.vue'
 import editSignature from '@/business/personalCenter/editSignature.vue'
 import editWeChat from '@/business/personalCenter/editWeChat.vue'
 import editAliPay from '@/business/personalCenter/editAliPay.vue'
+import activityRecords from '@/business/personalCenter/activityRecords.vue'
+import contributionRecords from '@/business/personalCenter/contributionRecords.vue'
+import verifiedForm from '@/business/personalCenter/verifiedForm.vue'
+import editUserName from '@/business/personalCenter/editUserName.vue'
+import editIdCard from '@/business/personalCenter/editIdCard.vue'
+import editPhoneNum from '@/business/personalCenter/editPhoneNum.vue'
+import editBankCard from '@/business/personalCenter/editBankCard.vue'
+import editAliPayForm from '@/business/personalCenter/editAliPayForm.vue'
+import faceRecognition from '@/business/personalCenter/faceRecognition.vue'
+import identityInformation from '@/business/personalCenter/identityInformation.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
 import createClub from '@/business/club/createClub.vue'
@@ -343,13 +353,107 @@ export default new Router({
             }
         },
         {
+            path: '/activityRecords',
+            name: 'activityRecords',
+            component: activityRecords,
+            meta: {
+                title: '活跃度明细',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/contributionRecords',
+            name: 'contributionRecords',
+            component: contributionRecords,
+            meta: {
+                title: '贡献值明细',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/verifiedForm',
+            name: 'verifiedForm',
+            component: verifiedForm,
+            meta: {
+                title: '实名认证',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/editUserName',
+            name: 'editUserName',
+            component: editUserName,
+            meta: {
+                title: '填写姓名',
+                back: '/verifiedForm',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editIdCard',
+            name: 'editIdCard',
+            component: editIdCard,
+            meta: {
+                title: '填写身份证',
+                back: '/verifiedForm',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editPhoneNum',
+            name: 'editPhoneNum',
+            component: editPhoneNum,
+            meta: {
+                title: '填写手机号码',
+                back: '/verifiedForm',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editBankCard',
+            name: 'editBankCard',
+            component: editBankCard,
+            meta: {
+                title: '填写银行卡号',
+                back: '/verifiedForm',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editAliPayForm',
+            name: 'editAliPayForm',
+            component: editAliPayForm,
+            meta: {
+                title: '填写支付宝账号',
+                back: '/verifiedForm',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/faceRecognition',
+            name: 'faceRecognition',
+            component: faceRecognition,
+            meta: {
+                title: '人脸识别',
+                back: '/verifiedForm'
+            }
+        },
+        {
+            path: '/identityInformation',
+            name: 'identityInformation',
+            component: identityInformation,
+            meta: {
+                title: '身份信息',
+                back: '/personalCenter'
+            }
+        },
+        {
             path: '/activity',
             name: 'activity',
             component: activity,
             meta: {
                 title: '活动',
-                back:
-                    '/'
+                back: '/'
             }
         },
         {
@@ -358,8 +462,7 @@ export default new Router({
             component: task,
             meta: {
                 title: '任务',
-                back:
-                    '/'
+                back: '/'
             }
         },
 //{
