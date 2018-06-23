@@ -7,6 +7,7 @@ import selecter from './selecter'
 import headMenu from './headMenu'
 import shortMenu from './shortMenu'
 import tabs from './tabs'
+import selectOption from './selectOption'
 
 export default {
     install: function (Vue) {
@@ -19,5 +20,6 @@ export default {
         Vue.component('l-head', headMenu)
         Vue.component('l-shortMenu', shortMenu)
         Vue.component('l-tabs', tabs)
+        Vue.component('l-selectOption', selectOption)
     }
 }
