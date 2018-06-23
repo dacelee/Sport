@@ -5,9 +5,10 @@
             <l-icon name="gouwuche" slot="right-item"/>
         </l-head>
         <div class="head-menu">
-            <div class="head-menu-item text-center" v-for="item in menuList">
+            <div class="head-menu-item text-center" v-for="item in menuList" 
+            @click="businessProduct">
                 <l-icon :name="item.icons"/>
-                <div class="head-menu-label">{{ item.name }}</div>
+                <div class="head-menu-label" >{{ item.name }}</div>
             </div>
         </div>
         <div class="business-center-list-item" v-for="item in list">
@@ -34,6 +35,7 @@
 </template>
 
 <script>
+    let _this
     export default {
         name: 'business-center-list',
         data() {
@@ -112,6 +114,14 @@
                     }
                 ]
             }
+        },
+        methods: {
+            businessProduct() {
+                _this.$router.push('businessProduct')
+            }
+        },
+        mounted() {
+            _this = this
         }
     }
 </script>
