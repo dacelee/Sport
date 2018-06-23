@@ -11,40 +11,35 @@
             </div>
         </div>
         <div class="user-basic-info">
-            <ul class="user-basic-info-value">
-                <li class="pull-left text-center user-basic-info-item" v-for="item in basicInfoValue">
-                    <div class="value">{{ item }}</div>
-                </li>
-            </ul>
-            <ul class="user-basic-info-label">
-                <li class="pull-left text-center user-basic-info-item" v-for="item in basicInfoLabel">
-                    <div class="value">{{ item }}</div>
-                </li>
-            </ul>
+            <div class="basic-info-list text-center" v-for="item in basicList" @click="toDetailsPage(item.route)">
+                <div class="value">{{ item.value }}</div>
+                <div class="label">{{ item.label }}</div>
+            </div>
         </div>
         <div class="user-menu-list">
             <ul>
-                <li class="user-menu-list-item candy">
+                <li class="user-menu-list-item candy" @click="toDetailsPage('candyRecords')">
                     <l-icon name="zongtangguo" class="left-icons"/>
                     <div class="left-label">总糖果</div>
                     <div class="right-value">{{ candyNum }}</div>
                 </li>
                 <li class="user-menu-list-item personal" :class="{'mt10':index === 0}"
-                    v-for="(item,index) in personalMenuList">
+                    v-for="(item,index) in personalMenuList" @click="toDetailsPage(item.id)">
                     <l-icon :name="item.icons" class="left-icons"/>
                     <div class="left-label">{{ item.name }}</div>
-                    <l-icon name="fanhui" class="link-icons" @click.native="toDetailsPage(item.id)"/>
+                    <l-icon name="fanhui" class="link-icons"/>
                 </li>
                 <li class="user-menu-list-item trading" :class="{'mt10':index === 0}"
-                    v-for="(item,index) in tradingMenuList">
+                    v-for="(item,index) in tradingMenuList" @click="toDetailsPage(item.id)">
                     <l-icon :name="item.icons" class="left-icons"/>
                     <div class="left-label">{{ item.name }}</div>
-                    <l-icon name="fanhui" class="link-icons" @click.native="toDetailsPage(item.id)"/>
+                    <l-icon name="fanhui" class="link-icons"/>
                 </li>
-                <li class="user-menu-list-item team" :class="{'mt10':index === 0}" v-for="(item,index) in teamMenuList">
+                <li class="user-menu-list-item team" @click="toDetailsPage(item.id)" :class="{'mt10':index === 0}"
+                    v-for="(item,index) in teamMenuList">
                     <l-icon :name="item.icons" class="left-icons"/>
                     <div class="left-label">{{ item.name }}</div>
-                    <l-icon name="fanhui" class="link-icons" @click.native="toDetailsPage(item.id)"/>
+                    <l-icon name="fanhui" class="link-icons"/>
                 </li>
             </ul>
         </div>
@@ -62,22 +57,37 @@
                 userName: 'Louis',
                 idNum: 45462331218,
                 description: '菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.',
-                basicInfoLabel: [ '会员等级', '活跃度', '贡献值' ],
-                basicInfoValue: [ 1, 34, 2600 ],
+                basicList: [
+                    {
+                        value: 2,
+                        label: '会员等级',
+                        route: 'vipLevel'
+                    },
+                    {
+                        value: 24,
+                        label: '活跃度',
+                        route: 'activityRecords'
+                    },
+                    {
+                        value: 2600,
+                        label: '贡献值',
+                        route: 'contributionRecords'
+                    }
+                ],
                 candyNum: 123213.00312312,
                 personalMenuList: [
                     {
-                        id: 'basicInfo',
+                        id: 'basicInformation',
                         name: '基本资料',
                         icons: 'jibenziliao'
                     },
                     {
-                        id: 'verified',
+                        id: 'verifiedForm',
                         name: '实名认证',
                         icons: 'shimingrenzheng'
                     },
                     {
-                        id: 'identity',
+                        id: 'identityInformation',
                         name: '身份信息',
                         icons: 'shenfenxinxi'
                     }
@@ -115,7 +125,7 @@
         },
         methods: {
             toDetailsPage(route) {
-            
+                this.$router.push(route)
             },
             editEvent() {
                 this.$router.push('/personalSetting')
@@ -175,14 +185,14 @@
             background-color: #404049;
             overflow: hidden;
             height: 140px;
-            .user-basic-info-item {
-                width: 33.3333333%;
-            }
-            .user-basic-info-value {
-                color: #ffd554;
-                font-size: 32px;
-                .user-basic-info-item {
-                    margin: 20px auto 10px;
+            display: flex;
+            justify-content: space-around;
+            .basic-info-list {
+                padding: 32px 0 32px;
+                .value {
+                    color: #ffd554;
+                    font-size: 32px;
+                    margin-bottom: 20px;
                 }
             }
         }

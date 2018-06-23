@@ -16,14 +16,8 @@
                 <div class="btn">提交</div>
             </div>
         </div>
-        <div class="feedback-type-container" v-if="showTypeList" @click="showTypeList = false">
-            <div class="feedback-type-list">
-                <div class="type-list-item" v-for="item in typeList" @click="type = item">
-                    {{ item.name }}
-                    <l-icon v-if="type.id === item.id" name="dagou"/>
-                </div>
-            </div>
-        </div>
+        <l-selectOption @change="changeSelect" v-if="showTypeList" @click="showTypeList = false" :list="typeList"
+                        :selected="type"/>
     </div>
 </template>
 
@@ -51,7 +45,11 @@
                         id: 'other',
                         name: '其他'
                     }
-                ]
+                ],
+                changeSelect(data) {
+                    _this.type = data
+                    _this.showTypeList = false
+                }
             }
         },
         mounted() {
