@@ -103,5 +103,6 @@ ul {
     }
 }
 
-.mui-toast-container {bottom: 40% !important;}
-.mui-toast-message {color: #fff; padding:30px;font-size:34px;line-height: 40px}
+.ivu-message{bottom: 160px;top:auto;}
+.ivu-message-notice-content {color: #fff; padding:10px;font-size:24px;line-height: 40px;background: rgba(0,0,0,0.7);}
+.ivu-message .ivu-icon{font-size: 24px;line-height: 40px;}
