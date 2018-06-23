@@ -1,13 +1,8 @@
 <template>
     <div class="activityList">
-        <l-head>
-         <l-icon name="fanhui" @click.native="$router.push('clubDetails')" slot="left-item"/>
-            活动
-        <div class="btn text-white" slot="right-item" @click="publishActivity">发布活动</div>
-        </l-head>
         <div class="activityList-container">
-            <div class="activityList-item" v-for="item in list">
-                <div class="left-img pull-left" @click="toDetails(item)">
+            <div class="activityList-item" v-for="item in list"  @click="toDetails(item.id)">
+                <div class="left-img pull-left">
                     <img :src="item.imgPath" alt="">
                 </div>
                 <div class="right-container pull-left">
@@ -25,35 +20,20 @@
 </template>
 
 <script>
-let _this
+    import club from '../../api/club.js'
     export default {
         name: 'activityList',
         data() {
             return {
                 router: 'activityList',
                 filterName: '',
+                page:1,
                 list: [
-                    {
-                        imgPath: 'static/img/club/1.jpg',
-                        name: '大波超酷炫的跑步活动来袭 你想 去哪个？',
-                        theTime: '2018.5.14 12:33'
-                    },
-                    {
-                        imgPath: 'static/img/club/2.jpg',
-                        name: '大波超酷炫的跑步活动来袭你想去哪个？',
-                        theTime: '2018.5.14 12:33'
-                    },
-                    {
-                        imgPath: 'static/img/club/3.jpg',
-                        name: '酷跑狂人',
-                        theTime: '2018.5.14 12:33'
-                    },
-                    {
-                        imgPath: 'static/img/club/4.jpg',
-                        name: '大波超酷炫的跑步活动来袭 你想 去哪个？',
-                        theTime: '2018.5.14 12:33'
-
-                    }
+//                    {
+//                        imgPath: 'static/img/club/1.jpg',
+//                        name: '大波超酷炫的跑步活动来袭 你想 去哪个？',
+//                        theTime: '2018.5.14 12:33'
+//                    }
                 ]
             }
         },
@@ -61,12 +41,24 @@ let _this
             reset() {
                 console.log(this.filterName)
             },
-            publishActivity() {
-                _this.$router.push('publishActivity')
+            editEvent() {
+                var clubid = this.$route.query.id;
+                this.$router.push({name:'publishActivity', query: {id: clubid}});
+            },
+            loadData(page){
+                var clubid = this.$route.query.id;
+                club.loadActivityList(this,clubid,page,10);
+            },
+            toDetails(id){
+//                this.$router.push({name:'publishActivity', query: {id: id}});
             }
         },
+        activated(){
+            this.page = 1;
+            this.loadData(this.page)
+        },
         mounted() {
-            _this = this
+
         }
     }
 </script>

@@ -2,11 +2,14 @@ var root = 'http://api.bozhiyue.com'
 // 引用axios
 var axios = require('axios')
 var qs = require('qs')
+import {LoadingBar} from 'iview';
+import 'iview/dist/styles/iview.css'
 axios.defaults.timeout =  120000;
 // 自定义判断元素类型JS
 function toType (obj) {
     return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
 }
+
 // 参数过滤函数
 function filterNull (o) {
     for (var key in o) {
@@ -33,10 +36,17 @@ function filterNull (o) {
  另外，不同的项目的处理方法也是不一致的，这里出错就是简单的alert
  */
 
-function apiAxios (method, url, params, success, failure) {
+function apiAxios (method, url, params, success, failure,loading) {
     if (params) {
         params = filterNull(params);
     }
+    //var loading = '<div class="loading"> <div class="line line1"></div><div class="line line2"></div> <div class="line line3"></div> </div>';
+
+    var loadingProcess = loading?loading:true;
+    if(loadingProcess){
+        LoadingBar.start();
+    }
+    $(".ivu-loading-bar").css({"top":$(".head-title").outerHeight()});
     axios({
         method: method,
         url: url,
@@ -45,6 +55,9 @@ function apiAxios (method, url, params, success, failure) {
         baseURL: root,
         withCredentials: false
     }).then(function (res) {
+            if(loadingProcess) {
+                LoadingBar.finish();
+            }
             if (res.data.code === 1) {
                 if (success) {
                     success(res.data)
@@ -54,12 +67,16 @@ function apiAxios (method, url, params, success, failure) {
                     failure(res.data);
                 } else {
                     //console.error(res);
-                    mui.toast(res.data.msg);
+                    Vue.$Message.error(res.data.msg);
                     //window.alert('error: ' + JSON.stringify(res))
                 }
             }
         })
         .catch(function (err) {
+            //Message.destroy()
+            if(loadingProcess) {
+                LoadingBar.error();
+            }
             let res = err.response
             if (err) {
                 console.error(err);

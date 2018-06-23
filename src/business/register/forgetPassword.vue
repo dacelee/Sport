@@ -65,17 +65,17 @@
                     clearInterval(_this.timer);
                     //
                     if(this.userInfo.loginpwd2!=this.userInfo.loginpwd){
-                       mui.toast("两次密码输入不一致");
+                        _this.$Message.error("两次密码输入不一致");
                         return;
                     }
                     var param = JSON.parse(JSON.stringify(this.userInfo));
                     delete param.loginpwd2;
                     this.axios.post(_this.session.findpwd,
                             param,function(data){
-                               mui.toast("密码已经重置");
+                                _this.$Message.info("密码已经重置");
                                 _this.$router.replace('/login')
                             },function(data){
-                               mui.toast(data.msg);
+                                _this.$Message.error(data.msg);
                             });
                 }
             },getCode(){
@@ -101,15 +101,15 @@
                 }
                 if(!this.$verify.check("mobile")){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                   mui.toast(errMsg);
+                    _this.$Message.error(errMsg);
                 }else{
                     this.getCode();
                     this.axios.post(this.session.sendsmscode, {'mobile':this.userInfo.mobile},function(data){
 //                        console.log(data);
-                       mui.toast(data.msg);
+                        _this.$Message.info(data.msg);
                     },function(data){
 //                        console.log(data);
-                       mui.toast(data.msg);
+                        _this.$Message.error(data.msg);
                     });
                 }
             }
@@ -127,66 +127,66 @@
         top: 0;
         left: 0;
         background-size: cover;
-        .head-title {
-            background-color: transparent;
-        }
-        .forget-password-form {
-            width: 580px;
-            margin: 80px auto 0;
-            .forget-password-form-item {
-                margin-bottom: 40px;
-                input {
-                    font-size: 28px;
-                    line-height: 28px;
-                    padding: 35px 10px 35px 30px;
-                    width: 580px;
-                    background-color: rgba(255, 255, 255, 0.1);
-                    -webkit-border-radius: 8px;
-                    -moz-border-radius: 8px;
-                    border-radius: 8px;
-                    color: #ffffff;
-                    &.validate-code-input {
-                        width: 360px;
-                    }
-                }
-                input::-webkit-input-placeholder {
-                    color: #999999;
-                }
-                input:-moz-placeholder {
-                    color: #999999;
-                }
-                input::-moz-placeholder {
-                    color: #999999;
-                }
-                input:-ms-input-placeholder {
-                    color: #999999;
-                }
-                .btn-validate-code {
-                    width: 188px;
-                    font-size: 28px;
-                    line-height: 28px;
-                    border: 2px solid #F8C513;
-                    -webkit-border-radius: 8px;
-                    -moz-border-radius: 8px;
-                    border-radius: 8px;
-                    color: #F8C513;
-                    padding: 35px 0;
-                }
-                &.register-btn {
-                    margin-top: 353px;
-                    .btn-register {
-                        width: 580px;
-                        font-size: 34px;
-                        line-height: 34px;
-                        background-color: #F8C513;
-                        -webkit-border-radius: 8px;
-                        -moz-border-radius: 8px;
-                        border-radius: 8px;
-                        color: #25252B;
-                        padding: 32px 0;
-                    }
-                }
-            }
-        }
+    .head-title {
+        background-color: transparent;
+    }
+    .forget-password-form {
+        width: 580px;
+        margin: 80px auto 0;
+    .forget-password-form-item {
+        margin-bottom: 40px;
+    input {
+        font-size: 28px;
+        line-height: 28px;
+        padding: 35px 10px 35px 30px;
+        width: 580px;
+        background-color: rgba(255, 255, 255, 0.1);
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        color: #ffffff;
+    &.validate-code-input {
+         width: 360px;
+     }
+    }
+    input::-webkit-input-placeholder {
+        color: #999999;
+    }
+    input:-moz-placeholder {
+        color: #999999;
+    }
+    input::-moz-placeholder {
+        color: #999999;
+    }
+    input:-ms-input-placeholder {
+        color: #999999;
+    }
+    .btn-validate-code {
+        width: 188px;
+        font-size: 28px;
+        line-height: 28px;
+        border: 2px solid #F8C513;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        color: #F8C513;
+        padding: 35px 0;
+    }
+    &.register-btn {
+         margin-top: 353px;
+    .btn-register {
+        width: 580px;
+        font-size: 34px;
+        line-height: 34px;
+        background-color: #F8C513;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        color: #25252B;
+        padding: 32px 0;
+    }
+    }
+    }
+    }
     }
 </style>

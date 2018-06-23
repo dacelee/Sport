@@ -47,6 +47,7 @@ import selectGender from '@/business/register/selectGender.vue'
 //import faceapp from '@/business/face/faceapp.vue'
 import activity from '@/business/activity/activity.vue'
 import task from '@/business/task/task.vue'
+import imageClip from '@/vue-cropper/imageClip.vue'
 
 Vue.use(Router)
 
@@ -167,11 +168,21 @@ export default new Router({
             }
         },
         {
+            path: '/imageClip',
+            name: 'imageClip',
+            component: imageClip,
+            meta: {
+                title: '裁剪图片',
+                back:'-1'
+            }
+        },
+        {
             path: '/createClub',
             name: 'createClub',
             component: createClub,
             meta: {
-                title: '创建俱乐部'
+                title: '创建俱乐部',
+                back:'/club',
             }
         },
         {
@@ -179,7 +190,8 @@ export default new Router({
             name: 'createClubSuccess',
             component: createClubSuccess,
             meta: {
-                title: '创建成功'
+                title: '创建成功',
+                back:'/-1',
             }
         },
         {
@@ -187,7 +199,8 @@ export default new Router({
             name: 'clubCertification',
             component: clubCertification,
             meta: {
-                title: '实体店认证'
+                title: '实体店认证',
+                back:"-1"
             }
         },
         {
@@ -195,7 +208,8 @@ export default new Router({
             name: 'clubCertificationSuccess',
             component: clubCertificationSuccess,
             meta: {
-                title: '实体店认证成功'
+                title: '实体店认证成功',
+                back:"-1"
             }
         },
         {
@@ -203,7 +217,9 @@ export default new Router({
             name: 'clubDetails',
             component: clubDetails,
             meta: {
-                title: '俱乐部详情'
+                title: '俱乐部详情',
+                back:'/club',
+                rightTitle:'发布活动'
             }
         },
         {
@@ -220,7 +236,8 @@ export default new Router({
             component: activityList,
             meta: {
                 title: '活动',
-                back: '/'
+                back: '-1',
+                rightTitle:'发布活动'
             }
         },
         {
@@ -228,7 +245,8 @@ export default new Router({
             name: 'publishActivity',
             component: publishActivity,
             meta: {
-                title: '发布活动'
+                title: '发布活动',
+                back:'-1'
             }
         },
         {

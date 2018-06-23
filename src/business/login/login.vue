@@ -17,8 +17,6 @@
     </div>
 </template>
 <script>
-    import Vue from 'vue'
-
     var _this;
     export default {
         name: 'login',
@@ -36,6 +34,7 @@
             }
         }, mounted() {
             _this = this;
+
             if(this.session.isLogin()){
                 _this.$router.replace('/');
             }
@@ -43,7 +42,7 @@
             login(){
                 if(!this.$verify.check()){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    mui.toast(errMsg);
+                    this.$Message.error(errMsg);
                 }else{
                     //登录
                     this.axios.post(this.session.login,
@@ -53,7 +52,7 @@
                             },
                             function (json) {
 //                                console.log(json);
-                                mui.toast(json.msg);
+                                _this.$Message.info(json.msg);
                                 var user = json.data;
                                 _this.session.loginSuccess(user);
                                 //开启计步
@@ -61,9 +60,10 @@
                                     this.appUtil.pedometer();
                                 }
                                 this.$router.replace('/')
-                            }, function (data) {
-                                console.log(data);
-                                mui.toast(data.msg);
+                            }, function (json) {
+                                console.log(json);
+//                                mui.toast(json.msg);
+                                _this.$Message.error(json.msg);
                                 _this.session.loginSuccess(true);
                                 _this.$router.replace('/')
                             });
@@ -84,71 +84,71 @@
         top: 0;
         left: 0;
         background-size: cover;
-        .login-form {
-            width: 580px;
-            margin: 365px auto 0;
-            .login-form-item {
-                position: relative;
-                input {
-                    width: 580px;
-                    height: 85px;
-                    background-color: rgba(255, 255, 255, 0.1);
-                    -webkit-border-radius: 8px;
-                    -moz-border-radius: 8px;
-                    border-radius: 8px;
-                    padding-left: 80px;
-                    font-size: 28px;
-                    line-height: 28px;
-                    color: #ffffff;
-                }
-                input::-webkit-input-placeholder {
-                    color: #999999;
-                }
-                input:-moz-placeholder {
-                    color: #999999;
-                }
-                input::-moz-placeholder {
-                    color: #999999;
-                }
-                input:-ms-input-placeholder {
-                    color: #999999;
-                }
-                .icons {
-                    width: 32px;
-                    height: 40px;
-                    position: absolute;
-                    top: 25.5px;
-                    left: 30px;
-                }
-                &.user-phone {
-                    margin-bottom: 40px;
-                }
-                &.user-password {
-                    margin-bottom: 20px;
-                }
-            }
-            .forget-password {
-                margin-bottom: 120px;
-                font-size: 24px;
-                line-height: 24px;
-            }
-            .btn-login {
-                width: 580px;
-                color: #25252B;
-                font-size: 34px;
-                line-height: 34px;
-                padding: 32px 0;
-                -webkit-border-radius: 8px;
-                -moz-border-radius: 8px;
-                border-radius: 8px;
-                background-color: #F8C513;
-                margin: 0 auto 60px;
-                box-shadow: 2px 2px 2px #ffd554;
-            }
-            .btn-register {
-                font-size: 34px;
-                line-height: 34px;
-            }
-        }
+    .login-form {
+        width: 580px;
+        margin: 365px auto 0;
+    .login-form-item {
+        position: relative;
+    input {
+        width: 580px;
+        height: 85px;
+        background-color: rgba(255, 255, 255, 0.1);
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        padding-left: 80px;
+        font-size: 28px;
+        line-height: 28px;
+        color: #ffffff;
+    }
+    input::-webkit-input-placeholder {
+        color: #999999;
+    }
+    input:-moz-placeholder {
+        color: #999999;
+    }
+    input::-moz-placeholder {
+        color: #999999;
+    }
+    input:-ms-input-placeholder {
+        color: #999999;
+    }
+    .icons {
+        width: 32px;
+        height: 40px;
+        position: absolute;
+        top: 25.5px;
+        left: 30px;
+    }
+    &.user-phone {
+         margin-bottom: 40px;
+     }
+    &.user-password {
+         margin-bottom: 20px;
+     }
+    }
+    .forget-password {
+        margin-bottom: 120px;
+        font-size: 24px;
+        line-height: 24px;
+    }
+    .btn-login {
+        width: 580px;
+        color: #25252B;
+        font-size: 34px;
+        line-height: 34px;
+        padding: 32px 0;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        background-color: #F8C513;
+        margin: 0 auto 60px;
+        box-shadow: 2px 2px 2px #ffd554;
+    }
+    .btn-register {
+        font-size: 34px;
+        line-height: 34px;
+    }
+    }
     }
 </style>

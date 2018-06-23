@@ -43,7 +43,7 @@
                     });
                     _this.list = data;
                 },function(json){
-
+                    _this.$Message.error(json.msg)
                 });
             },
             toDetails(item) {
@@ -61,49 +61,49 @@
         height: 100%;
         background-color: #ffffff;
         padding-bottom: 0 !important;
-        .industry-list-item {
-            width: 690px;
-            height: 180px;
-            border-bottom: 2px solid #999999;
-            margin: 0 auto;
-            padding: 10px 0;
-            overflow: hidden;
-            .news-left-img {
-                width: 160px;
-                height: 160px;
-                margin: 0 10px 0 0;
-                img {
-                    width: 160px;
-                    height: 160px;
-                }
-            }
-            .news-right-container {
-                width: 510px;
-                height: 160px;
-                .title {
-                    font-size: 40px;
-                    line-height: 40px;
-                    height: 40px;
-                    overflow: hidden;
-                    word-wrap: normal;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    color: #000000;
-                }
-                .description {
-                    font-size: 26px;
-                    line-height: 36px;
-                    height: 110px;
-                    margin-top: 10px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    word-wrap: normal;
-                    color: #666666;
-                }
-            }
-        }
-        .industry-list-item:nth-last-child(1) {
-            border-bottom: none;
-        }
+    .industry-list-item {
+        width: 690px;
+        height: 180px;
+        border-bottom: 2px solid #999999;
+        margin: 0 auto;
+        padding: 10px 0;
+        overflow: hidden;
+    .news-left-img {
+        width: 160px;
+        height: 160px;
+        margin: 0 10px 0 0;
+    img {
+        width: 160px;
+        height: 160px;
+    }
+    }
+    .news-right-container {
+        width: 510px;
+        height: 160px;
+    .title {
+        font-size: 40px;
+        line-height: 40px;
+        height: 40px;
+        overflow: hidden;
+        word-wrap: normal;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: #000000;
+    }
+    .description {
+        font-size: 26px;
+        line-height: 36px;
+        height: 110px;
+        margin-top: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: normal;
+        color: #666666;
+    }
+    }
+    }
+    .industry-list-item:nth-last-child(1) {
+        border-bottom: none;
+    }
     }
 </style>

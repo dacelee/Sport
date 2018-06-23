@@ -1,44 +1,69 @@
 <template>
     <div class="publishActivity">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('activityList')" slot="left-item"/>
-            发布活动
-        </l-head>
         <div class="club-item mt-20">
             <div class="left-label pull-left">名称</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入活动名称">
+                <input type="text" placeholder="请输入活动名称" v-model="formData.title" v-verify="formData.title" >
             </div>
         </div>
         <div class="club-item text-area">
             <div class="left-label pull-left">简介</div>
             <div class="right-input pull-left">
-                <textarea placeholder="在此输入活动内容"></textarea>
+                <textarea placeholder="在此输入活动内容" v-model="formData.content" v-verify="formData.content"></textarea>
             </div>
         </div>
         <div class="select-pic text-center">
-                <div class="upload-box">
-                  <div class="upload-pic">
-                   <l-icon name="shangchuantupian"/>
-                  </div>
-                <div class="select-upload-label">上传图片 0/1</div>
-                </div>
+            <!--<div class="upload-box">-->
+                <!--<div class="upload-pic">-->
+                    <!--<l-icon name="shangchuantupian"/>-->
+                <!--</div>-->
+                <!--<div class="select-upload-label">上传图片 0/1</div>-->
+
+            <!--</div>-->
+            <l-imageUpload   :limit="4"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
         </div>
-        <div class="save-btn text-center" >发布</div>
+        <div class="save-btn text-center" @click="publish">发布</div>
     </div>
 </template>
 
 <script>
-let _this
+    import club from '../../api/club.js'
     export default {
         name: 'publishActivity',
+        data(){
+            return {
+                formData:{
+                    title:"",
+                    content:"",
+                    photos:""
+                }
+            }
+        },
+        verify: {
+            formData: {
+                title: [{minLength: 1, message: "活动标题必须填写"}],
+                content: [{minLength: 1, message: "活动简介必须填写"}]
+            }
+        },
         methods: {
-            reset() {
-                console.log(this.filterName)
+            publish() {
+                if(!this.$verify.check()){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    this.$Message.error(errMsg);
+                }else {
+                    this.formData.clubid = this.$route.query.id;
+                    this.formData.adminid = this.session.getMemberID();
+                    club.addArticle(this, this.formData);
+                }
             },
+            uploadPhotosSuccess(res,item){
+                this.formData.photos = res;
+            },
+            removePhotos(res){
+                this.formData.photos = res;
+            }
         },
         mounted() {
-            _this = this
         }
     }
 </script>
@@ -50,7 +75,7 @@ let _this
         background-color:#33333a;
         padding:50px 0;
         margin-bottom:40px;
-        .upload-box{ 
+        .upload-box{
             background-color:#25252B;
             width:140px;
             height:140px;
@@ -76,18 +101,6 @@ let _this
         margin-bottom:0px;
         background-color: #33333a;
         padding:30px 0 140px 30px;
-        .upload-box{ 
-            background-color:#25252B;
-            width:210px;
-            height:210px;
-            border-radius:10px;
-            .icons {
-            width: 60px;
-            height: 52px;
-            padding-top:60px;
-            color: #999999;
-             }
-        }
      }
         padding-bottom: 60px;
         .club-item {

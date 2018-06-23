@@ -1,10 +1,5 @@
 <template>
     <div class="clubDetails">
-        <l-head>
-        <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            俱乐部详情
-           <div class="btn text-white" slot="right-item" @click="publishActivity">发布活动</div>
-        </l-head>
         <div class="clubDetails-head-info">
             <div class="left-head-photo pull-left">
                 <img :src="headPhoto" alt="">
@@ -30,29 +25,27 @@
         <div class="user-menu-list">
             <ul>
                 <li class="user-menu-list-item personal" :class="{'mt10':index === 0}"
-                    v-for="(item,index) in personalMenuList">
-                    <div class="left-label">{{ item.name }}</div>
-                    <l-icon name="fanhui" class="link-icons" @click.native="goToPage(item.router)"/>
+                    v-for="(item,index) in personalMenuList" @click="goToPage(item.router)">
+                        <div class="left-label" >{{ item.name }}</div>
+                        <l-icon name="fanhui" class="link-icons" />
                 </li>
-                
             </ul>
         </div>
         <div class="clubMsg">
         <div class="clubDetailMsg">
         	<h3 class='title'>群介绍</h3>
-<img src="/static/img/news/2.jpg" />
-        	<div class="word">以推广跑步及全民健身运动为主要目标，是陕以推广跑步及全民健身运动为主要目标，是陕以推广跑步及全民健身运动为主要目标，是陕以推广跑步及全民健身运动为主要目标，是陕</div>
+            <!--<img src="/static/img/news/2.jpg" />-->
+        	<div class="word" v-html="intor"></div>
         </div>
-         <div class="save-btn text-center" >申请加入</div>
-         <div class='text-center word1'>俱乐部创建人没认证，底部按钮显示申请认证</div>
-         <div class="save-btn text-center" >申请实体认证</div>
-         <div class='text-center word2'>已加入，已认证，底部无按钮 并且无发布活</div>
+         <div class="save-btn text-center" v-if="auth_license!=''">申请加入</div>
+         <!--<div class='text-center word1'>俱乐部创建人没认证，底部按钮显示申请认证</div>-->
+         <div class="save-btn text-center" v-if="auth_license==''&&mycreate" @click="clubCertification">申请实体认证</div>
+         <!--<div class='text-center word2'>已加入，已认证，底部无按钮 并且无发布活</div>-->
         </div>
     </div>
 </template>
-
 <script>
-let _this
+    import club from '../../api/club.js'
     export default {
         name: 'clubDetails',
         data() {
@@ -64,6 +57,9 @@ let _this
                 createTime: '2018.4.12',
                 InfoValue1: [ '岳麓区', 89, 56 ],
                 InfoValue2: [ '地区', '人数', '总活跃度' ],
+                intor:"",
+                auth_license:"",
+                mycreate:false,
                 personalMenuList: [
                     {
                         id: 'basicInfo',
@@ -78,19 +74,30 @@ let _this
                         router: 'activityList'
                     }
                 ]
-                
+
             }
         },
         methods: {
             goToPage(router) {
                this.$router.push(router)
             },
-            publishActivity() {
-                _this.$router.push('publishActivity')
+            editEvent() {
+                this.$router.push('publishActivity');
+            },
+            loadData(){
+                var clubid = this.$route.query.id;
+                club.showDetail(this,clubid);
+            },
+            clubCertification(){
+                var clubid = this.$route.query.id;
+                this.$router.push({name:'clubCertification', query: {id: clubid}});
             }
         },
+        beforeUpdate(){
+//            this.loadData();
+        },
         mounted() {
-            _this = this
+            this.loadData();
         }
     }
 </script>
@@ -131,8 +138,8 @@ let _this
                 }
                 .user-description {
                     overflow: hidden;
-                    
-                    
+
+
                 }
             }
         }
@@ -214,7 +221,9 @@ let _this
         display: flex;
         justify-content:center;
         align-items:Center;
-        margin:20px auto 0;
+            position: fixed;
+            bottom: 0px;
+
       }
       .word1{margin:50px 0;font-size:30px;}
       .word2{margin:50px auto; width:60%;font-size:34px;}
