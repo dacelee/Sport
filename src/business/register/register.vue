@@ -53,17 +53,17 @@
         }, mounted() {
             _this = this;
 //            window.apiready = function() {
-                if(_this.session.isAPPRuntime()){
-                    var header = $api.dom('.header-menu');
-                    var  headerHeight = $api.fixStatusBar(header);
-                }
+            if(_this.session.isAPPRuntime()){
+                var header = $api.dom('.header-menu');
+                var  headerHeight = $api.fixStatusBar(header);
+            }
 //            }
         },
         methods: {
             submitForm() {
                 if(!this.$verify.check()){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    mui.toast(errMsg);
+                    _this.$Message.error(errMsg);
                 }else{
                     clearInterval(_this.timer);
 //                    console.log( this.userInfo.mobile);
@@ -75,16 +75,16 @@
                 var count = TIME_COUNT;
                 this.show = false;
                 this.timer = setInterval(function(){
-                     if (count > 0 && count <= TIME_COUNT) {
-                             count--;
-                         _this.codeSend = count+"s";
-                         console.log(_this.codeSend);
-                     } else {
-                            this.show = true;
-                            clearInterval(_this.timer);
-                            this.timer = null;
-                             _this.codeSend = "获取验证码";
-                     }
+                    if (count > 0 && count <= TIME_COUNT) {
+                        count--;
+                        _this.codeSend = count+"s";
+                        console.log(_this.codeSend);
+                    } else {
+                        this.show = true;
+                        clearInterval(_this.timer);
+                        this.timer = null;
+                        _this.codeSend = "获取验证码";
+                    }
                 }, 1000);
             },
             getSmsCode(){
@@ -93,15 +93,15 @@
                 }
                 if(!this.$verify.check("mobile")){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    mui.toast(errMsg);
+                    _this.$Message.error(errMsg);
                 }else{
                     this.getCode();
                     this.axios.post(this.session.sendsmscode, {'mobile':this.userInfo.mobile},function(data){
 //                        console.log(data);
-                        _mui.toast(data.msg);
+                        _this.$Message.info(data.msg);
                     },function(data){
 //                        console.log(data);
-                        _mui.toast(data.msg);
+                        _this.$Message.error(data.msg);
                     });
                 }
             }
@@ -119,66 +119,66 @@
         top: 0;
         left: 0;
         background-size: cover;
-        .head-title {
-            background-color: transparent;
-        }
-        .register-form {
-            width: 580px;
-            margin: 80px auto 0;
-            .register-form-item {
-                margin-bottom: 40px;
-                input {
-                    font-size: 28px;
-                    line-height: 28px;
-                    padding: 35px 10px 35px 30px;
-                    width: 580px;
-                    background-color: rgba(255, 255, 255, 0.1);
-                    -webkit-border-radius: 8px;
-                    -moz-border-radius: 8px;
-                    border-radius: 8px;
-                    color: #ffffff;
-                    &.validate-code-input {
-                        width: 360px;
-                    }
-                }
-                input::-webkit-input-placeholder {
-                    color: #999999;
-                }
-                input:-moz-placeholder {
-                    color: #999999;
-                }
-                input::-moz-placeholder {
-                    color: #999999;
-                }
-                input:-ms-input-placeholder {
-                    color: #999999;
-                }
-                .btn-validate-code {
-                    width: 188px;
-                    font-size: 28px;
-                    line-height: 28px;
-                    border: 2px solid #F8C513;
-                    -webkit-border-radius: 8px;
-                    -moz-border-radius: 8px;
-                    border-radius: 8px;
-                    color: #F8C513;
-                    padding: 35px 0;
-                }
-                &.register-btn {
-                    margin-top: 353px;
-                    .btn-register {
-                        width: 580px;
-                        font-size: 34px;
-                        line-height: 34px;
-                        background-color: #F8C513;
-                        -webkit-border-radius: 8px;
-                        -moz-border-radius: 8px;
-                        border-radius: 8px;
-                        color: #25252B;
-                        padding: 32px 0;
-                    }
-                }
-            }
-        }
+    .head-title {
+        background-color: transparent;
+    }
+    .register-form {
+        width: 580px;
+        margin: 80px auto 0;
+    .register-form-item {
+        margin-bottom: 40px;
+    input {
+        font-size: 28px;
+        line-height: 28px;
+        padding: 35px 10px 35px 30px;
+        width: 580px;
+        background-color: rgba(255, 255, 255, 0.1);
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        color: #ffffff;
+    &.validate-code-input {
+         width: 360px;
+     }
+    }
+    input::-webkit-input-placeholder {
+        color: #999999;
+    }
+    input:-moz-placeholder {
+        color: #999999;
+    }
+    input::-moz-placeholder {
+        color: #999999;
+    }
+    input:-ms-input-placeholder {
+        color: #999999;
+    }
+    .btn-validate-code {
+        width: 188px;
+        font-size: 28px;
+        line-height: 28px;
+        border: 2px solid #F8C513;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        color: #F8C513;
+        padding: 35px 0;
+    }
+    &.register-btn {
+         margin-top: 353px;
+    .btn-register {
+        width: 580px;
+        font-size: 34px;
+        line-height: 34px;
+        background-color: #F8C513;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        color: #25252B;
+        padding: 32px 0;
+    }
+    }
+    }
+    }
     }
 </style>

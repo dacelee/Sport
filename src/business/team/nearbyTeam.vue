@@ -18,6 +18,7 @@
 </template>
 <script>
     let _this;
+    import citys from '../../api/citys.js'
     export default {
         name: 'nearby-team',
         data() {
@@ -48,9 +49,9 @@
             nearbyTeam(page,pageSize){
                 //附近组队
                 if(_this.param.x ==0|| _this.param.y==0){
-                    this.appUtil.location(function(ret){
+                    citys.location(function(ret){
                         if(!ret.status){
-                            mui.toast("定位失败,请开启GPS后再试试");
+                            _this.$Message.error("定位失败,请开启GPS后再试试");
                             return;
                         }
                         _this.param.x = ret.lon;
@@ -80,9 +81,9 @@
             join(id){
                 var memberid = this.session.getMemberID();
                 this.axios.post(this.session.nearReam, {"memberid":memberid,"teamid":id}, function (json) {
-                    mui.toast(json.msg);
+                    _this.$Message.info(json.msg);
                 },function(json){
-                    mui.toast(json.msg);
+                    _this.$Message.error(json.msg);
                 });
             }
         }
@@ -93,38 +94,38 @@
     .nearby-team {
         width: 690px;
         margin: 0 auto;
-        .nearby-team-item {
-            margin-top: 20px;
-            height: 190px;
-            background-color: #33333a;
-            padding: 30px 30px 30px;
-            -webkit-border-radius: 10px;
-            -moz-border-radius: 10px;
-            border-radius: 10px;
-            .nearby-name {
-                font-size: 32px;
-                line-height: 32px;
-                margin-bottom: 10px;
-            }
-            .nearby-info {
-                width: 500px;
-                .nearby-address {
-                    margin-top: 15px;
-                    font-size: 24px;
-                    line-height: 24px;
-                    margin-bottom: 10px;
-                }
-            }
-            .nearby-join {
-                width: 80px;
-                height: 80px;
-                border: 2px solid #ffd554;
-                -webkit-border-radius: 100%;
-                -moz-border-radius: 100%;
-                border-radius: 100%;
-                line-height: 80px;
-                text-align: center;
-            }
-        }
+    .nearby-team-item {
+        margin-top: 20px;
+        height: 190px;
+        background-color: #33333a;
+        padding: 30px 30px 30px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+    .nearby-name {
+        font-size: 32px;
+        line-height: 32px;
+        margin-bottom: 10px;
+    }
+    .nearby-info {
+        width: 500px;
+    .nearby-address {
+        margin-top: 15px;
+        font-size: 24px;
+        line-height: 24px;
+        margin-bottom: 10px;
+    }
+    }
+    .nearby-join {
+        width: 80px;
+        height: 80px;
+        border: 2px solid #ffd554;
+        -webkit-border-radius: 100%;
+        -moz-border-radius: 100%;
+        border-radius: 100%;
+        line-height: 80px;
+        text-align: center;
+    }
+    }
     }
 </style>

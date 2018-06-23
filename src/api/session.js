@@ -26,7 +26,7 @@ export default {
         return  this.appCache('appRuntime');
     },
     getMemberID:function(){
-        return 1;
+        return 3;
     },
     isLogin:function(){//是否登录
         return true;
