@@ -186,6 +186,7 @@
                 -moz-border-radius: 8px;
                 border-radius: 8px;
                 margin: 20px auto;
+                width: 100%;
             }
         }
     }
