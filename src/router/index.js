@@ -9,6 +9,13 @@ import tradingPassword from '@/business/personalCenter/tradingPassword.vue'
 import loginPassword from '@/business/personalCenter/loginPassword.vue'
 import feedbackList from '@/business/personalCenter/feedbackList.vue'
 import feedback from '@/business/personalCenter/feedback.vue'
+import candyRecords from '@/business/personalCenter/candyRecords.vue'
+import vipLevel from '@/business/personalCenter/vipLevel.vue'
+import basicInformation from '@/business/personalCenter/basicInformation.vue'
+import editNick from '@/business/personalCenter/editNick.vue'
+import editSignature from '@/business/personalCenter/editSignature.vue'
+import editWeChat from '@/business/personalCenter/editWeChat.vue'
+import editAliPay from '@/business/personalCenter/editAliPay.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
 import createClub from '@/business/club/createClub.vue'
@@ -260,6 +267,33 @@ export default new Router({
             }
         },
         {
+            path: '/candyRecords',
+            name: 'candyRecords',
+            component: candyRecords,
+            meta: {
+                title: '糖果明细',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/vipLevel',
+            name: 'vipLevel',
+            component: vipLevel,
+            meta: {
+                title: '会员等级',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/basicInformation',
+            name: 'basicInformation',
+            component: basicInformation,
+            meta: {
+                title: '基础资料',
+                back: '/personalCenter'
+            }
+        },
+        {
             path: '/feedback',
             name: 'feedback',
             component: feedback,
@@ -269,12 +303,53 @@ export default new Router({
             }
         },
         {
+            path: '/editNick',
+            name: 'editNick',
+            component: editNick,
+            meta: {
+                title: '设置昵称',
+                back: '/basicInformation',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editSignature',
+            name: 'editSignature',
+            component: editSignature,
+            meta: {
+                title: '设置个性签名',
+                back: '/basicInformation',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editWeChat',
+            name: 'editWeChat',
+            component: editWeChat,
+            meta: {
+                title: '设置微信号',
+                back: '/basicInformation',
+                rightTitle: '完成'
+            }
+        },
+        {
+            path: '/editAliPay',
+            name: 'editAliPay',
+            component: editAliPay,
+            meta: {
+                title: '设置支付宝账号',
+                back: '/basicInformation',
+                rightTitle: '完成'
+            }
+        },
+        {
             path: '/activity',
             name: 'activity',
             component: activity,
             meta: {
                 title: '活动',
-                back: '/'
+                back:
+                    '/'
             }
         },
         {
@@ -283,19 +358,20 @@ export default new Router({
             component: task,
             meta: {
                 title: '任务',
-                back: '/'
+                back:
+                    '/'
             }
         },
-        //{
-        //    path: '/face/faceapp',
-        //    name: 'faceapp',
-        //    component: faceapp,
-        //    meta: {
-        //        title: '人脸识别'
-        //    }
-        //},
-    ]
-    , scrollBehavior(to, from, savedPosition) {
+//{
+//    path: '/face/faceapp',
+//    name: 'faceapp',
+//    component: faceapp,
+//    meta: {
+//        title: '人脸识别'
+//    }
+//},
+    ],
+    scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
         }
