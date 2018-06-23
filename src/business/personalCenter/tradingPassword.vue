@@ -40,6 +40,7 @@
                     height: inherit;
                     margin-bottom: 0;
                     border: none;
+                    width: 100%;
                 }
             }
             .btn {

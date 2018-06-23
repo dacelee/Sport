@@ -103,6 +103,7 @@
                 padding: 30px 30px 30px;
                 font-size: 30px;
                 line-height: 30px;
+                width: 100%;
             }
             .btn {
                 position: absolute;
