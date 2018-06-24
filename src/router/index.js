@@ -5,6 +5,13 @@ import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
+import businessProduct from '@/business/businessCenter/businessProduct.vue'
+import businessDetail from '@/business/businessCenter/businessDetail.vue'
+import businessCart from '@/business/businessCenter/businessCart.vue'
+import businessSettlement from '@/business/businessCenter/businessSettlement.vue'
+import businessOrder from '@/business/businessCenter/businessOrder.vue'
+import businessAddress from '@/business/businessCenter/businessAddress.vue'
+import businessAddressAdd from '@/business/businessCenter/businessAddressAdd.vue'
 import club from '@/business/club/clubList.vue'
 import createClub from '@/business/club/createClub.vue'
 import createClubSuccess from '@/business/club/createClubSuccess.vue'
@@ -125,6 +132,62 @@ export default new Router({
             component: businessCenter,
             meta: {
                 title: '商圈'
+            }
+        },
+        {
+            path: '/businessProduct',
+            name: 'businessProduct',
+            component: businessProduct,
+            meta: {
+                title: '商圈产品'
+            }
+        },
+        {
+            path: '/businessDetail',
+            name: 'businessDetail',
+            component: businessDetail,
+            meta: {
+                title: '产品详情'
+            }
+        },
+        {
+            path: '/businessCart',
+            name: 'businessCart',
+            component: businessCart,
+            meta: {
+                title: '加入购物车'
+            }
+        },
+        {
+            path: '/businessSettlement',
+            name: 'businessSettlement',
+            component: businessSettlement,
+            meta: {
+                title: '结算'
+            }
+        },
+        {
+            path: '/businessOrder',
+            name: 'businessOrder',
+            component: businessOrder,
+            meta: {
+                title: '提交订单'
+            }
+        },
+        {
+            path: '/businessAddress',
+            name: 'businessAddress',
+            component: businessAddress,
+            meta: {
+                title: '选择收货地址'
+            }
+        },
+        {
+            path: '/businessAddressAdd',
+            name: 'businessAddressAdd',
+            component: businessAddressAdd,
+            meta: {
+                title: '新增收货地址'
             }
         },
         {
