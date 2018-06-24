@@ -165,6 +165,62 @@ export default new Router({
                 rightIcon: 'gouwuche'
             }
         },
+	{
+            path: '/businessProduct',
+            name: 'businessProduct',
+            component: businessProduct,
+            meta: {
+                title: '商圈产品'
+            }
+        },
+        {
+            path: '/businessDetail',
+            name: 'businessDetail',
+            component: businessDetail,
+            meta: {
+                title: '产品详情'
+            }
+        },
+        {
+            path: '/businessCart',
+            name: 'businessCart',
+            component: businessCart,
+            meta: {
+                title: '加入购物车'
+            }
+        },
+        {
+            path: '/businessSettlement',
+            name: 'businessSettlement',
+            component: businessSettlement,
+            meta: {
+                title: '结算'
+            }
+        },
+        {
+            path: '/businessOrder',
+            name: 'businessOrder',
+            component: businessOrder,
+            meta: {
+                title: '提交订单'
+            }
+        },
+        {
+            path: '/businessAddress',
+            name: 'businessAddress',
+            component: businessAddress,
+            meta: {
+                title: '选择收货地址'
+            }
+        },
+        {
+            path: '/businessAddressAdd',
+            name: 'businessAddressAdd',
+            component: businessAddressAdd,
+            meta: {
+                title: '新增收货地址'
+            }
+        },
         {
             path: '/club',
             name: 'club',
