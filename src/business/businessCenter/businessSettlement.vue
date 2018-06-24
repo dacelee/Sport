@@ -3,7 +3,6 @@
         <l-head>
          <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
             结算 
-      <l-icon name="gouwuche" slot="right-item"/>
         </l-head>
       <div class="SettlementList" v-for="item in list">
         <div class="icon pull-left"><l-icon name="gouxuan"/></div>
@@ -25,15 +24,16 @@
             </div>
             <div class="pull-right">
               <p>人民币：256</p>
-              <p>人民币：256</p>
+              <p>活跃币：888</p>
             </div>
             </div>
-            <div class="pull-right rightBox">结算</div>
+            <div class="pull-right rightBox" @click="businessOrder">结算</div>
         </div>
     </div>
 </template>
 
 <script>
+let _this
     export default {
         name: 'businessSettlement',
         data() {
@@ -63,9 +63,16 @@
                     },
                 
                 ]
-            }
-             
+            }    
         },
+      methods: {
+        businessOrder() {
+            _this.$router.push('businessOrder')
+        }
+     },
+     mounted() {
+        _this = this
+     }
     }
 </script>
 

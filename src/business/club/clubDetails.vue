@@ -68,8 +68,8 @@ let _this
                     {
                         id: 'basicInfo',
                         name: '成员列表',
-                        icons: 'teamList',
-                        router: 'teamList'
+                        icons: 'clubTeams',
+                        router: 'clubTeams'
                     },
                     {
                         id: 'verified',
