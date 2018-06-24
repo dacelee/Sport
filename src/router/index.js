@@ -26,6 +26,9 @@ import editBankCard from '@/business/personalCenter/editBankCard.vue'
 import editAliPayForm from '@/business/personalCenter/editAliPayForm.vue'
 import faceRecognition from '@/business/personalCenter/faceRecognition.vue'
 import identityInformation from '@/business/personalCenter/identityInformation.vue'
+import transaction from '@/business/personalCenter/transaction.vue'
+import transactionDetails from '@/business/personalCenter/transactionDetails.vue'
+import paySuccess from '@/business/personalCenter/paySuccess.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import club from '@/business/club/clubList.vue'
 import createClub from '@/business/club/createClub.vue'
@@ -173,7 +176,7 @@ export default new Router({
             component: imageClip,
             meta: {
                 title: '裁剪图片',
-                back:'-1'
+                back: '-1'
             }
         },
         {
@@ -182,7 +185,7 @@ export default new Router({
             component: createClub,
             meta: {
                 title: '创建俱乐部',
-                back:'/club',
+                back: '/club',
             }
         },
         {
@@ -191,7 +194,7 @@ export default new Router({
             component: createClubSuccess,
             meta: {
                 title: '创建成功',
-                back:'/-1',
+                back: '/-1',
             }
         },
         {
@@ -200,7 +203,7 @@ export default new Router({
             component: clubCertification,
             meta: {
                 title: '实体店认证',
-                back:"-1"
+                back: '-1'
             }
         },
         {
@@ -209,7 +212,7 @@ export default new Router({
             component: clubCertificationSuccess,
             meta: {
                 title: '实体店认证成功',
-                back:"-1"
+                back: '-1'
             }
         },
         {
@@ -218,8 +221,8 @@ export default new Router({
             component: clubDetails,
             meta: {
                 title: '俱乐部详情',
-                back:'/club',
-                rightTitle:'发布活动'
+                back: '/club',
+                rightTitle: '发布活动'
             }
         },
         {
@@ -237,7 +240,7 @@ export default new Router({
             meta: {
                 title: '活动',
                 back: '-1',
-                rightTitle:'发布活动'
+                rightTitle: '发布活动'
             }
         },
         {
@@ -246,7 +249,7 @@ export default new Router({
             component: publishActivity,
             meta: {
                 title: '发布活动',
-                back:'-1'
+                back: '-1'
             }
         },
         {
@@ -462,6 +465,33 @@ export default new Router({
             component: identityInformation,
             meta: {
                 title: '身份信息',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/transaction',
+            name: 'transaction',
+            component: transaction,
+            meta: {
+                title: '商圈交易',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/transactionDetails/:id',
+            name: 'transactionDetails',
+            component: transactionDetails,
+            meta: {
+                title: '订单信息',
+                back: '/transaction'
+            }
+        },
+        {
+            path: '/paySuccess',
+            name: 'paySuccess',
+            component: paySuccess,
+            meta: {
+                title: '支付成功',
                 back: '/personalCenter'
             }
         },

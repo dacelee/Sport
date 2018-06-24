@@ -57,7 +57,7 @@
             this.$nextTick(function () {
                 let height = $('.view-container').height()
                 $(_this.$el).css('height', height)
-                $('.feedback-container').css('height', height - 90)
+                $('.feedback-container').css('min-height', height - 90)
             })
         }
     }
