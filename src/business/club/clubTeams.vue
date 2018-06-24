@@ -1,7 +1,7 @@
 <template>
     <div class="clubTeams">
         <l-head>
-            成员
+             成员
             <div class="btn text-white" slot="right-item" @click="createClub">删除成员</div>
         </l-head>
         <div class="search-area">

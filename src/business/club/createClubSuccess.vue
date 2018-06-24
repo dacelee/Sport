@@ -2,7 +2,7 @@
     <div class="createClubSuccess">
         <l-head>
             <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            创建成功
+             创建成功
         </l-head>
        <div class='createClubSuccess-top'>
            <l-icon name="chenggong" class="text-center"/>

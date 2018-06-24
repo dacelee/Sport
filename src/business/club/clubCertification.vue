@@ -2,7 +2,7 @@
     <div class="clubCertification">
         <l-head>
             <l-icon name="fanhui" @click.native="$router.push('createClubSuccess')" slot="left-item"/>
-            实体店认证
+             实体店认证
         </l-head>
 
         <div class="select-upload" @click="toHome">

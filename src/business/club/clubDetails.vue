@@ -2,7 +2,7 @@
     <div class="clubDetails">
         <l-head>
         <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            俱乐部详情
+             俱乐部详情
            <div class="btn text-white" slot="right-item" @click="publishActivity">发布活动</div>
         </l-head>
         <div class="clubDetails-head-info">

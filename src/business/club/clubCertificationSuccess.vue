@@ -2,7 +2,7 @@
     <div class="clubCertificationSuccess">
         <l-head>
             <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-            实体店认证
+             实体店认证
         </l-head>
        <div class='createClubSuccess-top'>
            <l-icon name="chenggong" class="text-center"/>

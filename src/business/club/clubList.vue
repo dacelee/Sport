@@ -1,7 +1,7 @@
 <template>
     <div class="club-list">
         <l-head>
-            俱乐部
+             俱乐部
             <div class="btn text-white" slot="right-item" @click="createClub">创建</div>
         </l-head>
         <div class="search-area">
