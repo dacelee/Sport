@@ -1,130 +1,82 @@
 <template>
     <div class="clubCertification">
-        <div class="select-upload">
+        <l-head>
+            <l-icon name="fanhui" @click.native="$router.push('createClubSuccess')" slot="left-item"/>
+             实体店认证
+        </l-head>
+
+        <div class="select-upload" @click="toHome">
          <h4 class="title">营业执照</h4>
             <div class="upload-box text-center">
-                <l-icon name="shimingrenzheng"/>
-                <l-imageUpload   :limit="1"
-                                 :width="345"
-                                 :height="200"
-                                 :action="'http://api.bozhiyue.com/my/uploadimg'" style="border-radius: 50%;"
-                                 :onSuccess="uploadLicenseSuccess"
-                                 :onRemove = "removeLicense"
-                    />
-                <div class="select-upload-label text-center">上传营业执照</div>
+            <l-icon name="shimingrenzheng"/>
+            <div class="select-upload-label text-center">上传营业执照</div>
             </div>
-
         </div>
         <div class="club-item mt-20">
             <div class="left-label pull-left">姓名</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入" v-model="formData.authName" v-verify="formData.authName">
+                <input type="text" placeholder="请输入">
             </div>
         </div>
         <div class="club-item">
             <div class="left-label pull-left">身份证</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入" v-model="formData.authCard" v-verify="formData.authCard">
+                <input type="text" placeholder="请输入">
             </div>
         </div>
         <div class="club-item">
             <div class="left-label pull-left">电话</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入"  v-model="formData.authTel"  v-verify="formData.authTel">
+                <input type="text" placeholder="请输入">
             </div>
         </div>
          <div class="club-item">
             <div class="left-label pull-left">地址</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入"  v-model="formData.authAddress" v-verify="formData.authAddress">
+                <input type="text" placeholder="请输入">
             </div>
         </div>
-        <div class="select-pic" >
-            <h3 class="title">俱乐部介绍</h3>
-            <!--<div class="upload-box  text-center">-->
-                <!--<div class="upload-pic ">-->
-                    <!--<l-icon name="shangchuantupian"/>-->
-                <!--</div>-->
-                <!--<div class="select-upload-label text-center">上传图片 0/1</div>-->
-               <!---->
-            <!--</div>-->
-            <l-imageUpload   :limit="4"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
+        <div class="select-pic" @click="toHome">
+         <h3 class="title">俱乐部介绍</h3>
+                <div class="upload-box">
+                  <div class="upload-pic text-center">
+                   <l-icon name="shangchuantupian"/>
+                  </div>
+                <div class="select-upload-label text-center">上传图片 0/1</div>
+                </div>
         </div>
         <div class="save-btn text-center" @click="clubCertificationSuccess">提交</div>
     </div>
 </template>
+
 <script>
-    import club from '../../api/club.js'
+let _this
     export default {
         name: 'clubCertification',
-        data(){
-            return {
-                formData:{
-                    authLicense:"",
-                    authName:"",
-                    authCard:"",
-                    authTel:"",
-                    authAddress:"",
-                    photos:""
-                }
-            }
-        },
-        verify: {
-            formData: {
-                authName: [{minLength: 1, message: "姓名必须填写"}],
-                authCard: [{minLength: 1, message: "身份证必须填写"}],
-                authTel: [{minLength: 1, message: "电话必须填写"},"mobile"],
-                authAddress: [{minLength: 1, message: "地址必须填写"}]
-            }
-        },
         methods: {
             reset() {
-//                console.log(this.filterName)
+                console.log(this.filterName)
             },
             clubCertificationSuccess() {
-                if(this.formData.authLicense==""){
-                    this.$Message.error("请上传营业执照");
-                    return;
-                }
-
-                if(!this.$verify.check()){
-                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    this.$Message.error(errMsg);
-                }else {
-                    this.formData.id = this.$route.query.id;
-                    club.clubAuth(this, this.formData);
-                }
-            },
-            uploadLicenseSuccess(res,item) {
-                this.formData.authLicense = res;
-
-            },
-            removeLicense(res){
-                this.formData.photos = res;
-            },
-            uploadPhotosSuccess(res,item){
-                this.formData.photos = res;
-            },
-            removePhotos(res){
-                this.formData.photos = res;
+                _this.$router.push('clubCertificationSuccess')
             }
-
         },
         mounted() {
+            _this = this
         }
     }
 </script>
 
 <style lang="scss">
     .clubCertification {
+        
         .select-upload {
         width:100%;
         background-color:#33333a;
         padding:10px 0  30px 0;
         margin-bottom:40px;
         .title{padding-left:30px;font-size:30px;color:#999}
-        .upload-box{
-            position: relative;
+        .upload-box{ 
             background-color:#25252B;
             width:auto;
             height:400px;
@@ -144,15 +96,31 @@
             margin-top:20px;
             }
      }
-    .select-pic {
-        margin-bottom: 0px;
+     .select-pic {
+        .title{font-size:30px;color:#999}
+        margin-bottom:0;
+        margin-top:20px;
         background-color: #33333a;
-        padding: 30px 0 140px 30px;
-        .title{
-            margin-bottom: 10px;
+        padding:10px 0 140px 30px;
+        .upload-box{ 
+            background-color:#25252B;
+            width:210px;
+            height:210px;
+            border-radius:10px;
+            .icons {
+            width: 60px;
+            height: 52px;
+            padding-top:60px;
+            color: #999999;
+             }
         }
-        }
-
+        .select-upload-label {
+            color: #999999;
+            font-size: 24px;
+            line-height: 15px;
+            margin-top:20px;
+            }
+     }
         padding-bottom: 60px;
         .club-item {
             width: 750px;
