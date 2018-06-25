@@ -1,6 +1,6 @@
 <template>
     <div id="index">
-        <l-header :meta="meta" @rightBtnEvent="rightBtnEvent" @leftBtnEvent = "leftBtnEvent" />
+        <l-header :meta="meta" @rightBtnEvent="rightBtnEvent" @leftBtnEvent="leftBtnEvent"/>
         <div class="view-container">
             <keep-alive>
                 <router-view ref="router" @changeRightTitle="changeRightTitle"/>
@@ -54,21 +54,21 @@
             }
         },
         methods: {
-            rightBtnEvent(){
-                if(this.meta.rightTitle||this.meta.rightIcon){
-                    if(this.$refs.router.editEvent){
-                        this.$refs.router.editEvent(); //调用子组件方法
+            rightBtnEvent() {
+                if (this.meta.rightTitle || this.meta.rightIcon) {
+                    if (this.$refs.router.editEvent) {
+                        this.$refs.router.editEvent() //调用子组件方法
                     }
                 }
             },
-            leftBtnEvent(){
-                if(this.meta.back){
-                    if(this.$refs.router.leftBtnEvent){
-                        this.$refs.router.leftBtnEvent(); //调用子组件方法
+            leftBtnEvent() {
+                if (this.meta.back) {
+                    if (this.$refs.router.leftBtnEvent) {
+                        this.$refs.router.leftBtnEvent() //调用子组件方法
                     }
                 }
             },
-            getMeta(){
+            getMeta() {
                 return {
                     title: this.$route.meta.title,
                     back: this.$route.meta.back ? this.$route.meta.back : false,
@@ -95,10 +95,10 @@
             if (ci == 0) {
                 time1 = new Date().getTime()
                 ci = 1
-                This.$Message.info("再按一次返回键退出");
+                This.$Message.info('再按一次返回键退出')
             }
             else if (ci == 1) {
-                time2 = new Date().getTime();
+                time2 = new Date().getTime()
                 if (time2 - time1 < 3000) {
                     api.closeWidget({
                         id: api.appId,
@@ -107,9 +107,10 @@
                         },
                         silent: true
                     })
-                }else {
-                    ci = 0;
-                    This.$Message.info("再按一次返回键退出");
+                }
+                else {
+                    ci = 0
+                    This.$Message.info('再按一次返回键退出')
 //                    api.toast({msg:'再按一次返回键退出'});
                 }
             }
@@ -119,6 +120,7 @@
 </script>
 <style lang="scss">
     @import "./style/common.scss";
+    
     .view-container {
         overflow: hidden;
         > div:nth-child(1) {
