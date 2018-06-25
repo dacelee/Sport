@@ -1,9 +1,5 @@
 <template>
     <div class="create-club">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-             创建俱乐部
-        </l-head>
         <div class="select-upload" @click="toHome">
             <div class="upload-box text-center">
                 <l-icon name="shangchuantouxiang"/>

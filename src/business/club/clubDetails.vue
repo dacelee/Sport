@@ -1,10 +1,5 @@
 <template>
     <div class="clubDetails">
-        <l-head>
-        <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-             俱乐部详情
-           <div class="btn text-white" slot="right-item" @click="publishActivity">发布活动</div>
-        </l-head>
         <div class="clubDetails-head-info">
             <div class="left-head-photo pull-left">
                 <img :src="headPhoto" alt="">
@@ -85,9 +80,9 @@ let _this
             goToPage(router) {
                this.$router.push(router)
             },
-            publishActivity() {
+            editEvent(){
                 _this.$router.push('publishActivity')
-            }
+            },
         },
         mounted() {
             _this = this

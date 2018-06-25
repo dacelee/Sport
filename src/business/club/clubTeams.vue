@@ -1,9 +1,5 @@
 <template>
     <div class="clubTeams">
-        <l-head>
-             成员
-            <div class="btn text-white" slot="right-item" @click="createClub">删除成员</div>
-        </l-head>
         <div class="search-area">
             <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
         </div>
@@ -91,9 +87,6 @@ let _this
             reset() {
                 console.log(this.filterName)
             },
-            createClub() {
-                _this.$router.push('createClub')
-            },
             toDetails(item) {
                 let _this = this
                 _this.$router.push({name: 'clubDetails', params: {id: item.id}})
@@ -170,13 +163,15 @@ let _this
                             color: #999999;
                             margin-top: 20px;
                             .activity-count {
-                                margin-left: 40px;
+                                margin-left: 30px;
                             }
-                            .chengyuan-people{margin-right:40px;}
+                            .chengyuan-people{margin-right:30px;}
                             .already{margin-left: 40px;color:#F8C513}
                         }
                     }
                     .right-deletes {
+                        position:absolute;
+                        right:10%;
                         width: 40px;
                         margin-left: 0;
                         .icons {

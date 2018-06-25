@@ -1,9 +1,5 @@
 <template>
     <div class="publishActivity">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('activityList')" slot="left-item"/>
-             发布活动
-        </l-head>
         <div class="club-item mt-20">
             <div class="left-label pull-left">名称</div>
             <div class="right-input pull-left">
