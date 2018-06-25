@@ -1,10 +1,5 @@
 <template>
     <div class="businessCart">
-        <l-head>   
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-            购物车 
-            <l-icon name="gouwuche" slot="right-item"/>
-        </l-head>
        <div class="cartPic"><img src="static/img/goods/44.gif"></div>
        <div class="wordPic">
          <div class="smallPic pull-left"><img src="static/img/goods/44.gif"></div>

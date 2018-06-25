@@ -1,9 +1,5 @@
 <template>
     <div class="businessSettlement">
-        <l-head>
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-             结算 S
-        </l-head>  
       <div class="SettlementList" v-for="item in list">
         <div class="icon pull-left"><l-icon name="gouxuan"/></div>
        <div class="wordPic pull-right">
