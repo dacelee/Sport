@@ -1,18 +1,9 @@
 <template>
     <div class="businessProduct">
-        <l-head>
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-            跑鞋
-            <l-icon name="gouwuche" slot="right-item"/>
-        </l-head>  
-        <div class="head-menu">
-            <div class="head-menu-item text-center" v-for="item in menuList">
-                <div class="head-menu-label" >{{ item.name }}</div>
-            </div>
-        </div>
+        <l-tabs :list="menuList" :current="status" @change="changeRoute"/>
        
         <div class="recommend-goods-list">
-            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail">
+            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="showDetails(item)">
                 <div class="recommend-goods-img">
                     <img :src="item.imgPath" alt="">
                 </div>
@@ -30,21 +21,22 @@ let _this
         data() {
             return {
                 router: 'businessProduct',
+                status: 'all',
                 menuList: [
                     {
-                        
+                        id: 'all',
                         name: '综合排序'
                     },
                     {
-                        
+                        id: 'new',
                         name: '最新商品'
                     },
                     {
-                       
+                       id: 'priceLow',
                         name: '价格最低'
                     },
                     {
-                        
+                        id: 'priceHigh',
                         name: '价格最高'
                     }
                 ],
@@ -73,12 +65,19 @@ let _this
             }
         },
         methods: {
-            businessDetail() {
-                _this.$router.push('businessDetail')
+            showDetails(data) {
+                this.$router.push({name: 'businessProduct', params: {id: data.id}})
+            },
+            changeRoute(res) {
+                this.status = res
             }
         },
         mounted() {
             _this = this
+            this.$nextTick(function () {
+                let height = $('.view-container').height()
+                $(_this.$el).css('min-height', height)
+            })
         }
     }
 </script>
@@ -140,6 +139,11 @@ let _this
                     text-overflow: ellipsis;
                     white-space: nowrap;
                 }
+            }
+             .status {
+                font-size: 30px;
+                line-height: 120px;
+                color: #F5A623;
             }
         }
         .recommend-goods-item:nth-child(even) {

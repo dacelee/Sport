@@ -1,9 +1,5 @@
 <template>
     <div class="businessAddress">
-        <l-head>
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-             选择收货地址 
-        </l-head>
         <div class="addressMsg" v-for="item in list">
        <div class="address">
            <p>{{ item.name }}</p>

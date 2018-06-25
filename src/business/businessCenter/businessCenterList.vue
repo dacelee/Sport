@@ -1,9 +1,5 @@
 <template>
     <div class="business-center-list">
-        <l-head>
-              S商圈  
-            <l-icon name="gouwuche" slot="right-item"/>
-        </l-head>
         <div class="head-menu">
             <div class="head-menu-item text-center" v-for="item in menuList" 
             @click="businessProduct">

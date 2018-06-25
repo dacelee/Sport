@@ -1,10 +1,5 @@
 <template>
     <div class="clubCertification">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('createClubSuccess')" slot="left-item"/>
-             实体店认证
-        </l-head>
-
         <div class="select-upload" @click="toHome">
          <h4 class="title">营业执照</h4>
             <div class="upload-box text-center">
@@ -75,7 +70,7 @@ let _this
         background-color:#33333a;
         padding:10px 0  30px 0;
         margin-bottom:40px;
-        .title{padding-left:30px;font-size:30px;color:#999}
+        .title{padding-left:30px;font-size:30px;color:#999;padding:15px 30px;}
         .upload-box{ 
             background-color:#25252B;
             width:auto;
@@ -97,7 +92,7 @@ let _this
             }
      }
      .select-pic {
-        .title{font-size:30px;color:#999}
+        .title{font-size:30px;color:#999;padding:15px 0;}
         margin-bottom:0;
         margin-top:20px;
         background-color: #33333a;

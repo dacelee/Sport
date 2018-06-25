@@ -1,9 +1,5 @@
 <template>
     <div class="businessAddressAdd">
-        <l-head>  
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-            新增收货地址 
-        </l-head>
         <div class="add-item">
             <div class="left-label pull-left">收货人</div>
             <div class="right-input pull-left">

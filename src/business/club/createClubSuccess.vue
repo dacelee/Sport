@@ -1,9 +1,5 @@
 <template>
     <div class="createClubSuccess">
-        <l-head>
-            <l-icon name="fanhui" @click.native="$router.push('club')" slot="left-item"/>
-             创建成功
-        </l-head>
        <div class='createClubSuccess-top'>
            <l-icon name="chenggong" class="text-center"/>
            <div class="label text-center">恭喜，俱乐部创建成功</div>

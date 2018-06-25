@@ -1,11 +1,5 @@
 <template>
     <div class="businessDetail">
-        <l-head>
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-            商品详情    
-            <l-icon name="gouwuche" slot="right-item"/>
-        </l-head>
-        
        <div class="detailPic"><img src="static/img/goods/44.gif"></div>
        <div class="detailTitle">夏季低帮篮球鞋男鞋鸳鸯4 音速驭帅11运</div>
        <div class="goods-price">￥200</div>

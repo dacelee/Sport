@@ -1,10 +1,5 @@
 <template>
-    <div class="businessOrder">
-        <l-head>
-         <l-icon name="fanhui" @click.native="$router.push('businessCenter')" slot="left-item"/>
-            提交订单
-            <l-icon name="gouwuche" slot="right-item"/>
-        </l-head>  
+    <div class="businessOrder"> 
        <div class="address">
          <div class="pull-left juli"><l-icon name="juli1"/></div>
          <div class="pull-left msg">
