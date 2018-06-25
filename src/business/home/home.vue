@@ -64,7 +64,7 @@
                 stepNum: 0,
                 stepHeat: 0,
                 rewardNum: '0',
-                vipLevel: 'Lv0',
+                vipLevel: '0',
                 activity: 0,
                 totalReward: 0,
                 contribution: 0,
