@@ -26,6 +26,14 @@ import editBankCard from '@/business/personalCenter/editBankCard.vue'
 import editAliPayForm from '@/business/personalCenter/editAliPayForm.vue'
 import faceRecognition from '@/business/personalCenter/faceRecognition.vue'
 import identityInformation from '@/business/personalCenter/identityInformation.vue'
+import transaction from '@/business/personalCenter/transaction.vue'
+import transactionDetails from '@/business/personalCenter/transactionDetails.vue'
+import paySuccess from '@/business/personalCenter/paySuccess.vue'
+import orderCenter from '@/business/personalCenter/orderCenter.vue'
+import orderDetails from '@/business/personalCenter/orderDetails.vue'
+import addressManage from '@/business/PersonalCenter/addressManage.vue'
+import teamManage from '@/business/personalCenter/teamManage.vue'
+import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import businessProduct from '@/business/businessCenter/businessProduct.vue'
 import businessDetail from '@/business/businessCenter/businessDetail.vue'
@@ -525,6 +533,78 @@ export default new Router({
             component: identityInformation,
             meta: {
                 title: '身份信息',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/transaction',
+            name: 'transaction',
+            component: transaction,
+            meta: {
+                title: '商圈交易',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/transactionDetails/:id',
+            name: 'transactionDetails',
+            component: transactionDetails,
+            meta: {
+                title: '订单信息',
+                back: '/transaction'
+            }
+        },
+        {
+            path: '/paySuccess',
+            name: 'paySuccess',
+            component: paySuccess,
+            meta: {
+                title: '支付成功',
+                back: '/transaction'
+            }
+        },
+        {
+            path: '/orderCenter',
+            name: 'orderCenter',
+            component: orderCenter,
+            meta: {
+                title: '商圈订单',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/orderDetails/:id',
+            name: 'orderDetails',
+            component: orderDetails,
+            meta: {
+                title: '订单详情',
+                back: '/orderCenter'
+            }
+        },
+        {
+            path: '/addressManage',
+            name: 'addressManage',
+            component: addressManage,
+            meta: {
+                title: '收货地址',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/teamManage',
+            name: 'teamManage',
+            component: teamManage,
+            meta: {
+                title: '我的团队',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/teamRecruitment',
+            name: 'teamRecruitment',
+            component: teamRecruitment,
+            meta: {
+                title: '团队招募',
                 back: '/personalCenter'
             }
         },
