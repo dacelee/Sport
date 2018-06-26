@@ -31,6 +31,7 @@ import transactionDetails from '@/business/personalCenter/transactionDetails.vue
 import paySuccess from '@/business/personalCenter/paySuccess.vue'
 import orderCenter from '@/business/personalCenter/orderCenter.vue'
 import orderDetails from '@/business/personalCenter/orderDetails.vue'
+import logistics from '@/business/personalCenter/logistics.vue'
 import addressManage from '@/business/PersonalCenter/addressManage.vue'
 import teamManage from '@/business/personalCenter/teamManage.vue'
 import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
@@ -578,6 +579,15 @@ export default new Router({
             component: orderDetails,
             meta: {
                 title: '订单详情',
+                back: '/orderCenter'
+            }
+        },
+        {
+            path: '/logistics/:id',
+            name: 'logistics',
+            component: logistics,
+            meta: {
+                title: '物流信息',
                 back: '/orderCenter'
             }
         },

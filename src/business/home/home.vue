@@ -33,7 +33,7 @@
             <div class="reward-info text-center">奖励糖果:{{ rewardNum }}</div>
             <div class="user-basic-info">
                 <div class="text-center user-basic-info-list">
-                    <div class="basic-info-value isVip">{{ 'Lv.'+vipLevel }}</div>
+                    <div class="basic-info-value isVip">{{ vipLevel }}</div>
                     <div class="basic-info-label">会员等级</div>
                 </div>
                 <div class="text-center user-basic-info-list">
