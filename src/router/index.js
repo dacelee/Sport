@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import Router from 'vue-router' 
 import home from '@/business/home/home.vue'
 import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
