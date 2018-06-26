@@ -173,7 +173,7 @@ export default new Router({
                 rightIcon: 'gouwuche'
             }
         },
-	{
+        {
             path: '/businessProduct',
             name: 'businessProduct',
             component: businessProduct,
