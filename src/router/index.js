@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Router from 'vue-router' 
+import Router from 'vue-router'
 import home from '@/business/home/home.vue'
 import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
@@ -242,7 +242,7 @@ export default new Router({
             component: club,
             meta: {
                 title: '俱乐部',
-                rightTitle: '创建'
+                rightTitle: '创建',
             }
         },
         {
@@ -251,7 +251,7 @@ export default new Router({
             component: imageClip,
             meta: {
                 title: '裁剪图片',
-                back:'-1'
+                back: '-1'
             }
         },
         {
@@ -260,7 +260,7 @@ export default new Router({
             component: createClub,
             meta: {
                 title: '创建俱乐部',
-                back:'/club',
+                back: '/club',
             }
         },
         {
@@ -278,7 +278,7 @@ export default new Router({
             component: clubCertification,
             meta: {
                 title: '实体店认证',
-                back:"-1"
+                back: '-1'
             }
         },
         {
@@ -287,7 +287,7 @@ export default new Router({
             component: clubCertificationSuccess,
             meta: {
                 title: '实体店认证成功',
-                back:"-1"
+                back: '-1'
             }
         },
         {
@@ -296,8 +296,8 @@ export default new Router({
             component: clubDetails,
             meta: {
                 title: '俱乐部详情',
-                back:'/club',
-                rightTitle:'发布活动'
+                back: '/club',
+                rightTitle: '发布活动'
             }
         },
         {
@@ -316,7 +316,7 @@ export default new Router({
             meta: {
                 title: '活动',
                 back: '-1',
-                rightTitle:'发布活动'
+                rightTitle: '发布活动'
             }
         },
         {
@@ -325,7 +325,7 @@ export default new Router({
             component: publishActivity,
             meta: {
                 title: '发布活动',
-                back:'-1'
+                back: '-1'
             }
         },
         {
