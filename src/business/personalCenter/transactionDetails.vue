@@ -169,7 +169,7 @@
             .title {
                 padding: 0 30px;
                 margin: 25px 0 25px;
-                font-size: 42px;
+                font-size: 30px;
                 line-height: 42px;
                 display: flex;
                 justify-content: space-between;
