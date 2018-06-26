@@ -179,7 +179,8 @@ export default new Router({
             name: 'businessProduct',
             component: businessProduct,
             meta: {
-                title: '商圈产品'
+                title: '商圈产品',
+                back: 'businessCenter'
             }
         },
         {
@@ -187,7 +188,8 @@ export default new Router({
             name: 'businessDetail',
             component: businessDetail,
             meta: {
-                title: '产品详情'
+                title: '产品详情',
+                back: 'businessProduct'
             }
         },
         {
@@ -195,7 +197,8 @@ export default new Router({
             name: 'businessCart',
             component: businessCart,
             meta: {
-                title: '加入购物车'
+                title: '加入购物车',
+                 back: 'businessDetail'
             }
         },
         {
@@ -203,7 +206,8 @@ export default new Router({
             name: 'businessSettlement',
             component: businessSettlement,
             meta: {
-                title: '结算'
+                title: '结算',
+                 back: 'businessCart'
             }
         },
         {
@@ -211,7 +215,8 @@ export default new Router({
             name: 'businessOrder',
             component: businessOrder,
             meta: {
-                title: '提交订单'
+                title: '提交订单',
+                back: 'businessSettlement'
             }
         },
         {
@@ -219,7 +224,8 @@ export default new Router({
             name: 'businessAddress',
             component: businessAddress,
             meta: {
-                title: '选择收货地址'
+                title: '选择收货地址',
+                back: 'businessOrder'
             }
         },
         {
@@ -227,7 +233,8 @@ export default new Router({
             name: 'businessAddressAdd',
             component: businessAddressAdd,
             meta: {
-                title: '新增收货地址'
+                title: '新增收货地址',
+                 back: 'businessAddress'
             }
         },
         {
@@ -236,7 +243,7 @@ export default new Router({
             component: club,
             meta: {
                 title: '俱乐部',
-                rightTitle: '创建'
+                rightTitle: '创建',
             }
         },
         {
@@ -263,7 +270,7 @@ export default new Router({
             component: createClubSuccess,
             meta: {
                 title: '创建成功',
-                back: '/-1',
+                back:'/club'
             }
         },
         {
@@ -299,7 +306,8 @@ export default new Router({
             name: 'clubTeams',
             component: clubTeams,
             meta: {
-                title: '成员'
+                title: '成员',
+                back:'/clubDetails',
             }
         },
         {
