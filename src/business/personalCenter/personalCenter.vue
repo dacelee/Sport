@@ -104,7 +104,7 @@
                         icons: 'shangquandingdan'
                     },
                     {
-                        id: 'addressManage',
+                        id: 'addressInfo',
                         name: '收货地址',
                         icons: 'shouhuodizhi'
                     }

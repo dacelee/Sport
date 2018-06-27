@@ -42,6 +42,22 @@
                     border: none;
                     width: 100%;
                 }
+                input::placeholder {
+                    line-height: 38px;
+                    font-size: 28px;
+                }
+                input:-moz-placeholder {
+                    line-height: 38px;
+                    font-size: 28px;
+                }
+                input:-ms-input-placeholder {
+                    line-height: 38px;
+                    font-size: 28px;
+                }
+                input::-webkit-input-placeholder {
+                    line-height: 38px;
+                    font-size: 28px;
+                }
             }
             .btn {
                 background-color: #F8C513;
