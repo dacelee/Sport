@@ -28,11 +28,14 @@ import faceRecognition from '@/business/personalCenter/faceRecognition.vue'
 import identityInformation from '@/business/personalCenter/identityInformation.vue'
 import transaction from '@/business/personalCenter/transaction.vue'
 import transactionDetails from '@/business/personalCenter/transactionDetails.vue'
+import appeal from '@/business/personalCenter/appeal.vue'
 import paySuccess from '@/business/personalCenter/paySuccess.vue'
 import orderCenter from '@/business/personalCenter/orderCenter.vue'
 import orderDetails from '@/business/personalCenter/orderDetails.vue'
 import logistics from '@/business/personalCenter/logistics.vue'
-import addressManage from '@/business/PersonalCenter/addressManage.vue'
+import addressInfo from '@/business/personalCenter/addressInfo.vue'
+import addressOperation from '@/business/personalCenter/addressOperation.vue'
+import userGuide from '@/business/personalCenter/userGuide.vue'
 import teamManage from '@/business/personalCenter/teamManage.vue'
 import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
@@ -198,7 +201,7 @@ export default new Router({
             component: businessCart,
             meta: {
                 title: '加入购物车',
-                 back: 'businessDetail'
+                back: 'businessDetail'
             }
         },
         {
@@ -207,7 +210,7 @@ export default new Router({
             component: businessSettlement,
             meta: {
                 title: '结算',
-                 back: 'businessCart'
+                back: 'businessCart'
             }
         },
         {
@@ -234,7 +237,7 @@ export default new Router({
             component: businessAddressAdd,
             meta: {
                 title: '新增收货地址',
-                 back: 'businessAddress'
+                back: 'businessAddress'
             }
         },
         {
@@ -270,7 +273,7 @@ export default new Router({
             component: createClubSuccess,
             meta: {
                 title: '创建成功',
-                back:'/club'
+                back: '/club'
             }
         },
         {
@@ -307,7 +310,7 @@ export default new Router({
             component: clubTeams,
             meta: {
                 title: '成员',
-                back:'/clubDetails',
+                back: '/clubDetails',
             }
         },
         {
@@ -564,6 +567,15 @@ export default new Router({
             }
         },
         {
+            path: '/appeal:id',
+            name: 'appeal',
+            component: appeal,
+            meta: {
+                title: '申诉',
+                back: '/transaction'
+            }
+        },
+        {
             path: '/paySuccess',
             name: 'paySuccess',
             component: paySuccess,
@@ -600,12 +612,30 @@ export default new Router({
             }
         },
         {
-            path: '/addressManage',
-            name: 'addressManage',
-            component: addressManage,
+            path: '/addressInfo',
+            name: 'addressInfo',
+            component: addressInfo,
             meta: {
                 title: '收货地址',
                 back: '/personalCenter'
+            }
+        },
+        {
+            path: '/addressOperation/:id',
+            name: 'addressOperation',
+            component: addressOperation,
+            meta: {
+                title: '收货地址管理',
+                back: '/addressInfo'
+            }
+        },
+        {
+            path: '/userGuide',
+            name: 'userGuide',
+            component: userGuide,
+            meta: {
+                title: '新手指引',
+                back: '/personalSetting'
             }
         },
         {

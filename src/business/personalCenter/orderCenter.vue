@@ -1,7 +1,7 @@
 <template>
     <div class="order-center">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
-        <div class="order-list-item" v-for="item in list">
+        <div class="order-list-item" v-for="item in list" @click="showDetails(item.id)">
             <div class="order-goods-info">
                 <div class="order-goods-details">
                     <div class="goods-img">
@@ -23,7 +23,7 @@
                 <div class="operation-btn">
                     <div class="status">{{ item.status }}</div>
                     <div class="btn-area">
-                        <div class="btn">查看物流</div>
+                        <div class="btn" @click.stop="showLogistics(item.id)">查看物流</div>
                         <div class="btn btn-confirm">确认收货</div>
                     </div>
                 </div>
@@ -59,6 +59,7 @@
                 ],
                 list: [
                     {
+                        id: 1,
                         imgPath: '/static/img/goods/1.jpg',
                         name: '夏季鸳鸯4音速驭帅运动鞋',
                         unitPrice: '100',
@@ -68,6 +69,7 @@
                         status: '待收货'
                     },
                     {
+                        id: 2,
                         imgPath: '/static/img/goods/1.jpg',
                         name: '夏季鸳鸯4音速驭帅运动鞋',
                         unitPrice: '100',
@@ -82,6 +84,12 @@
         methods: {
             changeRoute(res) {
                 _this.status = res
+            },
+            showDetails(id) {
+                _this.$router.push({name: 'orderDetails', params: {id: id}})
+            },
+            showLogistics(id) {
+                _this.$router.push({name: 'logistics', params: {id: id}})
             }
         },
         mounted() {
@@ -111,7 +119,7 @@
                     display: flex;
                     justify-content: space-between;
                     padding: 25px 25px 25px;
-                    border-bottom: 1px solid #666666;
+                    margin-bottom: 2px;
                     .goods-img {
                         width: 210px;
                         height: 210px;
@@ -156,7 +164,7 @@
                 padding: 30px 25px 30px;
                 display: flex;
                 justify-content: space-between;
-                border-bottom: 1px solid #666666;
+                margin-bottom: 2px;
             }
             .operation-btn {
                 display: flex;
