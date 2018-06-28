@@ -67,7 +67,6 @@
         },
         data () {
             return {
-                context:"",
                 uploadFile:"",
                 progressStatus:"active",
                 uploadList: [],
@@ -125,10 +124,12 @@
                                     clipW = _this.width*(clipW/oldH)
                                 }
                             }
+                            var  context = "listener_"+Date.now() + _this.tempIndex++;
+                            _this.listener(context);
                             _this.$router.push({
                                 name: 'imageClip',
                                 params:{"base64": ret.base64Data},
-                                query: {"context": _this.context,"width":clipW,"height":clipH}
+                                query: {"context": context,"width":clipW,"height":clipH}
                             });
                         } else {
 //                            _this.$Message.error("获取图片失败");
@@ -136,12 +137,15 @@
                     });
                 }
             },
-            listener(){
+            listener(context){
                 var _this = this;
                 if (this.session.isAPPRuntime()) {
                     api.addEventListener({
-                        name: 'clip_success_'+ _this.context
+                        name: 'clip_success_'+ context
                     }, function (ret, err) {
+                        api.removeEventListener({
+                            name: 'clip_success_'+ context
+                        });
                         if (ret) {
                             var base64 = ret.value.base64;
                             _this.uploadFile = {url: base64, showProgress: true, percentage: 0,status:"",error:""}
@@ -187,13 +191,6 @@
                     });
                 }
             }
-        },
-        created (){
-//            var uploadFile = {url: 1, showProgress: true, percentage: 0,status:""}
-//            uploadFile.error = "上传出错";
-//            this.uploadList.push(uploadFile);
-             this.context = "listener_"+Date.now() + this.tempIndex++;
-             this.listener();
         }
     }
 </script>

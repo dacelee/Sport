@@ -79,12 +79,13 @@
                 });
             },
             join(id){
-                var memberid = this.session.getMemberID();
-                this.axios.post(this.session.nearReam, {"memberid":memberid,"teamid":id}, function (json) {
-                    _this.$Message.info(json.msg);
-                },function(json){
-                    _this.$Message.error(json.msg);
-                });
+               this.session.getMemberID(function(memberid){
+                   _this.axios.post(_this.session.nearReam, {"memberid":memberid,"teamid":id}, function (json) {
+                       _this.$Message.info(json.msg);
+                   },function(json){
+                       _this.$Message.error(json.msg);
+                   });
+               });
             }
         }
     }

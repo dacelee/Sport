@@ -212,6 +212,7 @@
 
 <style lang="scss">
     .trading-center-list {
+        padding-bottom:120px;
         .head-title {
             height: 80px;
             line-height: 80px;

@@ -1,14 +1,24 @@
 <template>
-    <div class="basic-information">
-        <div class="basic-information-item" @click="item.route ? changePage(item) : ''" v-for="item in list"
+    <div class="basic-information ">
+        <div class="basic-information-item isImg">
+            <div class="label">头像</div>
+            <div class="right">
+                <div class="photo" >
+                    <img :src="baseData.photos" alt="">
+                    <l-imageUpload   :limit="1"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
+                </div>
+                <l-icon name="fanhui"/>
+            </div>
+        </div>
+        <div class="basic-information-item" @click="changePage(item)" v-for="item in list"
              :class="{'split':item.split,'isImg':item.imgPath}">
             <div class="label">{{ item.name }}</div>
             <div class="right">
                 <div class="photo" v-if="item.imgPath">
                     <img :src="item.imgPath" alt="">
                 </div>
-                <div class="value" v-if="item.value">{{ item.value }}</div>
-                <div class="value" v-if="item.isSex">{{ currentSex.name}}</div>
+                <div class="value" >{{ showBaseData(item.base) }}</div>
+                <!--<div class="value" v-if="item.isSex">{{ currentSex.name}}</div>-->
                 <l-icon name="fanhui" v-if="item.showIcons"/>
             </div>
         </div>
@@ -17,14 +27,19 @@
 </template>
 
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'basic-information',
         data() {
             return {
                 showSexSelect: false,
-                currentSex: {
-                    id: 1,
-                    name: '帅哥'
+                baseData:{
+                    photos: '/static/img/personal/default.jpg',
+                    sex:"",
+                    id: '12031203213',
+                    nikename:"",
+                    personality:"",
+                    wxpay:"",
                 },
                 sexList: [
                     {
@@ -38,58 +53,68 @@
                 ],
                 list: [
                     {
-                        name: '头像',
-                        imgPath: '/static/img/personal/default.jpg',
-                        route: 'changeHead',
-                        showIcons: true
-                    },
-                    {
                         name: 'ID',
-                        value: '12031203213',
+                        base:"id",
                     },
                     {
                         name: '昵称',
                         showIcons: true,
-                        route: 'editNick',
+                        base:"nikename",
                         split: true
                     },
                     {
                         name: '个性签名',
                         showIcons: true,
-                        route: 'editSignature'
+                        base:"personality",
                     },
                     {
                         name: '性别',
                         showIcons: true,
-                        route: 'selectSex',
+                        base:"sex",
                         isSex: true
                     },
                     {
                         name: '微信号',
                         showIcons: true,
-                        route: 'editWeChat',
+                        base:"wxpay",
                         split: true
-                    },
-                    {
-                        name: '支付宝号',
-                        showIcons: true,
-                        route: 'editAliPay',
                     }
                 ]
             }
+        },
+        activated(){
+            this.loadData();
         },
         methods: {
             changeSex(data) {
                 this.currentSex = data
                 this.showSexSelect = false
+                this.baseData.sex = data.name;
+                users.editInfo(this, "sex", data.name,true);
             },
             changePage(data) {
+                if(data.base=="id"){
+                    return;
+                }
                 if (data.isSex) {
                     this.showSexSelect = true
+
                 }
                 else {
-                    this.$router.push(data.route)
+                    var val = eval("this.baseData."+data.base)?eval("this.baseData."+data.base):"";
+                    this.$router.push({name:"editField",query:{name:data.name,"base":data.base,"val":val}})
                 }
+            }, showBaseData(base){
+                return eval("this.baseData."+base)?eval("this.baseData."+base):"";
+            },loadData(){
+                users.myInfo(this);
+            }
+            ,uploadPhotosSuccess(res){
+                this.baseData.photos = res;
+                users.editInfo(this, "logo", res,true);
+            },
+            removePhotos(res){
+                this.baseData.photos = res;
             }
         }
     }
@@ -127,6 +152,7 @@
                     margin-top: 65px;
                 }
             }
+            .photo{position: relative;}
             .value {
                 color: #ffffff;
             }

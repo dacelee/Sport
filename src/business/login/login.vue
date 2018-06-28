@@ -55,17 +55,13 @@
                                 _this.$Message.info(json.msg);
                                 var user = json.data;
                                 _this.session.loginSuccess(user);
-                                //开启计步
-                                if(this.session.isAPPRuntime()){
-                                    this.appUtil.pedometer();
-                                }
-                                this.$router.replace('/')
+                                _this.$router.replace('/')
                             }, function (json) {
-                                console.log(json);
+//                                console.log(json);
 //                                mui.toast(json.msg);
                                 _this.$Message.error(json.msg);
-                                _this.session.loginSuccess(true);
-                                _this.$router.replace('/')
+//                                _this.session.loginSuccess(true);
+//                                _this.$router.replace('/')
                             });
                     return;
                 }

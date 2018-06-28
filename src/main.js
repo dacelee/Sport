@@ -20,7 +20,7 @@ Vue.prototype.appUtil = appUtil
 Vue.config.productionTip = false
 Vue.use(component)
 import {Message,Icon,Progress,Scroll,Spin} from 'iview';
-import 'iview/dist/styles/iview.css'
+import './style/iview_theme.less'
 Message.config({
     top: 'auto'
 });
@@ -48,11 +48,12 @@ new Vue({
     mounted() {
         //登录检测
         if(!this.session.isLogin()){
-            this.$router.push({
-                name: 'login'
-            })
+            this.$router.push('login');
             return;
         }
+        //this.$router.push({
+        //    name: 'home'
+        //})
         if (this.$router.history.current.name) {
             // 初始化时判断是否存在路由信息,如果不存在路由信息,则跳转至首页
             if (this.$router.history.current.path === '/') {

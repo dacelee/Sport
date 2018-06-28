@@ -1,7 +1,6 @@
 <template>
     <div class="all-task">
         <div class="task-info-list">
-            <Scroll :on-reach-top="handleReachTop">
                 <div class="task-list-item task-list-piece" v-for="item in list">
                     <div class="task-head-info">
                         <div class="task-list-name">{{ item.name }}</div>
@@ -16,7 +15,6 @@
                         <div class="task-details-btn" @click="buy(item.id)">兑换</div>
                     </div>
                 </div>
-            </Scroll>
         </div>
     </div>
 
@@ -63,24 +61,14 @@
 
                 });
             },
-            handleReachTop () {
-//                return new Promise(resolve => {
-//                    setTimeout(() => {
-//                    const first = this.list2[0];
-//                    for (let i = 1; i < 11; i++) {
-//                        this.list.unshift(first - i);
-//                    }
-//                    resolve();
-//                }, 2000);
-//            });
-            },
             buy(id){
-                var memberid = _this.session.getMemberID();
-                this.axios.get(this.session.buyTask, {"memberid":memberid,"taskid":id}, function (json) {
-                    mui.toast(json.msg);
-                },function(json){
-                    _this.$Message.error(json.msg);
-                });
+               this.session.getMemberID(function(memberid){
+                   _this.axios.get(_this.session.buyTask, {"memberid":memberid,"taskid":id}, function (json) {
+                       _this.$Message.info(json.msg);
+                   },function(json){
+                       _this.$Message.error(json.msg);
+                   });
+               });
             }
         }
     }
