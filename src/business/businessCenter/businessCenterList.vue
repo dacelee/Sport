@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="recommend-goods-list">
-            <div class="recommend-goods-item pull-left" v-for="item in recommendList">
+            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail" >
                 <div class="recommend-goods-img">
                     <img :src="item.imgPath" alt="">
                 </div>
@@ -81,7 +81,14 @@
         }, methods: {
             businessProduct() {
                 this.$router.push('businessProduct')
+
+            },
+            businessDetail() {
+                this.$router.push('businessDetail')
             }
+
+            }
+
         }
     }
 </script>
