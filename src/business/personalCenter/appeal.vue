@@ -127,9 +127,7 @@
             }
         }
         .btn {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            margin-top: 30px;
             background-color: #f8c513;
             color: #333333;
             text-align: center;

@@ -8,7 +8,7 @@
                 <l-icon name="fanhui" v-if="!item.value || item.value === ''"/>
             </div>
         </div>
-        <div class="btn">提交</div>
+        <div class="btn" @click="faceRecognition">提交</div>
     </div>
 </template>
 
@@ -55,6 +55,9 @@
         methods: {
             changePage(route) {
                 this.$router.push(route)
+            },
+            faceRecognition() {
+                this.$router.push('/faceRecognition')
             }
         }
     }
