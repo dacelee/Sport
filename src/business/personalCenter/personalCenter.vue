@@ -48,6 +48,7 @@
 </template>
 
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'personal-center',
         data() {
@@ -59,17 +60,17 @@
                 description: '菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.',
                 basicList: [
                     {
-                        value: 2,
+                        value: 0,
                         label: '会员等级',
                         route: 'vipLevel'
                     },
                     {
-                        value: 24,
+                        value: 0,
                         label: '活跃度',
                         route: 'activityRecords'
                     },
                     {
-                        value: 2600,
+                        value: 0,
                         label: '贡献值',
                         route: 'contributionRecords'
                     }
@@ -122,6 +123,8 @@
                     }
                 ]
             }
+        },activated () {
+           this.loadMyInfo();
         },
         methods: {
             toDetailsPage(route) {
@@ -129,6 +132,19 @@
             },
             editEvent() {
                 this.$router.push('/personalSetting')
+            },
+            loadMyInfo(){
+                var _this=  this;
+                users.getCacheMyInfo(this,function(data){
+                    _this.headPhoto = data.logo;
+                    _this.userName = data.nikename;
+                    _this.idNum = data.id;
+                    _this.description = data.personality;
+                    _this.basicList[0].value= data.memberlevel;
+                    _this.basicList[1].value= data.activity;
+                    _this.basicList[2].value= data.isrealauth;
+                    _this.candyNum =  data.cointotal;
+                });
             }
         }
     }
@@ -136,6 +152,7 @@
 
 <style lang="scss">
     .personalCenter {
+        padding-bottom:120px;
         overflow: hidden;
         background-color: #25252B;
         .personalCenter-head-info {

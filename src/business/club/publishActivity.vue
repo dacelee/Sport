@@ -13,12 +13,13 @@
             </div>
         </div>
         <div class="select-pic text-center">
-                <div class="upload-box">
-                  <div class="upload-pic">
-                   <l-icon name="shangchuantupian"/>
-                  </div>
-                <div class="select-upload-label">上传图片 0/1</div>
-                </div>
+            <!--<div class="upload-box">-->
+                <!--<div class="upload-pic">-->
+                    <!--<l-icon name="shangchuantupian"/>-->
+                <!--</div>-->
+                <!--<div class="select-upload-label">上传图片 0/1</div>-->
+            <!--</div>-->
+            <l-imageUpload   :limit="4"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
         </div>
         <div class="save-btn text-center" >发布</div>
     </div>
@@ -29,8 +30,18 @@ let _this
     export default {
         name: 'publishActivity',
         methods: {
-            reset() {
-                console.log(this.filterName)
+            publish() {
+                if(!this.$verify.check()){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    this.$Message.error({content:errMsg});
+                }else {
+                    let _this = this;
+                    this.formData.clubid = this.$route.query.id;
+                    this.session.getMemberID(function (memberid) {
+                        _this.formData.adminid = memberid;
+                        club.addArticle(_this, _this.formData);
+                    });
+                }
             },
         },
         mounted() {

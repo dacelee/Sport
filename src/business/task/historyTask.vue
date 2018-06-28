@@ -63,33 +63,33 @@
             this.loadTask();
         },methods:{
             loadTask(){
-                var memberid= this.session.getMemberID();
-                this.axios.post(this.session.historyTask, {"memberid":memberid}, function (json) {
-                    var data = [];
-                    $(json.dataList).each(function(index,item){
-                        data.push(
-                                {
-                                    id:item.id,
-                                    name: item.name,
-                                    currentStep:  item.name,
-                                    targetStep: item.steps,
-                                    activity: item.activity,
-                                    hanselActivity: item.activityadd,
-                                    needSugar: item.coinprice,
-                                    rewardSugar: item.coinget,
-                                    hanselSugar: 0,
-                                    dateTime: _this.appUtil.dateFormat(itme.begintime,"yyyy.MM.dd")+"-"+
-                                    _this.appUtil.dateFormat(itme.endtime,"yyyy.MM.dd"),
-                                    code: '—'
-                                }
-                        );
-                    })
-                    _this.list = data;
-                },function(json){
-                    _this.$Message.error(json.msg)
+                this.session.getMemberID(function(memberid){
+                    _this.axios.post(_this.session.historyTask, {"memberid":memberid}, function (json) {
+                        var data = [];
+                        $(json.dataList).each(function(index,item){
+                            data.push(
+                                    {
+                                        id:item.id,
+                                        name: item.name,
+                                        currentStep:  item.name,
+                                        targetStep: item.steps,
+                                        activity: item.activity,
+                                        hanselActivity: item.activityadd,
+                                        needSugar: item.coinprice,
+                                        rewardSugar: item.coinget,
+                                        hanselSugar: 0,
+                                        dateTime: _this.appUtil.dateFormat(itme.begintime,"yyyy.MM.dd")+"-"+
+                                        _this.appUtil.dateFormat(itme.endtime,"yyyy.MM.dd"),
+                                        code: '—'
+                                    }
+                            );
+                        })
+                        _this.list = data;
+                    },function(json){
+                        _this.$Message.error(json.msg)
+                    });
                 });
             }
-
         }
     }
 </script>

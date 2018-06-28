@@ -42,21 +42,25 @@ let _this
                 ],
                 recommendList: [
                     {
+                        id:1,
                         imgPath: 'static/img/goods/1.jpg',
                         name: '我也不知道是么子孩子',
-                        price: '760.00'
+                        price: '761.00'
                     },
                     {
+                        id:1,
                         imgPath: 'static/img/goods/2.jpg',
                         name: '我也不知道是么子孩子',
                         price: '760.00'
                     },
                     {
+                        id:1,
                         imgPath: 'static/img/goods/3.jpg',
                         name: '我也不知道是么子孩子',
                         price: '760.00'
                     },
                     {
+                        id:1,
                         imgPath: 'static/img/goods/4.jpg',
                         name: '我也不知道是么子孩子',
                         price: '760.00'
@@ -66,7 +70,7 @@ let _this
         },
         methods: {
             showDetails(data) {
-                this.$router.push({name: 'businessProduct', params: {id: data.id}})
+                this.$router.push({name: 'businessDetail', params: {id: data.id}})
             },
             changeRoute(res) {
                 this.status = res
@@ -75,8 +79,8 @@ let _this
         mounted() {
             _this = this
             this.$nextTick(function () {
-                let height = $('.view-container').height()
-                $(_this.$el).css('min-height', height)
+//                let height = $('.view-container').height()
+//                $(_this.$el).css('min-height', height)
             })
         }
     }

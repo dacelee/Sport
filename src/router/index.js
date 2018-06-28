@@ -20,6 +20,7 @@ import activityRecords from '@/business/personalCenter/activityRecords.vue'
 import contributionRecords from '@/business/personalCenter/contributionRecords.vue'
 import verifiedForm from '@/business/personalCenter/verifiedForm.vue'
 import editUserName from '@/business/personalCenter/editUserName.vue'
+import editField from '@/business/personalCenter/editField.vue'
 import editIdCard from '@/business/personalCenter/editIdCard.vue'
 import editPhoneNum from '@/business/personalCenter/editPhoneNum.vue'
 import editBankCard from '@/business/personalCenter/editBankCard.vue'
@@ -71,7 +72,7 @@ import imageClip from '@/vue-cropper/imageClip.vue'
 Vue.use(Router)
 
 export default new Router({
-    mode: 'history',
+    mode: 'hash',
     routes: [
         {
             path: '/login',
@@ -94,7 +95,7 @@ export default new Router({
             name: 'selectGender',
             component: selectGender,
             meta: {
-                title: 'false'
+                title: false
             }
         },
         {
@@ -411,6 +412,16 @@ export default new Router({
             meta: {
                 title: '提问',
                 back: '/feedbackList'
+            }
+        },
+        {
+            path: '/editField',
+            name: 'editField',
+            component: editField,
+            meta: {
+                title: '设置',
+                back: '-1',
+                rightTitle: '完成'
             }
         },
         {

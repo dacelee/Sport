@@ -26,6 +26,10 @@ function AppUtil() {
     }
     //计步
     this.pedometer=function (){
+        if(!session.isLogin()){
+            return;
+        }
+        //session.appCache("steps",0)
         var pedometer = api.require('pedometer');
         var _this = this;
         pedometer.startCount(function(ret) {
@@ -34,6 +38,8 @@ function AppUtil() {
         });
     }
     this.pedometerRes= function(ret){
+        var steps = ret.steps;
+        session.appCache("steps",steps);
         var _this = this;
         var stepsData = session.appCache("stepsData");
         var date = new Date().format("yyyy/MM/dd");
@@ -46,13 +52,14 @@ function AppUtil() {
         if(stepsData.date!=date){
             var pedometer = api.require('pedometer');
             var steps = pedometer.getSteps();
-            var memberid = session.getMemberID;
-            axios.post(session.toDayStepInfo,{'memberid':memberid,'steps':steps}, function () {
-                session.clearCache("steps");
-                var pedometer = api.require('pedometer');
-                pedometer.stopCount();
-                pedometer.startCount(function(ret) {
-                    _this.pedometerRes(ret);
+            session.getMemberID(function(memberid){
+                axios.post(session.toDayStepInfo,{'memberid':memberid,'steps':steps}, function () {
+                    session.clearCache("steps");
+                    var pedometer = api.require('pedometer');
+                    pedometer.stopCount();
+                    pedometer.startCount(function(ret) {
+                        _this.pedometerRes(ret);
+                    });
                 });
             });
         }
@@ -104,8 +111,8 @@ export default {
             }
         });
     },
-    imageUpload:function(src){
-
+    pedometer:function(){
+        appUtil.pedometer();//计步
     }
 }
 
