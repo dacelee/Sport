@@ -22,6 +22,7 @@ export default {
                         distance: item.juli+'km'
                     });
             });
+           context.page++;
            context.list = data;
         },function(json){
            context.$Message.error({content:json.msg});
@@ -37,21 +38,28 @@ export default {
             context.InfoValue1 = [ data.areaname, data.membercount, data.activity ];
             context.intor = data.intro;
             //context.auth_license = data.auth_license;
-            var member_id = session.getMemberID();
-            if(member_id==data.memberid){
-                context.mycreate = true;
-            }
+            session.getMemberID(function(member_id){
+                if(member_id==data.memberid){
+                    context.mycreate = true;
+                }
+            });
+
         },function(json){
             context.$Message.error({content:json.msg});
         });
     },
     clubCreate:function(context,formData){
-        axios.post(this.create, formData, function (json) {
-            context.$Message.info(json.msg);
-            context.$router.replace({name:'createClubSuccess',query:{id:json.id}});
-        },function(json){
-            context.$Message.error(json.msg);
+        var  _this = this;
+        session.getMemberID(function(memberid){
+            formData.memberid = memberid;
+            axios.post(_this.create, formData, function (json) {
+                context.$Message.info(json.msg);
+                context.$router.replace({name:'createClubSuccess',query:{id:json.id}});
+            },function(json){
+                context.$Message.error(json.msg);
+            });
         });
+
     },
     clubAuth:function(context,formData){
         axios.post(this.auth, formData, function (json) {

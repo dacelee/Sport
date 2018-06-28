@@ -87,6 +87,7 @@ function apiAxios (method, url, params, success, failure,loading) {
 
 // 返回在vue模板中的调用接口
 export default {
+    host:root,
     get: function (url, params, success, failure) {
         return apiAxios('GET', url, params, success, failure)
     },

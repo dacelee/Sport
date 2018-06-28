@@ -81,10 +81,14 @@
         }, methods: {
             businessProduct() {
                 this.$router.push('businessProduct')
+
             },
             businessDetail() {
                 this.$router.push('businessDetail')
-            },
+            }
+
+            }
+
         }
     }
 </script>

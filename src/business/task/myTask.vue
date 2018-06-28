@@ -6,10 +6,9 @@
                 <div class="step-info">{{ item.currentStep+'步 / ' +item.targetStep + '步' }}</div>
             </div>
             <div class="task-item-container">
-                <div class="task-container-item">活跃度：{{ item.activity }}<span class="hansel">{{ '+'+item.hanselActivity }}</span></div>
+                <div class="task-container-item">活跃度：{{ item.activity }}</div>
                 <div class="task-container-item">兑换所需：{{ item.needSugar }}</div>
-                <div class="task-container-item">奖励糖果：{{ item.rewardSugar }}<span
-                        class="hansel">{{ '+'+item.hanselSugar }}</span>
+                <div class="task-container-item">奖励糖果：{{ item.rewardSugar }}
                 </div>
                 <div class="task-container-item">任务周期：{{ item.dateTime }}</div>
                 <div class="task-container-item">任务编号：{{ item.code }}</div>
@@ -17,9 +16,7 @@
         </div>
     </div>
 </template>
-
 <script>
-    var _this;
     export default {
         name: 'my-task',
         data() {
@@ -64,37 +61,37 @@
                 ]
             }
         },mounted(){
-            _this = this;
             this.loadTask();
         },methods:{
             loadTask(){
-                var memberid= this.session.getMemberID();
-                this.axios.post(this.session.myTask, {"memberid":memberid}, function (json) {
-                    var data = [];
-                    $(json.dataList).each(function(index,item){
-                        data.push(
-                                {
-                                    id:item.id,
-                                    name: item.name,
-                                    currentStep:  item.name,
-                                    targetStep: item.steps,
-                                    activity: item.activity,
-                                    hanselActivity: item.activityadd,
-                                    needSugar: item.coinprice,
-                                    rewardSugar: item.coinget,
-                                    hanselSugar: 0,
-                                    dateTime: _this.appUtil.dateFormat(itme.begintime,"yyyy.MM.dd")+"-"+
-                                    _this.appUtil.dateFormat(itme.endtime,"yyyy.MM.dd"),
-                                    code: '—'
-                                }
-                        );
-                    })
-                    _this.list = data;
-                },function(json){
-                    _this.$Message.error(json.msg)
+                var _this = this;
+                this.session.getMemberID(function(memberid){
+                    _this.axios.post(_this.session.myTask, {"memberid":memberid}, function (json) {
+                        var data = [];
+                        $(json.dataList).each(function(index,item){
+                            data.push(
+                                    {
+                                        id:item.id,
+                                        name: item.name,
+                                        currentStep:  item.name,
+                                        targetStep: item.steps,
+                                        activity: item.activity,
+                                        hanselActivity: item.activityadd,
+                                        needSugar: item.coinprice,
+                                        rewardSugar: item.coinget,
+                                        hanselSugar:  item.addcoinprofit,
+                                        dateTime: _this.appUtil.dateFormat(item.begintime,"yyyy.MM.dd")+"-"+
+                                        _this.appUtil.dateFormat(item.endtime,"yyyy.MM.dd"),
+                                        code: item.no
+                                    }
+                            );
+                        })
+                        _this.list = data;
+                    },function(json){
+                        _this.$Message.error(json.msg)
+                    });
                 });
             }
-
         }
     }
 </script>
@@ -103,8 +100,9 @@
     .my-task {
         width: 690px;
         margin: 0 auto;
+    padding:15px 0px;
     .task-item {
-        margin-top: 20px;
+        margin-bottom: 20px;
     .head-info {
         display: flex;
         justify-content: space-between;

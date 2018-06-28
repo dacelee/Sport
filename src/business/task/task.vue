@@ -3,7 +3,7 @@
         <l-shortMenu :list="list" :currentRoute="currentRoute" @change="changeRoute"/>
         <div class="task-activity">
             <div class="activity-item">今日活跃度:{{ activity }}</div>
-            <div class="activity-item">产币:{{ sugarNum }}</div>
+            <div class="activity-item">奖励糖果:{{ sugarNum }}</div>
             <div class="activity-item">步数:{{ stepNum }}</div>
         </div>
         <component :is="currentRoute"/>
@@ -26,9 +26,10 @@
         data() {
             return {
                 currentRoute: 'allTask',
-                activity: 50,
-                sugarNum: 10,
-                stepNum: 12313,
+                activity: 0,
+                sugarNum: 0,
+                stepNum: 0,
+                getCoinUnit:0,
                 list: [
                     {
                         id: 'allTask',
@@ -48,11 +49,43 @@
         methods: {
             changeRoute(route) {
                 _this.currentRoute = route
+            },
+            loadTask(){
+                var _this = this;
+                this.session.getMemberID(function(memberid){
+                    var activity = 0;
+                    _this.axios.post(_this.session.myTask, {"memberid":memberid}, function (json) {
+                        $(json.dataList).each(function(index,item){
+                            activity+= item.activity
+                        })
+                        _this.axios.post(_this.session.myActivityAdd, {"memberid":memberid}, function (json) {
+                            activity+=json.data.activityadd;
+                            _this.activity =  activity;
+                        },function(json){
+                            _this.$Message.error(json.msg)
+                        });
+                        _this.axios.post(_this.session.getCoinUnit,null, function (json) {
+                            _this.getCoinUnit = json.data.getcoinunit;
+                            _this.stepNum = _this.session.appCache("steps");
+                            _this.sugarNum = (_this.stepNum* _this.getCoinUnit* _this.activity).toFixed(2);
+
+                        },function(json){
+                            _this.$Message.error(json.msg)
+                        });
+                    },function(json){
+                        _this.$Message.error(json.msg)
+                    });
+
+                });
             }
 
         },
         mounted() {
-            _this = this
+            _this = this;
+//            this.loadTask();
+        },
+        activated(){
+            this.loadTask();
         }
     }
 </script>

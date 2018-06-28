@@ -20,6 +20,7 @@ import activityRecords from '@/business/personalCenter/activityRecords.vue'
 import contributionRecords from '@/business/personalCenter/contributionRecords.vue'
 import verifiedForm from '@/business/personalCenter/verifiedForm.vue'
 import editUserName from '@/business/personalCenter/editUserName.vue'
+import editField from '@/business/personalCenter/editField.vue'
 import editIdCard from '@/business/personalCenter/editIdCard.vue'
 import editPhoneNum from '@/business/personalCenter/editPhoneNum.vue'
 import editBankCard from '@/business/personalCenter/editBankCard.vue'
@@ -28,11 +29,14 @@ import faceRecognition from '@/business/personalCenter/faceRecognition.vue'
 import identityInformation from '@/business/personalCenter/identityInformation.vue'
 import transaction from '@/business/personalCenter/transaction.vue'
 import transactionDetails from '@/business/personalCenter/transactionDetails.vue'
+import appeal from '@/business/personalCenter/appeal.vue'
 import paySuccess from '@/business/personalCenter/paySuccess.vue'
 import orderCenter from '@/business/personalCenter/orderCenter.vue'
 import orderDetails from '@/business/personalCenter/orderDetails.vue'
 import logistics from '@/business/personalCenter/logistics.vue'
-import addressManage from '@/business/PersonalCenter/addressManage.vue'
+import addressInfo from '@/business/personalCenter/addressInfo.vue'
+import addressOperation from '@/business/personalCenter/addressOperation.vue'
+import userGuide from '@/business/personalCenter/userGuide.vue'
 import teamManage from '@/business/personalCenter/teamManage.vue'
 import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
@@ -68,7 +72,7 @@ import imageClip from '@/vue-cropper/imageClip.vue'
 Vue.use(Router)
 
 export default new Router({
-    mode: 'history',
+    mode: 'hash',
     routes: [
         {
             path: '/login',
@@ -91,7 +95,7 @@ export default new Router({
             name: 'selectGender',
             component: selectGender,
             meta: {
-                title: 'false'
+                title: false
             }
         },
         {
@@ -198,7 +202,7 @@ export default new Router({
             component: businessCart,
             meta: {
                 title: '加入购物车',
-                 back: 'businessDetail'
+                back: 'businessDetail'
             }
         },
         {
@@ -207,7 +211,7 @@ export default new Router({
             component: businessSettlement,
             meta: {
                 title: '结算',
-                 back: 'businessCart'
+                back: 'businessCart'
             }
         },
         {
@@ -234,7 +238,7 @@ export default new Router({
             component: businessAddressAdd,
             meta: {
                 title: '新增收货地址',
-                 back: 'businessAddress'
+                back: 'businessAddress'
             }
         },
         {
@@ -270,7 +274,7 @@ export default new Router({
             component: createClubSuccess,
             meta: {
                 title: '创建成功',
-                back:'/club'
+                back: '/club'
             }
         },
         {
@@ -307,7 +311,7 @@ export default new Router({
             component: clubTeams,
             meta: {
                 title: '成员',
-                back:'/clubDetails',
+                back: '/clubDetails',
             }
         },
         {
@@ -408,6 +412,16 @@ export default new Router({
             meta: {
                 title: '提问',
                 back: '/feedbackList'
+            }
+        },
+        {
+            path: '/editField',
+            name: 'editField',
+            component: editField,
+            meta: {
+                title: '设置',
+                back: '-1',
+                rightTitle: '完成'
             }
         },
         {
@@ -564,6 +578,15 @@ export default new Router({
             }
         },
         {
+            path: '/appeal:id',
+            name: 'appeal',
+            component: appeal,
+            meta: {
+                title: '申诉',
+                back: '/transaction'
+            }
+        },
+        {
             path: '/paySuccess',
             name: 'paySuccess',
             component: paySuccess,
@@ -600,12 +623,30 @@ export default new Router({
             }
         },
         {
-            path: '/addressManage',
-            name: 'addressManage',
-            component: addressManage,
+            path: '/addressInfo',
+            name: 'addressInfo',
+            component: addressInfo,
             meta: {
                 title: '收货地址',
                 back: '/personalCenter'
+            }
+        },
+        {
+            path: '/addressOperation/:id',
+            name: 'addressOperation',
+            component: addressOperation,
+            meta: {
+                title: '收货地址管理',
+                back: '/addressInfo'
+            }
+        },
+        {
+            path: '/userGuide',
+            name: 'userGuide',
+            component: userGuide,
+            meta: {
+                title: '新手指引',
+                back: '/personalSetting'
             }
         },
         {

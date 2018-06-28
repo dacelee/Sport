@@ -9,7 +9,7 @@
         <div class="team-item">
             <div class="left-label pull-left">地区</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="活动位置" v-model="area" @click="selCity">
+                <input type="text" placeholder="活动位置" v-model="area" @click="selCity" readonly>
             </div>
         </div>
         <div class="team-item text-area">
@@ -26,10 +26,9 @@
     export default {
         name: 'create-team',
         data() {
-            var memberid = this.session.getMemberID();
             return{
                 formData:{
-                    memberid:memberid,
+                    memberid:0,
                     name:"",
                     proid:"",
                     cityid:"",
@@ -110,12 +109,16 @@
                     this.$Message.error(errMsg);
                 }else{
                     var _this = this;
-                    this.axios.post(this.session.teamCreate,this.formData, function (data) {
-                        _this.$Message.info(data.msg);
-                        _this.$router.replace('/teamList');
-                    },function(data){
-                        _this.$Message.error(data.msg);
+                    this.session.getMemberID(function(memberid){
+                        _this.formData.memberid  = memberid;
+                        _this.axios.post(_this.session.teamCreate,_this.formData, function (data) {
+                            _this.$Message.info(data.msg);
+                            _this.$router.replace('/teamList');
+                        },function(data){
+                            _this.$Message.error(data.msg);
+                        });
                     });
+
                 }
             },selCity(){
                 if (this.selectorJSON == null) {
@@ -190,7 +193,7 @@
         width: 750px;
     }
     .mt-20 {
-        margin-top: -20px;
+        margin-top: 20px;
     }
     }
 </style>

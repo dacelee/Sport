@@ -46,16 +46,16 @@
                 <div class="title text-center">正在打赏</div>
                 <div class="less-num text-center">当前糖果余额:{{ lessNum }}</div>
                 <div class="reward-num">
-                    <input type="text" placeholder="最少打赏0.01">
+                    <input type="text" placeholder="最少打赏0.01" v-model="coin">
                 </div>
                 <div class="operation-btn">
                     <div class="btn btn-cancel text-center" @click="showPopup = false">取&emsp;消</div>
-                    <div class="btn btn-confirm text-center">确&emsp;定</div>
+                    <div class="btn btn-confirm text-center" @click="givecoinAdd" >确&emsp;定</div>
                 </div>
             </div>
             <div class="evaluation" v-if="popupType === 'evaluation'" @click.stop="">
-                <textarea placeholder="请输入吐槽内容"></textarea>
-                <div class="btn btn-confirm pull-right">发送</div>
+                <textarea placeholder="请输入吐槽内容" v-model="comment"></textarea>
+                <div class="btn btn-confirm pull-right" @click="commentSubmit">发送</div>
             </div>
         </div>
     </div>
@@ -66,15 +66,18 @@
     export default {
         name: 'news-details',
         data() {
+
             return {
                 popupType: '',
                 showPopup: false,
                 lessNum: '321.211',
+                comment:'',
+                coin:'',
                 newsDetails: {
-                    title: '运动后恶心想吐怎么办 运动后恶心想吐的原因',
-                    author: 'Louis',
-                    dateTime: '2018/06/06 21:25',
-                    content: '跑步是一种锻炼身体的好习惯，很多年轻人都有早上跑步的习惯，但是有时候跑步会岔气，这是为什么呢？跑步时，我们应该选择合适的时间和方式，不应该盲目去跑。'
+//                    title: '运动后恶心想吐怎么办 运动后恶心想吐的原因',
+//                    author: 'Louis',
+//                    dateTime: '2018/06/06 21:25',
+//                    content: '跑步是一种锻炼身体的好习惯，很多年轻人都有早上跑步的习惯，但是有时候跑步会岔气，这是为什么呢？跑步时，我们应该选择合适的时间和方式，不应该盲目去跑。'
                 },
                 rewardInfo: {
                     complain: 5,
@@ -82,24 +85,25 @@
                     reward: 22
                 },
                 evaluation: [
-                    {
-                        photoPath: '/static/img/news/1.jpg',
-                        userName: 'Louis',
-                        dateTime: '2018/06/07 23:33',
-                        container: '这个方法好棒棒，好喜欢'
-                    },
-                    {
-                        photoPath: '/static/img/news/2.jpg',
-                        userName: 'Louis',
-                        dateTime: '2018/06/07 23:33',
-                        container: '这个方法好棒棒，好喜欢'
-                    },
-                    {
-                        photoPath: '/static/img/news/1.jpg',
-                        userName: 'Louis',
-                        dateTime: '2018/06/07 23:33',
-                        container: '这个方法好棒棒，好喜欢'
-                    }
+//                    {
+//                        photoPath: '/static/img/news/1.jpg',
+//                        userName: 'Louis',
+//                        dateTime: '2018/06/07 23:33',
+//                        container: '这个方法好棒棒，好喜欢'
+//                    }
+////                    ,
+////                    {
+////                        photoPath: '/static/img/news/2.jpg',
+////                        userName: 'Louis',
+////                        dateTime: '2018/06/07 23:33',
+////                        container: '这个方法好棒棒，好喜欢'
+////                    },
+////                    {
+////                        photoPath: '/static/img/news/1.jpg',
+////                        userName: 'Louis',
+////                        dateTime: '2018/06/07 23:33',
+////                        container: '这个方法好棒棒，好喜欢'
+////                    }
                 ]
             }
         },
@@ -112,6 +116,36 @@
                 _this.popupType = 'evaluation'
                 _this.showPopup = true
             },
+            commentSubmit(){
+                var param = this.$route.params;
+                this.session.getMemberID(function(memberid){
+                    _this.axios.post("/article/articlecomment_add", {"articleid":param.id,memberid:memberid,content:_this.comment,type:1}, function (json) {
+                        _this.$Message.info(json.msg);
+                        _this.showPopup = false;
+                        _this.loadComment(1)
+                    },function(json){
+                        _this.$Message.info(json.msg);
+                    });
+                });
+
+
+            },
+            givecoinAdd(){
+                var param = this.$route.params;
+                if(this.coin==""||this.coin<0.01){
+                    this.$Message.error("最少打赏0.01");
+                    return;
+                }
+                this.session.getMemberID(function(memberid){
+                    this.axios.post("/article/articlegivecoin_add", {"articleid":param.id,memberid:memberid,coin:this.coin,type:1}, function (json) {
+                        _this.$Message.info(json.msg);
+                        _this.showPopup = false;
+                        _this.loadComment(1)
+                    },function(json){
+                        this.$Message.info(json.msg);
+                    });
+                });
+            },
             loadData(){
                 var param = this.$route.params;
                 this.axios.post(this.session.articleDetail, {"id":param.id}, function (json) {
@@ -123,17 +157,38 @@
                         content: data.content
                     }
                     _this.rewardInfo={
-                        complain: json.bads,
-                        admiration: json.goods,
-                        reward: json.rewards
+                        complain: data.bads,
+                        admiration: data.goods,
+                        reward: data.rewards
                     }
                 },function(json){
 
                 });
+            },
+            loadComment(page){
+                var param = this.$route.params;
+                this.axios.post("/article/commentlist", {"articleid":param.id,page:page,pageSize:10}, function (json) {
+                    var data = json.dataList;
+                    if(page==1){
+                        _this.evaluation = [];
+                    }
+                    $(data).each(function(index,item){
+                        _this.evaluation.push({
+                            photoPath:item.logo? _this.axios.host+item.logo:"",
+                            userName: item.nikename,
+                            dateTime: _this.appUtil.dateFormat(item.addtime,"yyyy/MM/dd hh:ss"),
+                            container: item.content
+                        })
+                    })
+                },function(json){
+
+                });
             }
+
         },
         activated(){
             this.loadData();
+            this.loadComment(1);
         },
         mounted() {
             _this = this;
@@ -144,10 +199,8 @@
 <style lang="scss">
     .news-details {
         background-color: #f5f5f5;
-        position: absolute;
-        overflow: hidden;
         padding-bottom: 100px !important;
-        min-height: 100%;
+
     .news-details-container {
         color: #000;
         background-color: #ffffff;
@@ -241,7 +294,7 @@
         justify-content: space-between;
         height: 90px;
         padding: 5px 0;
-        position: absolute;
+        position: fixed;
         bottom: 0;
         left: 0;
     .news-short-menu-item {
