@@ -9,6 +9,8 @@ import shortMenu from './shortMenu'
 import tabs from './tabs'
 import selectOption from './selectOption'
 import imageUpload from './imageUpload'
+import alert from './alert'
+
 export default {
     install: function (Vue) {
         Vue.component('l-footerMenu', footerMenu)
@@ -22,5 +24,6 @@ export default {
         Vue.component('l-tabs', tabs)
         Vue.component('l-selectOption', selectOption)
         Vue.component('l-imageUpload', imageUpload)
+        Vue.component('l-alert', alert)
     }
 }
