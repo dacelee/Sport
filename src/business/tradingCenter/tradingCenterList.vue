@@ -31,6 +31,9 @@
                 </div>
             </div>
         </div>
+        <div class="bottomBtn">
+            <div class="pull-left" v-for="item in tabsList">{{item.name}}</div>
+        </div>
         <l-footerMenu :currentRoute.sync="route"/>
     </div>
 </template>
@@ -212,6 +215,7 @@
 
 <style lang="scss">
     .trading-center-list {
+        padding-bottom:120px;
         .head-title {
             height: 80px;
             line-height: 80px;
@@ -333,6 +337,20 @@
                     border-radius: 10px;
                 }
             }
+        }
+        .bottomBtn{
+            position: fixed;
+            bottom: 100px;
+            left: 0;
+            overflow:hidden;
+            width:100%;
+            text-align:center;
+            div{font-size: 34px;
+            line-height: 34px;
+            padding: 33px 0;
+            background-color: #F8C513;
+            color: #000;width:50%;}
+            .pull-left{background-color: #F8C513; }
         }
     }
 </style>
