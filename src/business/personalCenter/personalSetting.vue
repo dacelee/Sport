@@ -26,7 +26,7 @@
                         padding: true
                     },
                     {
-                        id: 'walletAddress',
+                        id: 'addressInfo',
                         name: '钱包地址',
                         padding: true
                     },

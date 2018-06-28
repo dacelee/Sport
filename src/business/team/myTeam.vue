@@ -49,49 +49,49 @@
                     personalCount: 8
                 },
                 teamMembers: [
-                    {
-                        id:0,
-                        imgPath: 'static/img/club/1.jpg',
-                        name: 'Louis',
-                        status: 1
-                    },
-                    {
-                        id:1,
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Judy',
-                        status: 0
-                    },
-                    {
-                        id:2,
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hansen',
-                        status: 0
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Merry',
-                        status: 0
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hill',
-                        status: 0
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Mountain',
-                        status: 0
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Fish',
-                        status: 0
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Roi',
-                        status: 0
-                    }
+//                    {
+//                        id:0,
+//                        imgPath: 'static/img/club/1.jpg',
+//                        name: 'Louis',
+//                        status: 1
+//                    },
+//                    {
+//                        id:1,
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Judy',
+//                        status: 0
+//                    },
+//                    {
+//                        id:2,
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Hansen',
+//                        status: 0
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Merry',
+//                        status: 0
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Hill',
+//                        status: 0
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Mountain',
+//                        status: 0
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Fish',
+//                        status: 0
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Roi',
+//                        status: 0
+//                    }
                 ]
             }
         }, mounted() {
@@ -100,21 +100,23 @@
         },
         methods: {
             getMyTeam(){
-                var memberid = this.session.getMemberID();
-                this.axios.post(this.session.teamDetail, {"memberid":memberid}, function (json) {
-                    var team = json.data;
-                    _this.myTeamInfo.teamid = team.teamid;
-                    _this.myTeamInfo.name = team.name;
-                    _this.myTeamInfo.dateTime = _this.appUtil.dateFormat(team.addtime,"yyyy/MM/dd hh:mm");
-                    _this.myTeamInfo.address = team.areaname;
-                    _this.myTeamInfo.description = team.intro;
-                    _this.loadTeamMember(team.teamid,1);
-                },function(json){
-                    _this.teamInfo.personalCount = 0;
-                    _this.teamMembers = [];
-                    _this.myTeamInfo = {name:"暂无组队"};
-                    _this.$Message.error(json.msg);
+                this.session.getMemberID(function(memberid){
+                    _this.axios.post(_this.session.teamDetail, {"memberid":memberid}, function (json) {
+                        var team = json.data;
+                        _this.myTeamInfo.teamid = team.teamid;
+                        _this.myTeamInfo.name = team.name;
+                        _this.myTeamInfo.dateTime = _this.appUtil.dateFormat(team.addtime,"yyyy/MM/dd hh:mm");
+                        _this.myTeamInfo.address = team.areaname;
+                        _this.myTeamInfo.description = team.intro;
+                        _this.loadTeamMember(team.teamid,1);
+                    },function(json){
+                        _this.teamInfo.personalCount = 0;
+                        _this.teamMembers = [];
+                        _this.myTeamInfo = {name:"暂无组队"};
+//                    _this.$Message.error(json.msg);
+                    });
                 });
+
             },
             loadTeamMember(teamid,page){
                 this.axios.post(this.session.teamMember, {"teamid":teamid,"page":page,'pageSize':10}, function (json) {

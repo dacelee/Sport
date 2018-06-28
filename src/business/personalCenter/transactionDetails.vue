@@ -26,6 +26,7 @@
 </template>
 
 <script>
+    let _this
     export default {
         name: 'transaction-details',
         data() {
@@ -114,11 +115,14 @@
         },
         methods: {
             appeal() {
-                this.$router.push('/appeal')
+                _this.$router.push({name: 'appeal', params: {id: _this.$route.params.id}})
             },
             paySuccess() {
-                this.$router.push('/paySuccess')
+                _this.$router.push('/paySuccess')
             }
+        },
+        mounted() {
+            _this = this
         }
     }
 </script>

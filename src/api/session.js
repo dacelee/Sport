@@ -21,15 +21,23 @@ export default {
     articleDetail:"/article/detail",//文章详情
     coinSalelist:"/coinsale/coinmysalelist",
     joinTeam:"/team/jointeam",
+    myActivityAdd:"/task/myactivityadd",
+    getCoinUnit :"/task/getcoinunit",
     isAPPRuntime:function(){
         //用于处理非apicloud运行环境
         return  this.appCache('appRuntime');
     },
-    getMemberID:function(){
-        return 3;
+    getMemberID:function(callback){
+        var loginUser = $api.getStorage('loginUser');
+        //return loginUser.id;
+        if(!loginUser){
+            return false;
+        }
+        callback(loginUser.id);
     },
     isLogin:function(){//是否登录
-        return true;
+        //return true;
+        //$api.clearStorage();
         var loginUser = $api.getStorage('loginUser');
         if(!loginUser){
             return false;

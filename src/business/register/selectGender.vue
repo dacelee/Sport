@@ -26,6 +26,10 @@
         name: 'select-gender',
         created() {
             _this = this;
+            if(this.session.isAPPRuntime()){
+                var header = $api.dom('.header-menu');
+                var  headerHeight = $api.fixStatusBar(header);
+            }
         },
         methods: {
             toHome(sex) {

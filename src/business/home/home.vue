@@ -64,32 +64,24 @@
                 stepNum: 0,
                 stepHeat: 0,
                 rewardNum: '0',
-                vipLevel: '0',
+                vipLevel: '',
                 activity: 0,
                 totalReward: 0,
                 contribution: 0,
+                activity:0,
+                getCoinUnit:0,
             }
         },
         mounted() {
             _this = this
-            _this.getShortMenuList()
+            _this.getShortMenuList();
+            _this.loadData();
 
-        },created () {
-            //登录检测
-            if(this.session.isLogin()){
-                this.axios.post(this.session.indexinfo, {'memberid':this.session.getMemberID()},function(json){
-                    var data = json.data;
-                    _this.vipLevel = data.memberLevel;
-                    _this.activity = data.activity;
-                    _this.totalReward = data.cointotal;
-                    _this.contribution = data.contributionvalue;
-
-                });
-                this.axios.post(this.session.todaystepinfo, {'memberid':this.session.getMemberID()},function(json){
-                    var data = json.data;
-                    _this.stepNum = data.steptotal;
-                    _this.stepHeat = data.distance;
-                });
+        },activated () {
+            var stepNum = this.session.appCache("steps");
+            if (stepNum) {
+                this.stepNum  = stepNum;
+                this.rewardNum = (this.stepNum * this.getCoinUnit * this.activity).toFixed(2);
             }
         },
         methods: {
@@ -138,6 +130,45 @@
             },
             toShortMenu(router) {
                 this.$router.push(router)
+            },
+            loadData(){
+                //登录检测
+                if(this.session.isLogin()){
+                    this.session.getMemberID(function(memberid){
+                        _this.axios.post(_this.session.indexinfo, {'memberid':memberid},function(json){
+                            var data = json.data;
+                            _this.vipLevel = data.memberLevel;
+                            _this.activity = data.activity;
+                            _this.totalReward = data.cointotal;
+                            _this.contribution = data.contributionvalue;
+
+                        });
+                        _this.axios.post(_this.session.todaystepinfo, {'memberid':memberid},function(json){
+                            var data = json.data;
+                            _this.stepNum = data.steptotal;
+                            _this.stepHeat = data.distance;
+                        });
+                        var activity = 0;
+                        _this.axios.post(_this.session.myTask, {"memberid": memberid}, function (json) {
+                            $(json.dataList).each(function (index, item) {
+                                activity += item.activity
+                            })
+                            _this.axios.post(_this.session.myActivityAdd, {"memberid": memberid}, function (json) {
+                                activity += json.data.activityadd;
+                                _this.activity = activity;
+                            }, function (json) {
+                                _this.$Message.error(json.msg)
+                            });
+                            _this.axios.post(_this.session.getCoinUnit, null, function (json) {
+                                _this.getCoinUnit = json.data.getcoinunit;
+                            }, function (json) {
+                                _this.$Message.error(json.msg)
+                            });
+                        }, function (json) {
+                            _this.$Message.error(json.msg)
+                        });
+                    });
+                }
             }
         }
     }
@@ -151,6 +182,7 @@
     
     .home-container {
         overflow: hidden;
+        padding-bottom:120px;
         .home-head {
             width: 750px;
             .head-img {

@@ -13,25 +13,35 @@
         <div class="btn" @click="$router.push('feedback')">提问</div>
     </div>
 </template>
-
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'feedback-list',
         data() {
             return {
+                page:1,
                 list: [
-                    {
-                        questions: {
-                            time: '2018/06/21 23:57',
-                            content: '为什么你们的物流这么慢'
-                        },
-                        reply: {
-                            time: '2018/06/21 23:58',
-                            content: '那你到是别买啊，怪我咯？'
-                        }
-                    }
+//                    {
+//                        questions: {
+//                            time: '2018/06/21 23:57',
+//                            content: '为什么你们的物流这么慢'
+//                        },
+//                        reply: {
+//                            time: '2018/06/21 23:58',
+//                            content: '那你到是别买啊，怪我咯？'
+//                        }
+//                    }
                 ]
             }
+        },
+        methods: {
+            loadData(page){
+
+                users.loadFeedback(this, page, 10);
+            }
+        },
+        activated() {
+            this.loadData(this.page);
         }
     }
 </script>
