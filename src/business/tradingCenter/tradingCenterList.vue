@@ -26,7 +26,7 @@
                     </div>
                     <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
                 </div>
-                <div class="right-business-btn pull-left text-center">
+                <div class="right-business-btn pull-left text-center" v-on:click="toggle()">
                     购买
                 </div>
             </div>
@@ -35,6 +35,14 @@
             <div class="pull-left" v-for="item in tabsList">{{item.name}}</div>
         </div>
         <l-footerMenu :currentRoute.sync="route"/>
+        <div class="bottomBtnBuy" v-show="isShow">
+            <div class="buyBox">
+            <div class="buying">正在购买</div>
+            <div class="buyleft">当前糖果剩余额：99</div>
+            <div class="buyText"><input type="text" placeholder="请输入购买数量"></div>
+            </div>
+            <div class="pull-left" v-for="item in tabsListBuy">{{item.name}}</div>
+        </div>
     </div>
 </template>
 
@@ -46,6 +54,7 @@
             return {
                 route: 'tradingCenter',
                 filterName: null,
+                isShow: false ,
                 dataList: [
                     {
                         name: '最低价格',
@@ -121,6 +130,16 @@
                     {
                         id: 'sell',
                         name: '我要卖'
+                    }
+                ],
+                tabsListBuy: [
+                    {
+                        id: 'cancel',
+                        name: '取消'
+                    },
+                    {
+                        id: 'ok',
+                        name: '确定'
                     }
                 ]
             }
@@ -203,7 +222,10 @@
                 },function(json){
 
                 });
-            }
+            },
+            toggle(){
+              this.isShow = true; 
+          }
         },
         mounted() {
             chartsEl = App.eCharts.echarts.init(document.getElementById('trading-charts'))
@@ -350,7 +372,30 @@
             padding: 33px 0;
             background-color: #F8C513;
             color: #000;width:50%;}
+            z-index:9;
             .pull-left{background-color: #F8C513; }
+        }
+        .bottomBtnBuy{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index:999;
+            overflow:hidden;
+            width:100%;
+            text-align:center;
+            background:#25252B;
+            div.pull-left{font-size: 34px;
+            line-height: 34px;
+            padding: 33px 0;
+            
+            color: #fff;}
+            .pull-left{width:50%;background-color: #404148; }
+            .pull-left:last-child{width:50%;background-color:#F8C513;color:#000;}
+        }
+         .buyBox{background:#25252B;width:100%; padding: 80px 0;
+         .buying{font-size:34px; color:#fff}
+         .buyleft{font-size:24px; color:#999;padding:30px 0;}
+         .buyText input{background:#333339; height:80px;border-radius:10px; width:60%;padding:0 10px;}
         }
     }
 </style>
