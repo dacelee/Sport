@@ -7,8 +7,13 @@
            <p>{{ item.address }}</p>
          </div>
          <div class="aset">
-           <div class='pull-left'><l-icon name="weigouxuan"/> 设以默认地址</div>
-           <div class='pull-right'><l-icon name="bianji"/> 编辑 <l-icon name="shanchu"/> 编辑</div>
+           <div class='pull-left'>
+             <l-icon name="weigouxuan"/> <div class="left-label">设以默认地址</div>
+           </div>
+           <div class='pull-right'>
+              <l-icon name="bianji"/><span class="right-label">编辑</span><span class="right-label"></span>
+              <l-icon name="shanchu"/><span class="right-label">删除</span>
+           </div>
          </div>
          </div>
         <div class="save-btn text-center" @click="businessAddressAdd">新增</div>
@@ -56,6 +61,9 @@ background-color: #F5F5F5;
 .addressMsg .address p:first-child {font-size:34px;margin-bottom:15px;}
 .addressMsg .aset{padding:20px;overflow:hidden;font-size:24px;}
 .addressMsg .aset .pull-right .icons:nth-child(2){margin-left:40px;}
+.addressMsg .aset .pull-right{}
+.left-label{padding-left:40px;}
+.right-label{padding-left:40px;}
 .save-btn {
       font-size: 34px;
       line-height: 34px;
@@ -67,5 +75,6 @@ background-color: #F5F5F5;
       left: 0;
       width: 750px;
   }
+  .icons{font-size:32px;position:absolute;margin-right:15px;}
 }  
 </style>
