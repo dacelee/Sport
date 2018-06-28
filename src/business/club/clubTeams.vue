@@ -1,37 +1,34 @@
 <template>
     <div class="clubTeams">
-        <l-head>
-            俱乐部
-            <div class="btn text-white" slot="right-item" @click="createClub">创建</div>
-        </l-head>
         <div class="search-area">
             <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
         </div>
         <div class="club-list-container">
             <div class="club-list-item" v-for="item in list">
-                <div class="left-img pull-left" @click="toDetails(item)">
+                <div class="left-img pull-left" >
                     <img :src="item.imgPath" alt="">
                 </div>
                 <div class="right-container pull-left">
                     <div class="left-basic-info text-white pull-left">
                         <div class="name">{{ item.name }}
                             <l-icon
-                                :name="item.status === 0 ? 'wochuangjian' : item.status === 1 ? 'yijiaru' : item.status === 2 ? 'renzheng' : ''"
-                                v-if="item.status !== 3"/>
+                                :name="item.status === 0 ? 'chuangjianren' : ''"/>
                         </div>
                         <div class="club-num-info">
-                            <div class="people-count pull-left">人数:{{ item.peopleCount }}</div>
-                            <div class="activity-count pull-left">活跃:{{ item.activity }}</div>
+                       <div class="chengyuan-people pull-left"> 
+                       <l-icon :name="item.chengyuanIcon" class="text-center"/></div>
+                            <div class="people-count pull-left">会员等级:{{ item.rank }}</div>
+                            <div class="activity-count pull-left">活跃度:{{ item.activity }}</div>
+                            <div class="already pull-left">{{ item.already }}</div>
                         </div>
                     </div>
-                    <div class="right-distance text-center pull-left">
-                        <l-icon name="juli1"/>
-                        <div class="distance-num">{{ item.distance }}</div>
+                   <div class="right-deletes text-center pull-right">
+                        <l-icon name="weigouxuan"/>
                     </div>
                 </div>
             </div>
         </div>
-        <l-footerMenu :currentRoute="route"/>
+        
     </div>
 </template>
 
@@ -46,35 +43,42 @@ let _this
                 list: [
                     {
                         imgPath: 'static/img/club/1.jpg',
-                        name: '旋风无敌小队',
-                        peopleCount: 12350,
+                        name: '如果回忆会心痛',
+                        chengyuanIcon:'chengyuan-nv',
+                        rank: 12350,
                         activity: 8987,
+                        already:'',
                         status: 0,
-                        distance: '500m'
+                        
                     },
                     {
                         imgPath: 'static/img/club/2.jpg',
                         name: '夜跑都市人',
-                        peopleCount: 4210,
+                        chengyuanIcon:'chengyuan-nv',
+                        rank: 4210,
                         activity: 3511,
+                        already:'已组队',
                         status: 1,
-                        distance: '1.5km'
+                        
                     },
                     {
                         imgPath: 'static/img/club/3.jpg',
                         name: '酷跑狂人',
-                        peopleCount: 147,
+                        chengyuanIcon:'chengyuan-nv',
+                        rank: 147,
                         activity: 131,
+                        already:'已组队',
                         status: 2,
-                        distance: '500m'
+                       
                     },
                     {
                         imgPath: 'static/img/club/4.jpg',
                         name: '减肥跑步俱乐部',
-                        peopleCount: 312,
+                        chengyuanIcon:'chengyuan-nan',
+                        rank: 312,
                         activity: 224,
-                        status: 3,
-                        distance: '3.4km'
+                        already:'',
+                        status: 3,   
                     }
                 ]
             }
@@ -82,9 +86,6 @@ let _this
         methods: {
             reset() {
                 console.log(this.filterName)
-            },
-            createClub() {
-                _this.$router.push('createClub')
             },
             toDetails(item) {
                 let _this = this
@@ -143,9 +144,9 @@ let _this
                 }
                 .right-container {
                     margin-left: 20px;
-                    width: calc(100% - 175px);
+                    width: calc(100% - 160px);
                     .left-basic-info {
-                        width: calc(100% - 120px);
+                        
                         .name {
                             font-size: 32px;
                             line-height: 32px;
@@ -162,24 +163,24 @@ let _this
                             color: #999999;
                             margin-top: 20px;
                             .activity-count {
-                                margin-left: 20px;
+                                margin-left: 30px;
                             }
+                            .chengyuan-people{margin-right:30px;}
+                            .already{margin-left: 40px;color:#F8C513}
                         }
                     }
-                    .right-distance {
-                        width: 100px;
-                        margin-left: 15px;
+                    .right-deletes {
+                        position:absolute;
+                        right:10%;
+                        width: 40px;
+                        margin-left: 0;
                         .icons {
                             width: 30px;
                             height: 30px;
                             color: #ffffff;
-                            margin-top: 18px;
+                            margin-top: 36px;
                         }
-                        .distance-num {
-                            font-size: 24px;
-                            line-height: 24px;
-                            margin-top: 10px;
-                        }
+                        
                     }
                 }
             }

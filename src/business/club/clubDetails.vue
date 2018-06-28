@@ -25,27 +25,29 @@
         <div class="user-menu-list">
             <ul>
                 <li class="user-menu-list-item personal" :class="{'mt10':index === 0}"
-                    v-for="(item,index) in personalMenuList" @click="goToPage(item.router)">
-                        <div class="left-label" >{{ item.name }}</div>
-                        <l-icon name="fanhui" class="link-icons" />
+                    v-for="(item,index) in personalMenuList">
+                    <div class="left-label">{{ item.name }}</div>
+                    <l-icon name="fanhui" class="link-icons" @click.native="goToPage(item.router)"/>
                 </li>
+                
             </ul>
         </div>
         <div class="clubMsg">
         <div class="clubDetailMsg">
         	<h3 class='title'>群介绍</h3>
-            <!--<img src="/static/img/news/2.jpg" />-->
-        	<div class="word" v-html="intor"></div>
+<img src="/static/img/news/2.jpg" />
+        	<div class="word">以推广跑步及全民健身运动为主要目标，是陕以推广跑步及全民健身运动为主要目标，是陕以推广跑步及全民健身运动为主要目标，是陕以推广跑步及全民健身运动为主要目标，是陕</div>
         </div>
-         <div class="save-btn text-center" v-if="auth_license!=''">申请加入</div>
-         <!--<div class='text-center word1'>俱乐部创建人没认证，底部按钮显示申请认证</div>-->
-         <div class="save-btn text-center" v-if="auth_license==''&&mycreate" @click="clubCertification">申请实体认证</div>
-         <!--<div class='text-center word2'>已加入，已认证，底部无按钮 并且无发布活</div>-->
+         <div class="save-btn text-center" >申请加入</div>
+         <div class='text-center word1'>俱乐部创建人没认证，底部按钮显示申请认证</div>
+         <div class="save-btn text-center" >申请实体认证</div>
+         <div class='text-center word2'>已加入，已认证，底部无按钮 并且无发布活</div>
         </div>
     </div>
 </template>
-<script>
-    import club from '../../api/club.js'
+
+<script> 
+let _this
     export default {
         name: 'clubDetails',
         data() {
@@ -57,15 +59,12 @@
                 createTime: '2018.4.12',
                 InfoValue1: [ '岳麓区', 89, 56 ],
                 InfoValue2: [ '地区', '人数', '总活跃度' ],
-                intor:"",
-                auth_license:"",
-                mycreate:false,
                 personalMenuList: [
                     {
                         id: 'basicInfo',
                         name: '成员列表',
-                        icons: 'teamList',
-                        router: 'teamList'
+                        icons: 'clubTeams',
+                        router: 'clubTeams'
                     },
                     {
                         id: 'verified',
@@ -74,30 +73,19 @@
                         router: 'activityList'
                     }
                 ]
-
+                
             }
         },
         methods: {
             goToPage(router) {
                this.$router.push(router)
             },
-            editEvent() {
-                this.$router.push('publishActivity');
+            editEvent(){
+                _this.$router.push('publishActivity')
             },
-            loadData(){
-                var clubid = this.$route.query.id;
-                club.showDetail(this,clubid);
-            },
-            clubCertification(){
-                var clubid = this.$route.query.id;
-                this.$router.push({name:'clubCertification', query: {id: clubid}});
-            }
-        },
-        beforeUpdate(){
-//            this.loadData();
         },
         mounted() {
-            this.loadData();
+            _this = this
         }
     }
 </script>
@@ -138,8 +126,8 @@
                 }
                 .user-description {
                     overflow: hidden;
-
-
+                    
+                    
                 }
             }
         }
@@ -221,9 +209,7 @@
         display: flex;
         justify-content:center;
         align-items:Center;
-            position: fixed;
-            bottom: 0px;
-
+        margin:20px auto 0;
       }
       .word1{margin:50px 0;font-size:30px;}
       .word2{margin:50px auto; width:60%;font-size:34px;}

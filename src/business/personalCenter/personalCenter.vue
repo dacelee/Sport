@@ -99,12 +99,12 @@
                         icons: 'wodejiaoyi'
                     },
                     {
-                        id: 'businessOrder',
+                        id: 'orderCenter',
                         name: '商圈订单',
                         icons: 'shangquandingdan'
                     },
                     {
-                        id: 'addressManage',
+                        id: 'addressInfo',
                         name: '收货地址',
                         icons: 'shouhuodizhi'
                     }

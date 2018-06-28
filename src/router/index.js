@@ -26,7 +26,26 @@ import editBankCard from '@/business/personalCenter/editBankCard.vue'
 import editAliPayForm from '@/business/personalCenter/editAliPayForm.vue'
 import faceRecognition from '@/business/personalCenter/faceRecognition.vue'
 import identityInformation from '@/business/personalCenter/identityInformation.vue'
+import transaction from '@/business/personalCenter/transaction.vue'
+import transactionDetails from '@/business/personalCenter/transactionDetails.vue'
+import appeal from '@/business/personalCenter/appeal.vue'
+import paySuccess from '@/business/personalCenter/paySuccess.vue'
+import orderCenter from '@/business/personalCenter/orderCenter.vue'
+import orderDetails from '@/business/personalCenter/orderDetails.vue'
+import logistics from '@/business/personalCenter/logistics.vue'
+import addressInfo from '@/business/personalCenter/addressInfo.vue'
+import addressOperation from '@/business/personalCenter/addressOperation.vue'
+import userGuide from '@/business/personalCenter/userGuide.vue'
+import teamManage from '@/business/personalCenter/teamManage.vue'
+import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
+import businessProduct from '@/business/businessCenter/businessProduct.vue'
+import businessDetail from '@/business/businessCenter/businessDetail.vue'
+import businessCart from '@/business/businessCenter/businessCart.vue'
+import businessSettlement from '@/business/businessCenter/businessSettlement.vue'
+import businessOrder from '@/business/businessCenter/businessOrder.vue'
+import businessAddress from '@/business/businessCenter/businessAddress.vue'
+import businessAddressAdd from '@/business/businessCenter/businessAddressAdd.vue'
 import club from '@/business/club/clubList.vue'
 import createClub from '@/business/club/createClub.vue'
 import createClubSuccess from '@/business/club/createClubSuccess.vue'
@@ -159,12 +178,75 @@ export default new Router({
             }
         },
         {
+            path: '/businessProduct',
+            name: 'businessProduct',
+            component: businessProduct,
+            meta: {
+                title: '商圈产品',
+                back: 'businessCenter'
+            }
+        },
+        {
+            path: '/businessDetail',
+            name: 'businessDetail',
+            component: businessDetail,
+            meta: {
+                title: '产品详情',
+                back: 'businessProduct'
+            }
+        },
+        {
+            path: '/businessCart',
+            name: 'businessCart',
+            component: businessCart,
+            meta: {
+                title: '加入购物车',
+                back: 'businessDetail'
+            }
+        },
+        {
+            path: '/businessSettlement',
+            name: 'businessSettlement',
+            component: businessSettlement,
+            meta: {
+                title: '结算',
+                back: 'businessCart'
+            }
+        },
+        {
+            path: '/businessOrder',
+            name: 'businessOrder',
+            component: businessOrder,
+            meta: {
+                title: '提交订单',
+                back: 'businessSettlement'
+            }
+        },
+        {
+            path: '/businessAddress',
+            name: 'businessAddress',
+            component: businessAddress,
+            meta: {
+                title: '选择收货地址',
+                back: 'businessOrder'
+            }
+        },
+        {
+            path: '/businessAddressAdd',
+            name: 'businessAddressAdd',
+            component: businessAddressAdd,
+            meta: {
+                title: '新增收货地址',
+                back: 'businessAddress'
+            }
+        },
+        {
             path: '/club',
             name: 'club',
             component: club,
             meta: {
                 title: '俱乐部',
-                rightTitle: '创建'
+                rightTitle: '创建',
             }
         },
         {
@@ -173,7 +255,7 @@ export default new Router({
             component: imageClip,
             meta: {
                 title: '裁剪图片',
-                back:'-1'
+                back: '-1'
             }
         },
         {
@@ -182,7 +264,7 @@ export default new Router({
             component: createClub,
             meta: {
                 title: '创建俱乐部',
-                back:'/club',
+                back: '/club',
             }
         },
         {
@@ -191,7 +273,7 @@ export default new Router({
             component: createClubSuccess,
             meta: {
                 title: '创建成功',
-                back:'/-1',
+                back: '/club'
             }
         },
         {
@@ -200,7 +282,7 @@ export default new Router({
             component: clubCertification,
             meta: {
                 title: '实体店认证',
-                back:"-1"
+                back: '-1'
             }
         },
         {
@@ -209,7 +291,7 @@ export default new Router({
             component: clubCertificationSuccess,
             meta: {
                 title: '实体店认证成功',
-                back:"-1"
+                back: '-1'
             }
         },
         {
@@ -218,8 +300,8 @@ export default new Router({
             component: clubDetails,
             meta: {
                 title: '俱乐部详情',
-                back:'/club',
-                rightTitle:'发布活动'
+                back: '/club',
+                rightTitle: '发布活动'
             }
         },
         {
@@ -227,7 +309,8 @@ export default new Router({
             name: 'clubTeams',
             component: clubTeams,
             meta: {
-                title: '成员'
+                title: '成员',
+                back: '/clubDetails',
             }
         },
         {
@@ -237,7 +320,7 @@ export default new Router({
             meta: {
                 title: '活动',
                 back: '-1',
-                rightTitle:'发布活动'
+                rightTitle: '发布活动'
             }
         },
         {
@@ -246,7 +329,7 @@ export default new Router({
             component: publishActivity,
             meta: {
                 title: '发布活动',
-                back:'-1'
+                back: '-1'
             }
         },
         {
@@ -462,6 +545,114 @@ export default new Router({
             component: identityInformation,
             meta: {
                 title: '身份信息',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/transaction',
+            name: 'transaction',
+            component: transaction,
+            meta: {
+                title: '商圈交易',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/transactionDetails/:id',
+            name: 'transactionDetails',
+            component: transactionDetails,
+            meta: {
+                title: '订单信息',
+                back: '/transaction'
+            }
+        },
+        {
+            path: '/appeal:id',
+            name: 'appeal',
+            component: appeal,
+            meta: {
+                title: '申诉',
+                back: '/transaction'
+            }
+        },
+        {
+            path: '/paySuccess',
+            name: 'paySuccess',
+            component: paySuccess,
+            meta: {
+                title: '支付成功',
+                back: '/transaction'
+            }
+        },
+        {
+            path: '/orderCenter',
+            name: 'orderCenter',
+            component: orderCenter,
+            meta: {
+                title: '商圈订单',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/orderDetails/:id',
+            name: 'orderDetails',
+            component: orderDetails,
+            meta: {
+                title: '订单详情',
+                back: '/orderCenter'
+            }
+        },
+        {
+            path: '/logistics/:id',
+            name: 'logistics',
+            component: logistics,
+            meta: {
+                title: '物流信息',
+                back: '/orderCenter'
+            }
+        },
+        {
+            path: '/addressInfo',
+            name: 'addressInfo',
+            component: addressInfo,
+            meta: {
+                title: '收货地址',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/addressOperation/:id',
+            name: 'addressOperation',
+            component: addressOperation,
+            meta: {
+                title: '收货地址管理',
+                back: '/addressInfo'
+            }
+        },
+        {
+            path: '/userGuide',
+            name: 'userGuide',
+            component: userGuide,
+            meta: {
+                title: '新手指引',
+                back: '/personalSetting'
+            }
+        },
+        {
+            path: '/teamManage',
+            name: 'teamManage',
+            component: teamManage,
+            meta: {
+                title: '我的团队',
+                back: '/personalCenter'
+            }
+        },
+        {
+            path: '/teamRecruitment',
+            name: 'teamRecruitment',
+            component: teamRecruitment,
+            meta: {
+                title: '团队招募',
                 back: '/personalCenter'
             }
         },
