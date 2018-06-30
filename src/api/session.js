@@ -47,10 +47,8 @@ export default {
     loginSuccess:function(user){
         this.appCache('loginUser',user);
     },
-    clearCache:function(key){
-        if(this.isAPPRuntime()){
-            $api.setStorage(key,null);
-        }
+    clearCache:function(){
+        $api.clearStorage();
     },
     appCache:function(key,val){
         if(val&&val!=null){
