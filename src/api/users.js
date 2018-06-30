@@ -7,6 +7,8 @@ export default {
     feedbackAddAction:"/my/feedbackadd",
     editInfoAction:"/my/editinfo",
     myInfoAction:"/my/myinfo",
+    myIdentity:"/my/myidentity",
+    coinlog:"/my/coinloglist",
     setPwd:function(context,formData){
         session.getMemberID(function(memberid) {
             formData.memberid = memberid;
@@ -104,6 +106,74 @@ export default {
                 var data = json.data;
                 session.appCache("MyInfo_" + memberid, data);
                 callback(data);
+            }, function (json) {
+                context.$Message.error(json.msg);
+            });
+        });
+    },
+    myIdentityLoad:function (context){
+        var _this = this;
+        session.getMemberID(function(memberid) {
+            axios.post(_this.myIdentity, {memberid: memberid}, function (json) {
+                var data = json.data;
+                context.list = [];
+                var exist = false;
+                if(data.isshops===1){
+                    exist = true;
+                    context.list.push({
+                        name: '商家',
+                        passed: 1
+                    });
+                }
+                if(data.isclub===1){
+                    exist = true;
+                    context.list.push({
+                        name: '圈主',
+                        passed: 1
+                    });
+                }
+                if(data.iscityagent===1){
+                    exist = true;
+                    context.list.push({
+                        name: '城市代理',
+                        passed: 0
+                    });
+                }
+                if(data.starlevel&&data.starlevel>0){
+                    exist = true;
+                    var number =["","一","二","三","四"];
+                    context.list.push({
+                        name: number[data.starlevel]+'星达人',
+                        passed: 1
+                    });
+                }
+                if(!exist){
+                    context.list.push({
+                        name: '无身份信息',
+                        passed: 0
+                    });
+                }
+            }, function (json) {
+                context.$Message.error(json.msg);
+            });
+        });
+    },
+    coinlogLoad:function(context){
+        var _this = this;
+        session.getMemberID(function(memberid) {
+            axios.post(_this.coinlog, {memberid: memberid,page:context.page,pageSize:10}, function (json) {
+                var data = json.dataList;
+                if(context.page==1){
+                    context.list = [];
+                }
+                $(data).each(function(index,item){
+                    context.list.push({
+                        name: item.logrecord,
+                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:ss"),
+                        num: item.coinnum
+                    });
+                })
+                context.page++;
             }, function (json) {
                 context.$Message.error(json.msg);
             });
