@@ -179,39 +179,40 @@ export default new Router({
             }
         },
         {
-            path: '/businessProduct',
+            path: '/businessProduct:id',
             name: 'businessProduct',
             component: businessProduct,
             meta: {
                 title: '商圈产品',
-                back: 'businessCenter'
+                back: '-1'
             }
         },
         {
-            path: '/businessDetail',
+            path: '/businessDetail:id',
             name: 'businessDetail',
             component: businessDetail,
             meta: {
                 title: '产品详情',
-                back: 'businessProduct'
+                back: '-1'
             }
         },
-        {
-            path: '/businessCart',
-            name: 'businessCart',
-            component: businessCart,
-            meta: {
-                title: '加入购物车',
-                back: 'businessDetail'
-            }
-        },
+        //{
+        //    path: '/businessCart',
+        //    name: 'businessCart',
+        //    component: businessCart,
+        //    meta: {
+        //        title: '加入购物车',
+        //        back: 'businessDetail'
+        //    }
+        //},
         {
             path: '/businessSettlement',
             name: 'businessSettlement',
             component: businessSettlement,
             meta: {
-                title: '结算',
-                back: 'businessCart'
+                title: '购物车',
+                back: '-1',
+                rightTitle:"管理"
             }
         },
         {
@@ -220,7 +221,7 @@ export default new Router({
             component: businessOrder,
             meta: {
                 title: '提交订单',
-                back: 'businessSettlement'
+                back: '-1'
             }
         },
         {
@@ -229,7 +230,7 @@ export default new Router({
             component: businessAddress,
             meta: {
                 title: '选择收货地址',
-                back: 'businessOrder'
+                back: '-1'
             }
         },
         {
@@ -238,7 +239,7 @@ export default new Router({
             component: businessAddressAdd,
             meta: {
                 title: '新增收货地址',
-                back: 'businessAddress'
+                back: '-1'
             }
         },
         {
@@ -265,7 +266,7 @@ export default new Router({
             component: createClub,
             meta: {
                 title: '创建俱乐部',
-                back: '/club',
+                back: '-1',
             }
         },
         {
@@ -274,7 +275,7 @@ export default new Router({
             component: createClubSuccess,
             meta: {
                 title: '创建成功',
-                back: '/club'
+                back: '-1'
             }
         },
         {
@@ -311,7 +312,7 @@ export default new Router({
             component: clubTeams,
             meta: {
                 title: '成员',
-                back: '/clubDetails',
+                back: '-1',
             }
         },
         {
@@ -547,7 +548,7 @@ export default new Router({
             component: faceRecognition,
             meta: {
                 title: '人脸识别',
-                back: '/verifiedForm'
+                back: '-1'
             }
         },
         {
@@ -556,7 +557,7 @@ export default new Router({
             component: identityInformation,
             meta: {
                 title: '身份信息',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -564,8 +565,8 @@ export default new Router({
             name: 'transaction',
             component: transaction,
             meta: {
-                title: '商圈交易',
-                back: '/personalCenter'
+                title: '我的交易',
+                back: '-1'
             }
         },
         {
@@ -574,7 +575,7 @@ export default new Router({
             component: transactionDetails,
             meta: {
                 title: '订单信息',
-                back: '/transaction'
+                back: '-1'
             }
         },
         {
@@ -583,7 +584,7 @@ export default new Router({
             component: appeal,
             meta: {
                 title: '申诉',
-                back: '/transaction'
+                back: '-1'
             }
         },
         {
@@ -592,7 +593,7 @@ export default new Router({
             component: paySuccess,
             meta: {
                 title: '支付成功',
-                back: '/transaction'
+                back: '-1'
             }
         },
         {
@@ -601,7 +602,7 @@ export default new Router({
             component: orderCenter,
             meta: {
                 title: '商圈订单',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -610,7 +611,7 @@ export default new Router({
             component: orderDetails,
             meta: {
                 title: '订单详情',
-                back: '/orderCenter'
+                back: '-1'
             }
         },
         {
@@ -619,7 +620,7 @@ export default new Router({
             component: logistics,
             meta: {
                 title: '物流信息',
-                back: '/orderCenter'
+                back: '-1'
             }
         },
         {
@@ -628,16 +629,16 @@ export default new Router({
             component: addressInfo,
             meta: {
                 title: '收货地址',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
-            path: '/addressOperation/:id',
+            path: '/addressOperation',
             name: 'addressOperation',
             component: addressOperation,
             meta: {
                 title: '收货地址管理',
-                back: '/addressInfo'
+                back: '-1'
             }
         },
         {
@@ -646,7 +647,7 @@ export default new Router({
             component: userGuide,
             meta: {
                 title: '新手指引',
-                back: '/personalSetting'
+                back: '-1'
             }
         },
         {
@@ -655,7 +656,7 @@ export default new Router({
             component: teamManage,
             meta: {
                 title: '我的团队',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -664,7 +665,7 @@ export default new Router({
             component: teamRecruitment,
             meta: {
                 title: '团队招募',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -673,7 +674,7 @@ export default new Router({
             component: activity,
             meta: {
                 title: '活动',
-                back: '/'
+                back: '-1'
             }
         },
         {
@@ -682,7 +683,7 @@ export default new Router({
             component: task,
             meta: {
                 title: '任务',
-                back: '/'
+                back: '-1'
             }
         },
 //{
