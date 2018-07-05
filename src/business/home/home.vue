@@ -27,7 +27,7 @@
                     <div class="step-num-info">
                         {{ stepNum }} <span class="steps">步</span>
                     </div>
-                    <div class="step-heat">{{ stepHeat }} Kal</div>
+                    <div class="step-heat">{{ stepHeat }} 卡路里</div>
                 </div>
             </div>
             <div class="reward-info text-center">奖励糖果:{{ rewardNum }}</div>
@@ -195,14 +195,17 @@
             }
         }
         .home-notice {
-            line-height: 24px;
-            font-size: 24px;
+            line-height: 32px;
+            font-size: 32px;
             padding: 28px 30px;
+            width: calc(100% - 60px);
+            border-bottom: 1px solid #000000;
+            margin: 0 auto;
             .left-icons {
                 margin-right: 30px;
                 .icons {
-                    width: 24px;
-                    height: 24px;
+                    width: 32px;
+                    height: 32px;
                 }
             }
         }
