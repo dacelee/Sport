@@ -50,6 +50,10 @@ export default {
     clearCache:function(){
         $api.clearStorage();
     },
+    loginOut(){
+        //退出
+        this.rmCache('loginUser');
+    },
     appCache:function(key,val){
         if(val&&val!=null){
             $api.setStorage(key,val);
@@ -58,5 +62,8 @@ export default {
             return $api.getStorage(key);
         }
     },
+    rmCache(key){
+        $api.rmStorage(key);
+    }
 
 }

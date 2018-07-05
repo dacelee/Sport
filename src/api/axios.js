@@ -1,4 +1,4 @@
-var root = 'http://api.bozhiyue.com'
+var root = 'http://39.108.2.130'
 // 引用axios
 var axios = require('axios')
 var qs = require('qs')
@@ -36,7 +36,7 @@ function filterNull (o) {
  另外，不同的项目的处理方法也是不一致的，这里出错就是简单的alert
  */
 
-function apiAxios (method, url, params, success, failure,loading) {
+function apiAxios (method, url, params, success, failure,resolve,loading) {
     if (params) {
         params = filterNull(params);
     }
@@ -55,6 +55,11 @@ function apiAxios (method, url, params, success, failure,loading) {
         baseURL: root,
         withCredentials: false
     }).then(function (res) {
+            if(resolve){
+                setTimeout(() => {
+                    resolve();
+                }, 1000);
+            }
             if(loadingProcess) {
                 LoadingBar.finish();
             }
@@ -88,16 +93,10 @@ function apiAxios (method, url, params, success, failure,loading) {
 // 返回在vue模板中的调用接口
 export default {
     host:root,
-    get: function (url, params, success, failure) {
-        return apiAxios('GET', url, params, success, failure)
+    get: function (url, params, success, failure,resolve) {
+        return apiAxios('GET', url, params, success, failure,resolve)
     },
-    post: function (url, params, success, failure) {
-        return apiAxios('POST', url, params, success, failure)
-    },
-    put: function (url, params, success, failure) {
-        return apiAxios('PUT', url, params, success, failure)
-    },
-    delete: function (url, params, success, failure) {
-        return apiAxios('DELETE', url, params, success, failure)
+    post: function (url, params, success, failure,resolve) {
+        return apiAxios('POST', url, params, success, failure,resolve)
     }
 }
