@@ -1,6 +1,6 @@
 <template>
     <div class="search-input">
-        <input type="text" class="search-input-container" v-model="nVal" @keyup.enter="responseFilter"
+        <input type="text" class="search-input-container" v-model="nVal"  @keyup.enter="responseFilter"
                :placeholder="placeholder">
         <l-icon name="sousuo"/>
     </div>
@@ -21,6 +21,9 @@
                 nVal: null
             }
         },
+        deactivated() {
+            this.nVal = ""
+        },
         mounted() {
             this.nVal = this.value
         },
@@ -29,6 +32,7 @@
                 this.$emit('input', this.nVal)
                 this.$emit('change')
             }
+
         }
     }
 </script>

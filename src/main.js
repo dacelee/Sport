@@ -19,7 +19,8 @@ Vue.prototype.session = session
 Vue.prototype.appUtil = appUtil
 Vue.config.productionTip = false
 Vue.use(component)
-import {Message,Icon,Progress,Scroll,Spin} from 'iview';
+import {Message,Icon,Progress,Scroll,Spin,Radio,
+    RadioGroup,Checkbox,CheckboxGroup,InputNumber} from 'iview';
 import './style/iview_theme.less'
 Message.config({
     top: 'auto'
@@ -28,7 +29,12 @@ Vue.prototype.$Message = Message
 Vue.component("Icon",Icon)
 Vue.component("Progress",Progress)
 Vue.component("Scroll",Scroll)
+Vue.component("RadioGroup",RadioGroup)
+Vue.component("Radio",Radio)
+Vue.component("CheckboxGroup",CheckboxGroup)
+Vue.component("Checkbox",Checkbox)
 Vue.component("Spin",Spin)
+Vue.component("InputNumber",InputNumber)
 let eCharts = require('./assets/echarts.js')
 let $api = require('./public/api.js')
 Vue.use(VueWeChatTitle)
@@ -46,14 +52,6 @@ new Vue({
     components: {index},
     template: '<index/>',
     mounted() {
-        //登录检测
-        if(!this.session.isLogin()){
-            this.$router.push('login');
-            return;
-        }
-        //this.$router.push({
-        //    name: 'home'
-        //})
         if (this.$router.history.current.name) {
             // 初始化时判断是否存在路由信息,如果不存在路由信息,则跳转至首页
             if (this.$router.history.current.path === '/') {
@@ -70,5 +68,6 @@ new Vue({
                 name: 'home'
             })
         }
+
     },
 })
