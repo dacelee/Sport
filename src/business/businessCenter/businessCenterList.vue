@@ -1,8 +1,8 @@
 <template>
     <div class="business-center-list">
         <div class="head-menu">
-            <div class="head-menu-item text-center" v-for="item in menuList" @click="businessProduct">
-                <l-icon :name="item.icons"/>
+            <div class="head-menu-item text-center" v-for="item in menuList" @click="businessProduct(item.id)">
+                <img :src="item.logo"/>
                 <div class="head-menu-label">{{ item.name }}</div>
             </div>
         </div>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="recommend-goods-list">
-            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail">
+            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail(item.id)" >
                 <div class="recommend-goods-img">
                     <img :src="item.imgPath" alt="">
                 </div>
@@ -31,15 +31,15 @@
 
 <script>
     import goods from '../../api/goods.js'
-    
-    let _this
     export default {
         name: 'business-center-list',
         data() {
             return {
+                page:1,
                 route: 'businessCenter',
                 menuList: [
                     {
+                        id:1,
                         icons: 'paoxie',
                         name: '跑鞋'
                     },
@@ -63,7 +63,31 @@
                         price: '5231.00',
                         equal: '500'
                     },
-                
+//                    {
+//                        imgPath: '',
+//                        name: '雷霆战靴-王者归来',
+//                        price: '5231.00',
+//                        equal: '500'
+//                    },
+//                    {
+//                        imgPath: '',
+//                        name: '雷霆战靴-王者归来',
+//                        price: '5231.00',
+//                        equal: '500'
+//                    },
+//                    {
+//                        imgPath: '',
+//                        name: '雷霆战靴-王者归来',
+//                        price: '5231.00',
+//                        equal: '500'
+//                    },
+//                    {
+//                        imgPath: '',
+//                        name: '雷霆战靴-王者归来',
+//                        price: '5231.00',
+//                        equal: '500'
+//                    },
+
                 ],
                 recommendList: [
                     {
@@ -73,21 +97,22 @@
                     }
                 ]
             }
-        }, mounted() {
-            _this = this
+        },mounted(){
+            goods.loadCateList(this);
             //热门
-            goods.loadGoods(this, 'list', 0, 2, 'addtime', 'desc', 1, 5)
+            goods.loadGoods(this,"list",0,2,"addtime","desc",null,5);
             //推荐
-            goods.loadGoods(this, 'recommendList', 0, 1, 'addtime', 'desc', 1, 4)
+            goods.loadGoods(this,"recommendList",0,1,"addtime","desc",null,4);
         }, methods: {
-            businessProduct() {
-                this.$router.push('businessProduct')
-                
+            businessProduct(id) {
+                this.$router.push({name:'businessProduct',params:{id:id}});
             },
-            businessDetail() {
-                this.$router.push('businessDetail')
-            }
-            
+            businessDetail(id) {
+                this.$router.push({name:'businessDetail',params:{id:id}})
+            },
+            editEvent(){
+                this.$router.push("businessSettlement")
+            },
         }
     }
 </script>

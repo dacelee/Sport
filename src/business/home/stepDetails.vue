@@ -66,9 +66,9 @@
             changeTabs(res) {
                 this.currentMenu = res;
                 if(res==="stepStatistics"){
-                    this.$emit('changeRightTitle',null);
+                    this.$emit('changeRightIcon',null);
                 }else{
-                    this.$emit('changeRightTitle',"fenxiang");
+                    this.$emit('changeRightIcon',"fenxiang");
                 }
 
             },

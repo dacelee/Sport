@@ -47,10 +47,12 @@ export default {
     loginSuccess:function(user){
         this.appCache('loginUser',user);
     },
-    clearCache:function(key){
-        if(this.isAPPRuntime()){
-            $api.setStorage(key,null);
-        }
+    clearCache:function(){
+        $api.clearStorage();
+    },
+    loginOut(){
+        //退出
+        this.rmCache('loginUser');
     },
     appCache:function(key,val){
         if(val&&val!=null){
@@ -60,5 +62,8 @@ export default {
             return $api.getStorage(key);
         }
     },
+    rmCache(key){
+        $api.rmStorage(key);
+    }
 
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="clubTeams">
         <div class="search-area">
-            <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
+            <l-search placeholder="搜索" v-model="filterName"   @change="change"/>
         </div>
         <div class="club-list-container">
             <div class="club-list-item" v-for="item in list">
@@ -12,7 +12,7 @@
                     <div class="left-basic-info text-white pull-left">
                         <div class="name">{{ item.name }}
                             <l-icon
-                                :name="item.status === 0 ? 'chuangjianren' : ''"/>
+                                :name="item.level === 1 ? 'chuangjianren' : ''"/>
                         </div>
                         <div class="club-num-info">
                        <div class="chengyuan-people pull-left"> 
@@ -22,7 +22,7 @@
                             <div class="already pull-left">{{ item.already }}</div>
                         </div>
                     </div>
-                   <div class="right-deletes text-center pull-right">
+                   <div class="right-deletes text-center pull-right" v-if="delModel">
                         <l-icon name="weigouxuan"/>
                     </div>
                 </div>
@@ -33,67 +33,72 @@
 </template>
 
 <script>
-let _this
+    import club from '../../api/club.js'
     export default {
         name: 'clubTeams',
         data() {
             return {
-                route: 'club',
+                page: 1,
+                delModel:false,
                 filterName: '',
                 list: [
-                    {
-                        imgPath: 'static/img/club/1.jpg',
-                        name: '如果回忆会心痛',
-                        chengyuanIcon:'chengyuan-nv',
-                        rank: 12350,
-                        activity: 8987,
-                        already:'',
-                        status: 0,
-                        
-                    },
-                    {
-                        imgPath: 'static/img/club/2.jpg',
-                        name: '夜跑都市人',
-                        chengyuanIcon:'chengyuan-nv',
-                        rank: 4210,
-                        activity: 3511,
-                        already:'已组队',
-                        status: 1,
-                        
-                    },
-                    {
-                        imgPath: 'static/img/club/3.jpg',
-                        name: '酷跑狂人',
-                        chengyuanIcon:'chengyuan-nv',
-                        rank: 147,
-                        activity: 131,
-                        already:'已组队',
-                        status: 2,
-                       
-                    },
-                    {
-                        imgPath: 'static/img/club/4.jpg',
-                        name: '减肥跑步俱乐部',
-                        chengyuanIcon:'chengyuan-nan',
-                        rank: 312,
-                        activity: 224,
-                        already:'',
-                        status: 3,   
-                    }
+//                    {
+//                        imgPath: 'static/img/club/1.jpg',
+//                        name: '如果回忆会心痛',
+//                        chengyuanIcon:'chengyuan-nv',
+//                        rank: 12350,
+//                        activity: 8987,
+//                        already:'',
+//                        level: 0,
+//
+//                    },
+//                    {
+//                        imgPath: 'static/img/club/2.jpg',
+//                        name: '夜跑都市人',
+//                        chengyuanIcon:'chengyuan-nv',
+//                        rank: 4210,
+//                        activity: 3511,
+//                        already:'已组队',
+//                        level: 1,
+//
+//                    },
+//                    {
+//                        imgPath: 'static/img/club/3.jpg',
+//                        name: '酷跑狂人',
+//                        chengyuanIcon:'chengyuan-nv',
+//                        rank: 147,
+//                        activity: 131,
+//                        already:'已组队',
+//                        level: 2,
+//
+//                    },
+//                    {
+//                        imgPath: 'static/img/club/4.jpg',
+//                        name: '减肥跑步俱乐部',
+//                        chengyuanIcon:'chengyuan-nan',
+//                        rank: 312,
+//                        activity: 224,
+//                        already:'',
+//                        level: 3,
+//                    }
                 ]
             }
         },
+
         methods: {
-            reset() {
-                console.log(this.filterName)
+            change(){
+                this.page = 1;
+                var clubid = this.$route.query.id;
+                club.loadMemberList(this,clubid,this.filterName);
             },
-            toDetails(item) {
-                let _this = this
-                _this.$router.push({name: 'clubDetails', params: {id: item.id}})
-            }
+
         },
-        mounted() {
-            _this = this
+        activated() {
+            this.filterName = "";
+            this.page = 1;
+            this.list = [];
+            var clubid = this.$route.query.id;
+            club.loadMemberList(this,clubid,this.filterName);
         }
     }
 </script>

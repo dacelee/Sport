@@ -1,27 +1,35 @@
 <template>
     <div class="businessProduct">
         <l-tabs :list="menuList" :current="status" @change="changeRoute"/>
-       
         <div class="recommend-goods-list">
-            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="showDetails(item)">
-                <div class="recommend-goods-img">
-                    <img :src="item.imgPath" alt="">
+            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="0">
+                <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="showDetails(item)">
+                    <div class="recommend-goods-img">
+                        <img :src="item.imgPath" alt="">
+                    </div>
+                    <div class="recommend-goods-name">{{ item.name }}</div>
+                    <div class="recommend-goods-price">{{ '￥'+item.price }}</div>
                 </div>
-                <div class="recommend-goods-name">{{ item.name }}</div>
-                <div class="recommend-goods-price">{{ '￥'+item.price }}</div>
-            </div>
+                <div style="clear: both"></div>
+            </Scroll>
         </div>
     </div>
 </template>
 
 <script>
-let _this
+    import goods from '../../api/goods.js'
     export default {
         name: 'businessProduct',
         data() {
             return {
+                page:1,
+                catid:0,
+                attr:"0",
+                sort:"addtime",
+                sorttype:"desc",
                 router: 'businessProduct',
                 status: 'all',
+                scrollHeight:0,
                 menuList: [
                     {
                         id: 'all',
@@ -41,30 +49,30 @@ let _this
                     }
                 ],
                 recommendList: [
-                    {
-                        id:1,
-                        imgPath: 'static/img/goods/1.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '761.00'
-                    },
-                    {
-                        id:1,
-                        imgPath: 'static/img/goods/2.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    },
-                    {
-                        id:1,
-                        imgPath: 'static/img/goods/3.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    },
-                    {
-                        id:1,
-                        imgPath: 'static/img/goods/4.jpg',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    }
+//                    {
+//                        id:1,
+//                        imgPath: 'static/img/goods/1.jpg',
+//                        name: '我也不知道是么子孩子',
+//                        price: '761.00'
+//                    },
+//                    {
+//                        id:1,
+//                        imgPath: 'static/img/goods/2.jpg',
+//                        name: '我也不知道是么子孩子',
+//                        price: '760.00'
+//                    },
+//                    {
+//                        id:1,
+//                        imgPath: 'static/img/goods/3.jpg',
+//                        name: '我也不知道是么子孩子',
+//                        price: '760.00'
+//                    },
+//                    {
+//                        id:1,
+//                        imgPath: 'static/img/goods/4.jpg',
+//                        name: '我也不知道是么子孩子',
+//                        price: '760.00'
+//                    }
                 ]
             }
         },
@@ -74,13 +82,50 @@ let _this
             },
             changeRoute(res) {
                 this.status = res
+                this.page = 1;
+                switch (res){
+                    case "all":
+                        this.attr="0";
+                        this.sort="addtime";
+                        this.sorttype="desc";
+                        break;
+                    case "new":
+                        this.attr="3";
+                        this.sort="addtime";
+                        this.sorttype="desc";
+                        break;
+                    case "priceLow":
+                        this.attr="0";
+                        this.sort="price";
+                        this.sorttype="asc";
+                        break;
+                    case "priceHigh":
+                        this.attr="0";
+                        this.sort="price";
+                        this.sorttype="desc";
+                        break;
+                }
+                goods.loadGoods(this,"recommendList",this.catid,this.attr,this.sort,this.sorttype);
+            },
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve) {
+                    goods.loadGoods(_this,"recommendList", _this.catid ,_this.attr,_this.sort,_this.sorttype,resolve);
+                });
             }
+        },activated () {
+            this.catid = this.$route.params.id;
+            this.status='all';
+            this.attr="0";
+            this.page=1;
+            this.sort="addtime";
+            this.sorttype="desc";
+            goods.loadGoods(this,"recommendList", this.catid ,this.attr,this.sort,this.sorttype);
         },
         mounted() {
-            _this = this
             this.$nextTick(function () {
-//                let height = $('.view-container').height()
-//                $(_this.$el).css('min-height', height)
+                var headerHeight = this.appUtil.getHeaderHeight();
+                this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
             })
         }
     }
@@ -111,12 +156,11 @@ let _this
         }
         
         .recommend-goods-list {
-            margin-top: 10px;
             overflow: hidden;
             .recommend-goods-item {
                 width: calc(50% - 5px);
                 background-color: #ffffff;
-                margin-top: 10px;
+                margin-bottom: 10px;
                 .recommend-goods-img {
                     width: 100%;
                     height: 370px;

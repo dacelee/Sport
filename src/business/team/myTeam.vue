@@ -25,7 +25,7 @@
                         <l-icon name="duichang" class="pull-left"/>
                         <div class="label">队长</div>
                     </div>
-                    <div class="personal-operation pull-left" v-if="item.status === 0" @click="delMember(item.id)">请出队伍</div>
+                    <div class="personal-operation pull-left" v-if="item.status === 0" @click="delMember(item.teamid,item.id)">请出队伍</div>
                 </div>
             </div>
         </div>
@@ -126,6 +126,7 @@
                     $(teamList).each(function(index,item){
                         teamMembers.push(
                                 {
+                                    teamid:teamid,
                                     id:item.teammemberid,
                                     imgPath: item.logo,
                                     name: item.nikename,
@@ -139,16 +140,19 @@
                     _this.$Message.error(json.msg);
                 });
             },
-            delMember(id){
-                this.axios.post(this.session.teamDelMember, {"id":id}, function (json) {
+            delMember(teamid,memberid){
+                this.axios.post(this.session.teamDelMember, {"teamid":teamid,memberid:memberid}, function (json) {
                     _this.$Message.info(json.msg);
                     if(json.code==1){
                         $(_this.teamMembers).each(function(index,item){
                             if(item.id==id){
-                                delete _this.teamMembers[index];
+                                _this.teamMembers.splice(index, 1);
+                                return;
                             }
                         });
                     }
+                }, function (json) {
+                    _this.$Message.info(json.msg);
                 });
             }
         }

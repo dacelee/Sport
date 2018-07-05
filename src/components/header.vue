@@ -19,11 +19,15 @@
                 type: Object
             }
         },
+
         data() {
             return {
                 name:""
             };
-        } , methods: {
+        },
+        mounted() {
+        },
+        methods: {
             native:function(){
                 if(this.meta.back==="leftBtnEvent"){
                     this.$emit('leftBtnEvent')
@@ -36,7 +40,8 @@
             },
             myEvent(){
                 this.$emit('rightBtnEvent')//触发父组件事件
-            }
+            },
+
         }
     }
 </script>

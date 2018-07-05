@@ -1,81 +1,140 @@
 <template>
     <div class="businessOrder"> 
-       <div class="address">
+       <div class="address"  @click='getAddress'>
          <div class="pull-left juli"><l-icon name="juli1"/></div>
          <div class="pull-left msg">
-           <p>收货人：李大陆</p>
-           <p>联系电话：18577890456</p>
-           <p>收货地址：湖南长沙岳麓区梅溪湖街道</p>
+           <p>收货人：{{delivery.linkman}}</p>
+           <p>联系电话：{{delivery.mobile}}</p>
+           <p>收货地址：{{delivery.address}}</p>
          </div>
-         <div class="pull-right icon" @click='businessAddress'><l-icon name="fanhui" class="link-icons" /></div>
+         <div class="pull-right icon"><l-icon name="fanhui" class="link-icons" /></div>
        </div>
        <div class="wordPic" v-for="item in list">
-         <div class="smallPic pull-left"><img src="static/img/goods/44.gif"></div>
+         <div class="smallPic pull-left"><img :src="item.pic"></div>
          <div class="pull-right">
-          <div class="title">夏季低帮篮球鞋男鞋鸳鸯4 音速驭帅11运</div>
-          <div class="goods-price">￥200</div>
-         <div class="bi">还需支付 <span>{{ item.hlb }}活力币</span></div>
+          <div class="title">{{ item.name }}</div>
+          <div class="goods-price">{{ item.rmb }}</div>
+         <div class="bi">还需支付 <span>{{ item.hlb }} 糖果</span></div>
           <div class="bi">数量:{{ item.num }}</div>
          </div>
        </div>
-       <div class="totals">共1件商品</div>
-       <div class="payStylelist">
-       <div class="payList">
-         <div class="pull-left"><l-icon name="wechat"/> 微信支付</div>
-         <div class="pull-right"><l-icon name="weigouxuan"/></div>
-         </div>
-         <div class="payList">
-         <div class="pull-left"><l-icon name="Shape"/> 支付宝支付</div>
-         <div class="pull-right"><l-icon name="weigouxuan"/></div>
-         </div>
-       </div>
+       <div class="totals">共{{list.length}}件商品</div>
+        <RadioGroup v-model="payType"  >
+            <div class="payStylelist">
+                <div class="payList">
+                    <div class="pull-left">
+                        <l-icon name="wechat"/>
+                        微信支付
+                    </div>
+                    <div class="pull-right">
+                        <Radio label="1"><l-icon :name="payType!=1?'weigouxuan':'gouxuan'" /></Radio>
+                    </div>
+                </div>
+                <div class="payList">
+                    <div class="pull-left">
+                        <l-icon name="Shape"/>
+                        支付宝支付
+                    </div>
+                    <div class="pull-right">
+                        <Radio label="2"><l-icon :name="payType!=2?'weigouxuan':'gouxuan'" /></Radio>
+                    </div>
+                </div>
+            </div>
+            </RadioGroup>
         <div class="bottomBtn">
             <div class="pull-left leftBox">
             <div class="pull-left">
                合计
             </div>
             <div class="pull-right">
-              <p>人民币：256</p>
-              <p>活跃币：256</p>
+              <p>人民币：{{totalPrice}}</p>
+              <p>糖果：{{totalCoin}}</p>
             </div>
             </div>
-            <div class="pull-right rightBox" >提交</div>
+            <div class="pull-right rightBox"  @click="paySuccess">提交</div>
         </div>
     </div>
 </template>
 
 <script>
-let _this
-    export default {
-        name: 'businessOrder',
-        data() {
-            return {
-                router: 'businessOrder',
-                 list: [
-                    {
-                        pic: 'static/img/goods/44.gif',
-                        name: '旋风无敌小队队队',
-                        rmb: 12350,
-                        hlb: 8987,
-                        num: 3,
-                    }
-                    ]
-            }
-        },
-        methods: {
-        businessAddress() {
-            _this.$router.push('businessAddress')
+import goods from '../../api/goods.js'
+import address from '../../api/address.js'
+export default {
+    name: 'businessOrder',
+    data() {
+        return {
+            totalPrice:0,
+            totalCoin:0,
+            payType:1,
+            deliveryid:0,
+            delivery:{
+                linkman:"",
+                mobile:"",
+                address:""
+            },
+            list: [
+                {
+//                    pic: 'static/img/goods/44.gif',
+//                    name: '旋风无敌小队队队',
+//                    rmb: 12350,
+//                    hlb: 8987,
+//                    num: 3,
+                }
+            ]
         }
-     },
-     mounted() {
-        _this = this
-     }
+    },
+    methods: {
+        getAddress(){
+            this.$router.push('businessAddress')
+        },
+        paySuccess() {
+            if(this.deliveryid==0){
+                this.$Message.error("请填写收货人信息");
+                return;
+            }
+            if(this.payType==1){
+                goods.orderSubmitAction(this, this.deliveryid,"wxpay");
+            }else{
+                goods.orderSubmitAction(this, this.deliveryid,"alipay");
+            }
+//            this.$router.replace('paySuccess')
+        },
+        changeNum(){
+            this.totalPrice = 0;
+            this.totalCoin = 0;
+            var _this = this;
+            var list = this.list;
+            $(list).each(function(index,item){
+                _this.totalPrice +=item.rmb*item.num;
+                _this.totalCoin += parseFloat((item.hlb*item.num).toFixed(2));
+            });
+        }
+    },
+    activated(){
+        var addressid =  this.$route.query.addressid;
+        if(addressid){
+            this.deliveryid = addressid;
+            address.useAddress(this,this.deliveryid);
+        }else{
+            address.useAddress(this);
+        }
+        goods.loadCartGoods(this);
+
+    },
+    mounted() {
+        this.$nextTick(function () {
+            var headerHeight = this.appUtil.getHeaderHeight();
+            var height = $(window).height()-headerHeight;
+            $(".businessOrder").css("min-height",height);
+        })
     }
+}
 </script>
 
 <style lang="scss">
 .businessOrder {
 background-color: #F5F5F5;
+padding-bottom:125px;
 .cartPic img{max-width:100%;width:100%}
 .title{font-size: 32px;
 padding: 0px 0 10px 20px;
@@ -116,8 +175,9 @@ white-space: nowrap;}
             text-align:center;
             font-size:34px;
             color:#000;
+            background-color:#404148;
             .leftBox{display:flex;align-items:Center;
-             background-color:#404148;padding:20px;color:#fff;width:70%;
+             padding:20px;color:#fff;width:70%;
              .pull-left{color:#F8C513!important}
               .pull-right{font-size:24px;color:#F8C513;float:right;margin-left:200px;}
             }

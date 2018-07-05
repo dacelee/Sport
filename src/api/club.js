@@ -2,12 +2,14 @@ import axios from './axios.js'
 import session from './session.js'
 import utils from '../public/appUtil.js'
 export default {
+    pageSize:10,
     nearclub:"/club/nearclub",
     detail:"/club/detail",
     create:"/club/create",
     auth:"/club/authstore",
     articleList:"/club/articlelist",
     addArticleUrl:"/club/addarticle",
+    memberList:"/club/memberlist",
     loadClub:function(context,name,memberid,x,y,page,pageSize){
        axios.post(this.nearclub, {"page":page,"pageSize":pageSize,"name":name,"memberid":memberid,"x":x,"y":y}, function (json) {
             var data = [];
@@ -19,7 +21,7 @@ export default {
                         peopleCount: item.countTotal,
                         activity: item.activity,
                         status:item.memberid==memberid?0:(item.isjoin>0?1:(item.isunderline==1?2:3)),
-                        distance: item.juli+'km'
+                        distance: item.juli.toFixed(1)+'km'
                     });
             });
            context.page++;
@@ -29,24 +31,7 @@ export default {
         });
     },
     showDetail:function(context,clubid){
-        axios.post(this.detail, {"clubid":clubid}, function (json) {
-            var data = json.data;
-            context.headPhoto = data.logo;
-            context.clubName = data.name;
-            context.idNum = data.nikename;
-            context.createTime = utils.dateFormat(data.addtime,"yyyy.MM.dd");
-            context.InfoValue1 = [ data.areaname, data.membercount, data.activity ];
-            context.intor = data.intro;
-            //context.auth_license = data.auth_license;
-            session.getMemberID(function(member_id){
-                if(member_id==data.memberid){
-                    context.mycreate = true;
-                }
-            });
-
-        },function(json){
-            context.$Message.error({content:json.msg});
-        });
+        
     },
     clubCreate:function(context,formData){
         var  _this = this;
@@ -93,6 +78,32 @@ export default {
         },function(json){
             context.$Message.error(json.msg);
         });
+    },
+    loadMemberList:function(context,clubid,name,resolve){
+        var _this = this;
+        axios.post(_this.memberList, {clubid: clubid,name:name,page:context.page,pageSize:_this.pageSize}, function (json) {
+            var data = json.dataList;
+            if(context.page==1){
+                context.list = [];
+            }
+            $(data).each(function(index,item){
+                context.list.push({
+                    imgPath: item.logo,
+                    name: item.nikename,
+                    chengyuanIcon:item.sex=="美女"?'chengyuan-nv':'chengyuan-nan',
+                    rank: item.memberlevel,
+                    activity: item.activity,
+                    already:item.teammemberid>0?'已组队':'',
+                    level: item.level,
+
+                });
+            })
+            if(data.length>0){
+                context.page++;
+            }
+        }, function (json) {
+            context.$Message.error(json.msg);
+        },resolve);
     }
 
 }

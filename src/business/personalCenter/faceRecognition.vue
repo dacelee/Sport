@@ -15,20 +15,142 @@
                 <div class="text">放慢动作</div>
             </div>
         </div>
-        <div class="btn">开始</div>
+        <div class="btn"  @click="nextStep"  :class="{'btn-disabled': nextDisabled}">开始</div>
+        <popupError v-if="showPopupError"
+                    :showPopupError.sync="showPopupError" />
+        <verifyCodeModal v-if="showVerifyCodeModal"
+                         @cancel="onDialogCancel"
+                         @videoResult="onDialogVideoResult"
+                         :videoFail.sync="videoFail"
+                         :videoFailText.sync="videoFailText"
+        />
+        <loading v-if="showLoading"></loading>
+        <result v-if="showResult"
+                @restart="onDialogAgain"
+                :showResult.sync="showResult"
+                :videoResultDetail="videoResultDetail"></result>
     </div>
 </template>
 
 <script>
+    import verifyCodeModal from './face/verifyCodeModal';
+    import loading from './face/loading';
+    import result from './face/result';
+    import popupError from './face/popupError';
     let _this
     export default {
         name: 'face-recognition',
+        components: {
+            verifyCodeModal,
+            loading,
+            result,
+            popupError
+        },
+        data() {
+            return {
+                showVerifyCodeModal: false,
+                verifyCode: '',
+                nextDisabled: false,
+                showLoading: false,
+                showResult: false,
+                videoResultDetail: null,
+                videoFail: false,
+                videoFailText: {},
+                showPopupError: false,
+            };
+        },
         mounted() {
+            let ua = navigator.userAgent.toLowerCase();
+            let model = ua.indexOf('android');
+            let browser = ua.indexOf('micromessenger');
+
+            if (model !== -1 && browser !== -1) {
+                this.showPopupError = true;
+            }
+            if (typeof(FileReader) === 'undefined' ){
+                this.showVerifyCodeModal = true;
+                this.errorContent();
+                this.videoFail = true;
+                this.videoFailText.detail = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
+            }
             _this = this
             _this.$nextTick(function () {
                 $(_this.$el).css('min-height', $('.view-container').height())
             })
+        },
+        methods: {
+            onDialogCancel() {
+                this.nextDisabled = false;
+                this.showVerifyCodeModal = false;
+            },
+
+            onDialogAgain() {
+                this.nextDisabled = false;
+                this.showVerifyCodeModal = true;
+            },
+
+            onDialogVideoResult(event, sessionId) {
+                // 显示loding图
+                const files = event.target.files;
+                this.showLoading = true;
+
+                if (files && files.length > 0) {
+                    let file = files[0];
+                    let self = this;
+                    if (file.size > 20 * 1024 * 1024) {
+                        this.showLoading = false;
+                        this.videoFail = true;
+                        this.videoFailText = {
+                            title: '视频上传失败',
+                            detail: '您录制的视频时间过大,请重新录制'
+                        };
+                        return;
+                    }
+
+                    let reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.addEventListener('loadend', function () {
+                        var vedio = reader.result.split(',');
+                        let formdata = {
+                            type: 'faceliveness_verify',
+                            apiType: 'faceliveness',
+                            'session_id': sessionId,
+                            'video_base64':vedio[1]
+                        };
+                        if(sessionId==null){
+                            this.errorContent();
+                            return;
+                        }
+                        _this.axios.post('extend/aibaidu',formdata,function(json){
+
+                        },function(json){
+                            self.showLoading = false;
+                            self.showVerifyCodeModal = false;
+                            var data = json.data;
+                            if(!data){
+                                _this.errorContent();
+                            }else{
+                                self.showResult = true;
+                                self.videoResultDetail = data;
+                            }
+                        });
+                    });
+                }
+            },
+            nextStep() {
+                this.showVerifyCodeModal = true;
+            },
+
+            errorContent() {
+                this.showLoading = false;
+                this.videoFail = true;
+                this.videoFailText = {
+                    title: '视频上传失败',
+                    detail: '视频上传失败，请重新上传'
+                };
+            }
         }
+
     }
 </script>
 
@@ -71,6 +193,9 @@
             position: absolute;
             bottom: 0;
             left: 0;
+            &-disabled {
+                 background-color: #ccc;
+             }
         }
     }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="activity-list">
-        <Scroll :on-reach-Bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="[0,0]">
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
             <div class="activity-list-item" v-for="item in list">
                 <div class="item-bg">
                     <img :src="item.imgPath" alt="">

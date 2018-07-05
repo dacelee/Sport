@@ -51,6 +51,10 @@
                         name: '美女'
                     }
                 ],
+                currentSex:{
+                    id: 1,
+                    name: '帅哥'
+                },
                 list: [
                     {
                         name: 'ID',
@@ -90,6 +94,10 @@
                 this.currentSex = data
                 this.showSexSelect = false
                 this.baseData.sex = data.name;
+                this.currentSex = {
+                    id: data.id,
+                    name: data.name
+                };
                 users.editInfo(this, "sex", data.name,true);
             },
             changePage(data) {

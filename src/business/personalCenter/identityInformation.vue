@@ -10,32 +10,41 @@
 </template>
 
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'identity-information',
         data() {
             return {
                 list: [
-                    {
-                        name: '市级代理',
-                        passed: 1
-                    },
-                    {
-                        name: '俱乐部圈主',
-                        passed: 1
-                    },
-                    {
-                        name: '商家',
-                        passed: 1
-                    },
-                    {
-                        name: '一星达人',
-                        passed: 1
-                    },
-                    {
-                        name: '省级代理',
-                        passed: 0
-                    }
+//                    {
+//                        name: '市级代理',
+//                        passed: 1
+//                    },
+//                    {
+//                        name: '俱乐部圈主',
+//                        passed: 1
+//                    },
+//                    {
+//                        name: '商家',
+//                        passed: 1
+//                    },
+//                    {
+//                        name: '一星达人',
+//                        passed: 1
+//                    },
+//                    {
+//                        name: '省级代理',
+//                        passed: 0
+//                    }
                 ]
+            }
+        },
+        mounted(){
+            this.loadData();
+        },
+        methods:{
+            loadData(){
+                users.myIdentityLoad(this);
             }
         }
     }

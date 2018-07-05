@@ -1,43 +1,58 @@
 <template>
     <div class="team-manage">
-        <div class="team-list-item" v-for="item in list">
-            <img :src="item.imgPath" alt="">
-            <div class="name">{{ item.userName }}</div>
-            <div class="personalAmount">下线{{ item.amount }}人</div>
-        </div>
-        <div class="total-amount text-right">合计：{{ total }}人</div>
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
+            <div class="team-list-item" v-for="item in list">
+                <img :src="item.imgPath" alt="">
+                <div class="name">{{ item.userName }}</div>
+                <div class="personalAmount">下线{{ item.amount }}人</div>
+            </div>
+            <div class="total-amount text-right">合计：{{ total }}人</div>
+        </Scroll>
     </div>
 </template>
 
 <script>
-    let _this
+    import users from '../../api/users.js'
     export default {
         name: 'team-manage',
         data() {
             return {
-                total: 50,
+                total: 0,
+                page:1,
+                scrollHeight:0,
                 list: [
-                    {
-                        imgPath: '/static/img/personal/default.jpg',
-                        userName: '游泳的鱼',
-                        amount: (Math.random() * 100).toFixed(0)
-                    },
-                    {
-                        imgPath: '/static/img/personal/default.jpg',
-                        userName: '游泳的鱼',
-                        amount: (Math.random() * 100).toFixed(0)
-                    },
-                    {
-                        imgPath: '/static/img/personal/default.jpg',
-                        userName: '游泳的鱼',
-                        amount: (Math.random() * 100).toFixed(0)
-                    }
+//                    {
+//                        imgPath: '/static/img/personal/default.jpg',
+//                        userName: '游泳的鱼',
+//                        amount: (Math.random() * 100).toFixed(0)
+//                    },
+//                    {
+//                        imgPath: '/static/img/personal/default.jpg',
+//                        userName: '游泳的鱼',
+//                        amount: (Math.random() * 100).toFixed(0)
+//                    },
+//                    {
+//                        imgPath: '/static/img/personal/default.jpg',
+//                        userName: '游泳的鱼',
+//                        amount: (Math.random() * 100).toFixed(0)
+//                    }
                 ]
             }
         },
-        methods: {},
+        methods: {
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve) {
+                    users.loadMyGroupTeam(_this,resolve);
+                });
+            }
+        },
         mounted() {
-            _this = this
+            this.$nextTick(function () {
+                var headerHeight = this.appUtil.getHeaderHeight();
+                this.scrollHeight = $(window).height()-headerHeight;
+            })
+            users.loadMyGroupTeam(this)
         }
     }
 </script>
