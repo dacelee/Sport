@@ -4,23 +4,28 @@
             <div class="num">{{ contributionNum }}</div>
             <div class="label">当前贡献值</div>
         </div>
-        <div class="records-list-item" v-for="item in list">
-            <div class="left-details">
-                <div class="name">{{ item.name }}</div>
-                <div class="date">{{ item.time }}</div>
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
+            <div class="records-list-item" v-for="item in list">
+                <div class="left-details">
+                    <div class="name">{{ item.name }}</div>
+                    <div class="date">{{ item.time }}</div>
+                </div>
+                <div class="right-num" >
+                    +{{ item.num }}
+                </div>
             </div>
-            <div class="right-num" :class="{'payOut':item.type === -1}">
-                {{ item.type === -1 ? '-' : '+' }}{{ item.num }}
-            </div>
-        </div>
+        </Scroll>
     </div>
 </template>
 
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'contribution-records',
         data() {
             return {
+                page:1,
+                scrollHeight:0,
                 contributionNum: '150.1321315124',
                 list: [
                     {
@@ -54,6 +59,24 @@
                         type: 1
                     }
                 ]
+            }
+        },mounted(){
+            var headerHeight = this.appUtil.getHeaderHeight();
+            this.scrollHeight = $(window).height()-headerHeight-$(".current-contribution").height()-80;
+            var _this = this;
+            users.getCacheMyInfo(this, function (myInfo) {
+                _this.contributionNum = myInfo.contributionvalue;
+            })
+        },
+        activated(){
+            users.loadContributionvaluelog(this);
+        },
+        methods: {
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve){
+                    users.loadContributionvaluelog(_this,resolve);
+                });
             }
         }
     }

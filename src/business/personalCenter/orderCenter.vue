@@ -1,60 +1,66 @@
 <template>
     <div class="order-center">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
-        <div class="order-list-item" v-for="item in list" @click="showDetails(item.id)">
-            <div class="order-goods-info">
-                <div class="order-goods-details">
-                    <div class="goods-img">
-                        <img :src="item.imgPath" alt="">
-                    </div>
-                    <div class="goods-info">
-                        <div class="goods-title">{{ item.name }}</div>
-                        <div class="goods-price">￥{{ item.unitPrice }}</div>
-                        <div class="goods-extend" v-if="item.extendData">还需要支付<span>{{ item.extendData+'糖果' }}</span>
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
+            <div class="order-list-item" v-for="order in list" @click="showDetails(order.id)">
+                <div class="order-goods-info">
+                    <div class="order-goods-details" v-for="good in order.goods" >
+                        <div class="goods-img">
+                            <img :src="good.imgPath" alt="">
                         </div>
-                        <div class="class-amount">{{ '数量：'+item.amount }}</div>
+                        <div class="goods-info">
+                            <div class="goods-title">{{ good.name }}</div>
+                            <div class="goods-price">￥{{ good.unitPrice }}</div>
+                            <div class="goods-extend" v-if="good.extendData">
+                                还需要支付<span>{{ good.extendData+'糖果' }}</span>
+                            </div>
+                            <div class="class-amount">{{ '数量：'+good.amount }}</div>
+                        </div>
                     </div>
-                </div>
-                <div class="goods-details">
-                    <div class="goods-num">{{ '共'+item.amount+'件商品' }}</div>
-                    <div class="goods-total">{{ '合计：'+item.totalPrice }}<span v-if="item.extendData">+{{ item.extendData+'糖果' }}</span>
+                    <div class="goods-details">
+                        <div class="goods-num">{{ '共'+order.amount+'件商品' }}</div>
+                        <div class="goods-total">{{ '合计：'+order.totalPrice }}<span v-if="order.extendData">+{{ order.extendData+'糖果' }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="operation-btn">
-                    <div class="status">{{ item.status }}</div>
-                    <div class="btn-area">
-                        <div class="btn" @click.stop="showLogistics(item.id)">查看物流</div>
-                        <div class="btn btn-confirm">确认收货</div>
+                    <div class="operation-btn">
+                        <div class="status">{{ order.status_des }}</div>
+                        <div class="btn-area">
+                            <div class="btn" @click.stop="showLogistics(order.id)" v-if="order.status==3||order.status==5">查看物流</div>
+                            <div class="btn btn-confirm" v-if="order.status==3">确认收货</div>
+                            <div class="btn btn-confirm" v-if="order.status==1">立即支付</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Scroll>
     </div>
 </template>
 
 <script>
-    let _this
+    import goods from '../../api/goods.js'
     export default {
         name: 'order-center',
         data() {
             return {
-                status: 'all',
+                status: '0',
+                page:1,
+                scrollHeight:0,
                 statusList: [
                     {
-                        id: 'all',
+                        id: '0',
                         name: '全部'
                     },
                     {
-                        id: 'pending',
+                        id: '1',
                         name: '待付款'
                     },
                     {
-                        id: 'appeal',
-                        name: '申诉中'
+                        id: '2',
+                        name: '待发货'
                     },
                     {
-                        id: 'canceled',
-                        name: '已取消'
+                        id: '3',
+                        name: '待收货'
                     }
                 ],
                 list: [
@@ -83,20 +89,24 @@
         },
         methods: {
             changeRoute(res) {
-                _this.status = res
+                this.status = res
+                this.page=1;
+                goods.loadOrderList(this,this.status);
             },
             showDetails(id) {
-                _this.$router.push({name: 'orderDetails', params: {id: id}})
+                this.$router.push({name: 'orderDetails', params: {id: id}})
             },
             showLogistics(id) {
-                _this.$router.push({name: 'logistics', params: {id: id}})
+                this.$router.push({name: 'logistics', params: {id: id}})
             }
         },
+        activated () {
+            goods.loadOrderList(this,this.status);
+        },
         mounted() {
-            _this = this
             this.$nextTick(function () {
-                let height = $('.view-container').height()
-                $(_this.$el).css('min-height', height)
+                var headerHeight = this.appUtil.getHeaderHeight();
+                this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
             })
         }
     }

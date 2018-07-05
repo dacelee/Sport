@@ -14,15 +14,17 @@
                     {{ item.address }}
                 </div>
                 <div class="operation">
-                    <div class="pull-left" :class="{'default':item.isDefault}">{{ item.isDefault ? '默认地址' : '设置成默认地址'
-                        }}
+
+                    <div class="pull-left default"  v-if="item.isDefault">
+                        默认地址
                     </div>
+                    <!--<div class="pull-left"  v-if="!item.isDefault" @click="setDefault(item.id)">设置成默认地址</div>-->
                     <div class="pull-right">
                         <div class="pull-left btn btn-edit" @click="editAddress(item.id)">
                             <l-icon name="bianji"/>
                             编辑
                         </div>
-                        <div class="pull-left btn btn-delete">
+                        <div class="pull-left btn btn-delete" @click="delAddress(item.id)">
                             <l-icon name="shanchu"/>
                             删除
                         </div>
@@ -37,41 +39,48 @@
 </template>
 
 <script>
-    let _this
+    import address from '../../api/address.js'
     export default {
         name: 'address-manage',
         data() {
             return {
                 list: [
-                    {
-                        id: '3213213',
-                        userName: 'Louis',
-                        phone: '133-3213-2131',
-                        address: '北京市朝阳区朝阳街道朝阳楼朝阳栋朝阳层朝阳号',
-                        isDefault: true
-                    },
-                    {
-                        id: '3213213',
-                        userName: 'Louis',
-                        phone: '133-3213-2131',
-                        address: '北京市朝阳区朝阳街道朝阳楼朝阳栋朝阳层朝阳号'
-                    }
+//                    {
+//                        id: '3213213',
+//                        userName: 'Louis',
+//                        phone: '133-3213-2131',
+//                        address: '北京市朝阳区朝阳街道朝阳楼朝阳栋朝阳层朝阳号',
+//                        isDefault: true
+//                    },
+//                    {
+//                        id: '3213213',
+//                        userName: 'Louis',
+//                        phone: '133-3213-2131',
+//                        address: '北京市朝阳区朝阳街道朝阳楼朝阳栋朝阳层朝阳号'
+//                    }
                 ]
             }
         },
         methods: {
             editAddress(id) {
-                _this.$router.push({name: 'addressOperation', params: {id: id}})
+                this.$router.push({name: 'addressOperation', query: {id: id}})
             },
             addAddress() {
-                _this.$router.push({name: 'addressOperation'})
+                this.$router.push({name: 'addressOperation'})
+            },
+            delAddress(id){
+                address.delAddress(this,id);
+            },
+            setDefault(id){
+                address.setDefault(this,id);
             }
         },
+        activated () {
+            address.loadList(this);
+        },
         mounted() {
-            _this = this
-            _this.$nextTick(function () {
-                let height = $('.view-container').height()
-                $(_this.$el).css('min-height', height)
+            this.$nextTick(function () {
+
             })
         }
     }
@@ -126,7 +135,7 @@
             }
         }
         .add-address {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             background-color: #f8c513;
             width: 100%;

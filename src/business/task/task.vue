@@ -67,8 +67,10 @@
                         _this.axios.post(_this.session.getCoinUnit,null, function (json) {
                             _this.getCoinUnit = json.data.getcoinunit;
                             _this.stepNum = _this.session.appCache("steps");
+                            if(isNaN(_this.stepNum )){
+                                _this.stepNum = 0;
+                            }
                             _this.sugarNum = (_this.stepNum* _this.getCoinUnit* _this.activity).toFixed(2);
-
                         },function(json){
                             _this.$Message.error(json.msg)
                         });

@@ -1,7 +1,7 @@
 <template>
     <div class="club-list">
         <div class="search-area">
-            <l-search placeholder="搜索" v-model="filterName" />
+            <l-search placeholder="搜索" v-model="filterName"  @change="change"/>
         </div>
         <div class="club-list-container">
             <div class="club-list-item" v-for="item in list"  @click="toDetails(item)">
@@ -44,15 +44,15 @@
                 y:0,
                 page:1,
                 list: [
-                    {
-                        id:4,
-                        imgPath: 'static/img/club/1.jpg',
-                        name: '旋风无敌小队',
-                        peopleCount: 12350,
-                        activity: 8987,
-                        status: 0,
-                        distance: '500m'
-                    },
+//                    {
+//                        id:4,
+//                        imgPath: 'static/img/club/1.jpg',
+//                        name: '旋风无敌小队',
+//                        peopleCount: 12350,
+//                        activity: 8987,
+//                        status: 0,
+//                        distance: '500m'
+//                    },
 ////                    {
 ////                        imgPath: 'static/img/club/2.jpg',
 ////                        name: '夜跑都市人',
@@ -80,17 +80,10 @@
                 ]
             }
         },
-        watch:{
-            filterName: function (val, oldVal) {
-                _this.page = 1;
-                this.loadData();
-            }
-        },
-
         methods: {
-            reset() {
-                console.log(this.filterName)
-                alert(this.filterName)
+            change(){
+                this.page = 1;
+                this.loadData();
             },
             editEvent() {
                 _this.$router.push('createClub')

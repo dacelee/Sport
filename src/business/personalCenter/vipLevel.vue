@@ -16,13 +16,14 @@
             </div>
             <div class="privilege">
                 <div class="require">{{ item.require }}</div>
-                <div class="label">{{ item.label }}</div>
+                <div class="label">交易手续费{{ item.label }}%</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'vip-level',
         data() {
@@ -31,32 +32,43 @@
                 contribution: 2400,
                 lessNum: 600,
                 list: [
-                    {
-                        level: 1,
-                        require: 1000,
-                        label: '交易手续费5%'
-                    },
-                    {
-                        level: 2,
-                        require: 2000,
-                        label: '交易手续费5%'
-                    },
-                    {
-                        level: 3,
-                        require: 3000,
-                        label: '交易手续费5%'
-                    },
-                    {
-                        level: 4,
-                        require: 4000,
-                        label: '交易手续费5%'
-                    },
-                    {
-                        level: 5,
-                        require: 5000,
-                        label: '交易手续费5%'
-                    }
+//                    {
+//                        level: 1,
+//                        require: 1000,
+//                        label: '5%'
+//                    },
+//                    {
+//                        level: 2,
+//                        require: 2000,
+//                        label: '交易手续费5%'
+//                    },
+//                    {
+//                        level: 3,
+//                        require: 3000,
+//                        label: '交易手续费5%'
+//                    },
+//                    {
+//                        level: 4,
+//                        require: 4000,
+//                        label: '交易手续费5%'
+//                    },
+//                    {
+//                        level: 5,
+//                        require: 5000,
+//                        label: '交易手续费5%'
+//                    }
                 ]
+            }
+        },activated () {
+            this.loadMyInfo();
+        },methods: {
+            loadMyInfo(){
+                var _this=  this;
+                users.getCacheMyInfo(this,function(data){
+                    _this.level= data.memberlevel;
+                    _this.contribution =  data.contributionvalue;
+                    users.loadMemberLevel(_this,_this.contribution);
+                });
             }
         }
     }

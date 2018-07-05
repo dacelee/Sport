@@ -55,6 +55,7 @@
 </template>
 <script type="text/javascript">
     let _this
+    import pedometer from '../../api/pedometer.js'
     export default {
         name: 'home',
         data() {
@@ -75,13 +76,13 @@
         mounted() {
             _this = this
             _this.getShortMenuList();
-            _this.loadData();
 
         },activated () {
-            var stepNum = this.session.appCache("steps");
-            if (stepNum) {
-                this.stepNum  = stepNum;
-                this.rewardNum = (this.stepNum * this.getCoinUnit * this.activity).toFixed(2);
+            var _this = this;
+            _this.loadData();
+            var pedometerStart = this.session.appCache("pedometerStart");
+            if(!pedometerStart&&_this.session.isAPPRuntime()){
+                pedometer.start(this);
             }
         },
         methods: {
@@ -139,13 +140,12 @@
                             var data = json.data;
                             _this.vipLevel = data.memberLevel;
                             _this.activity = data.activity;
-                            _this.totalReward = data.cointotal;
-                            _this.contribution = data.contributionvalue;
+                            _this.totalReward = parseInt(data.cointotal);
+                            _this.contribution = parseInt(data.contributionvalue);
 
                         });
                         _this.axios.post(_this.session.todaystepinfo, {'memberid':memberid},function(json){
                             var data = json.data;
-                            _this.stepNum = data.steptotal;
                             _this.stepHeat = data.distance;
                         });
                         var activity = 0;
@@ -156,14 +156,19 @@
                             _this.axios.post(_this.session.myActivityAdd, {"memberid": memberid}, function (json) {
                                 activity += json.data.activityadd;
                                 _this.activity = activity;
+                                _this.axios.post(_this.session.getCoinUnit, null, function (json) {
+                                    _this.getCoinUnit = json.data.getcoinunit;
+                                    if(_this.session.isAPPRuntime()){
+                                        _this.stepNum  = pedometer.getSteps();
+                                        _this.rewardNum = (_this.stepNum * _this.getCoinUnit * _this.activity).toFixed(2);
+                                    }
+                                }, function (json) {
+                                    _this.$Message.error(json.msg)
+                                });
                             }, function (json) {
                                 _this.$Message.error(json.msg)
                             });
-                            _this.axios.post(_this.session.getCoinUnit, null, function (json) {
-                                _this.getCoinUnit = json.data.getcoinunit;
-                            }, function (json) {
-                                _this.$Message.error(json.msg)
-                            });
+
                         }, function (json) {
                             _this.$Message.error(json.msg)
                         });

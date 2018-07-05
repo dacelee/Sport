@@ -5,11 +5,12 @@
             {{ item.name }}
             <l-icon name="fanhui"/>
         </div>
-        <div class="logout">退出登录</div>
+        <div class="logout" @click="quitApp">退出登录</div>
     </div>
 </template>
 
 <script>
+    import pedometer from '../../api/pedometer.js'
     let _this
     export default {
         name: 'personal-setting',
@@ -26,7 +27,7 @@
                         padding: true
                     },
                     {
-                        id: 'addressInfo',
+                        id: 'userGuide',
                         name: '钱包地址',
                         padding: true
                     },
@@ -44,6 +45,15 @@
         methods: {
             changePage(route) {
                 _this.$router.push(route)
+            },
+            quitApp(){
+                var _this = this;
+                App.confirm({"title":'警告',"content":"确定要退出应用?"}).then(function(){
+                    pedometer.stop();
+                    _this.session.loginOut();
+                    _this.$router.replace("/login");
+                });
+
             }
         },
         mounted() {

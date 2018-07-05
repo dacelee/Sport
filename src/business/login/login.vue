@@ -12,7 +12,7 @@
             <div class="forget-password text-right text-white" @click="$router.push('/register/forgetPassword')">忘记密码
             </div>
             <div class="btn-login text-center" @click="login">登&emsp;录</div>
-            <div class="btn-register text-center" @click="$router.push('/register')">注&emsp;册</div>
+            <div class="btn-register text-center" @click="register">注&emsp;册</div>
         </div>
     </div>
 </template>
@@ -34,11 +34,14 @@
             }
         }, mounted() {
             _this = this
-            
             if (this.session.isLogin()) {
                 _this.$router.replace('/')
             }
-        }, methods: {
+        },
+        activated(){
+            this.userInfo={ phone: '',password: ''};
+        }
+        , methods: {
             login() {
                 if (!this.$verify.check()) {
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors)
@@ -66,7 +69,11 @@
                         })
                     return
                 }
+            },
+            register(){
+                this.$router.push('/register')
             }
+
         }
     }
 </script>

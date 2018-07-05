@@ -4,50 +4,80 @@
             <div class="charts" id="trading-charts"></div>
         </div>
         <div class="trading-data-board">
-            <div class="trading-data-item pull-left" v-for="item in dataList">
-                <div class="left-label pull-left">{{ item.name }}</div>
-                <div class="right-value pull-left">{{ item.value }}</div>
+            <div class="trading-data-item pull-left">
+                <div class="left-label pull-left">最低价格</div>
+                <div class="right-value pull-left">{{ low }}美元</div>
+            </div>
+            <div class="trading-data-item pull-left">
+                <div class="left-label pull-left">最高价格</div>
+                <div class="right-value pull-left">{{ high }}美元</div>
+            </div>
+            <div class="trading-data-item pull-left">
+                <div class="left-label pull-left">当前价格</div>
+                <div class="right-value pull-left">{{ current }}美元</div>
+            </div>
+            <div class="trading-data-item pull-left">
+                <div class="left-label pull-left">成交量</div>
+                <div class="right-value pull-left">{{ volume }}</div>
+            </div>
+            <div class="trading-data-item pull-left">
+                <div class="left-label pull-left">涨跌幅度</div>
+                <div class="right-value pull-left">{{ percent }}</div>
             </div>
         </div>
         <l-shortMenu :currentRoute="currentMenu" :list="tabsList" @change="changeTabs"/>
         <div class="search-area">
-            <l-search placeholder="搜索" v-model="filterName" @change="reset"/>
+            <l-search placeholder="搜索" v-model="filterName" @change="search"/>
         </div>
         <div class="trading-center-list-business">
-            <div class="trading-business-item" v-for="item in businessList">
-                <div class="left-img pull-left">
-                    <img :src="item.imgPath" alt="">
-                </div>
-                <div class="item-base-info pull-left">
-                    <div class="base-info-name">{{ item.name }}</div>
-                    <div class="base-info-price-info">
-                        <div class="unit-price pull-left">{{ '单价:'+item.unitPrice }}</div>
-                        <div class="less-count pull-left">{{ '数量:' +item.lessCount}}</div>
+            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
+                <div class="trading-business-item" v-for="item in businessList">
+                    <div class="left-img pull-left">
+                        <img :src="item.imgPath" alt="">
                     </div>
-                    <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
+                    <div class="item-base-info pull-left">
+                        <div class="base-info-name">{{ item.name }}</div>
+                        <div class="base-info-price-info">
+                            <div class="unit-price pull-left">{{ '单价:'+item.unitPrice }}</div>
+                            <div class="less-count pull-left">{{ '数量:' +item.lessCount}}</div>
+                        </div>
+                        <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
+                    </div>
+                    <div class="right-business-btn pull-left text-center" @click="market(item)"  v-if="item.lessCount>0">
+                        {{marketBtn}}
+                    </div>
                 </div>
-                <div class="right-business-btn pull-left text-center" v-on:click="toggle()">
-                    购买
-                </div>
-            </div>
+            </Scroll>
         </div>
         <div class="bottomBtn">
-            <div class="pull-left" v-for="item in tabsList">{{item.name}}</div>
+            <div class="pull-left" v-for="item in tabsList" @click="myAction(item.id)">{{item.name}}</div>
         </div>
         <l-footerMenu :currentRoute.sync="route"/>
         <div class="bottomBtnBuy" v-show="isShow">
             <div class="buyBox">
-            <div class="buying">正在购买</div>
-            <div class="buyleft">当前糖果剩余额：99</div>
-            <div class="buyText"><input type="text" placeholder="请输入购买数量"></div>
+                <div class="buying">正在{{marketBtn}}</div>
+                <div class="buyleft">当前糖果剩余额：{{myCoin}}</div>
+                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal" placeholder="请输入数量"></div>
+                <div class="buyText"><label>交易秘密</label><input type="password" v-model="password" placeholder="输入交易秘密"></div>
             </div>
-            <div class="pull-left" v-for="item in tabsListBuy">{{item.name}}</div>
+            <div class="pull-left" v-for="item in tabsListBuy" @click="userBuy(item.id)">{{item.name}}</div>
+        </div>
+        <div class="bottomBtnBuy" v-show="isShowSell">
+            <div class="buyBox">
+                <div class="buying">发布{{marketAction}}</div>
+                <div class="buyleft">当前价格：{{current}}</div>
+                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2"   placeholder="请输入交易数量"></div>
+                <div class="buyText"><label>单价</label><input type="text" v-model="unitprice" placeholder="允许两倍溢价"></div>
+            </div>
+            <div class="pull-left" v-for="item in tabsListBuy" @click="marketSell(item.id)">{{item.name}}</div>
         </div>
     </div>
 </template>
 
 <script>
-    let chartsEl,_this;
+    let chartsEl;
+    import coin from '../../api/coin.js'
+    import users from '../../api/users.js'
     export default {
         name: 'trading-center-list',
         data() {
@@ -55,28 +85,26 @@
                 route: 'tradingCenter',
                 filterName: null,
                 isShow: false ,
-                dataList: [
-                    {
-                        name: '最低价格',
-                        value: '3美元'
-                    },
-                    {
-                        name: '最高价格',
-                        value: '6美元'
-                    },
-                    {
-                        name: '当前价格',
-                        value: '5美元'
-                    },
-                    {
-                        name: '成交量',
-                        value: '600'
-                    },
-                    {
-                        name: '涨跌幅度',
-                        value: '4%'
-                    }
-                ],
+                isShowSell:false,
+                marketBtn:'购买',
+                marketAction:"买单",
+                marketItem:null,
+                page:1,
+                type:1,
+                myCoin:0,
+                scrollHeight:500,
+                high:0,
+                low:0,
+                current:0,
+                volume:0,
+                percent:0,
+                coinmysaleid:"",
+                cointotal:"",
+                cointotal2:"",
+                unitprice:"",
+                password:"",
+                sealType:1,
+                tradecharge:0,//手续费率
                 businessList: [
                     {
                         imgPath: 'static/img/personal/default.jpg',
@@ -121,14 +149,14 @@
                         tradingNum: (Math.random() * 5000).toFixed(0)
                     }
                 ],
-                currentMenu: 'buy',
+                currentMenu: '1',
                 tabsList: [
                     {
-                        id: 'buy',
+                        id: '1',
                         name: '我要买'
                     },
                     {
-                        id: 'sell',
+                        id: '2',
                         name: '我要卖'
                     }
                 ],
@@ -145,92 +173,179 @@
             }
         },
         methods: {
-            reset() {
-            
+            search(){
+
             },
             changeTabs(res) {
                 this.currentMenu = res
-            },
-            setChartsData() {
-                let option = {
-                    title: {
-                        show: false
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data: [ '价格', '交易量' ],
-                        y: 'top',
-                        x: 'left',
-                        top: 10,
-                        left: 10,
-                        textStyle: {
-                            color: '#999999'
-                        }
-                    },
-                    grid: {
-                        top: 40,
-                        left: 40,
-                        right: 20,
-                        bottom: 40
-                    },
-                    toolbox: {
-                        show: false,
-                    },
-                    color: [ '#ff0066', '#fec800' ],
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: [ '5月1日', '5月2日', '5月3日', '5月4日', '5月5日', '5月6日', '5月7日' ],
-                        axisLabel: {
-                            show: true,
-                            color: '#ffffff'
-                        }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLabel: {
-                            show: true,
-                            color: '#ffffff'
-                        }
-                    },
-                    series: [
-                        {
-                            name: '价格',
-                            type: 'line',
-                            data: [ 112, 121, 111, 13, 12, 13, 10 ],
-                        },
-                        {
-                            name: '交易量',
-                            type: 'line',
-                            data: [ 81, 42, 31, 55, 87, 94, 113 ],
-                        }
-                    ]
+                this.type = res;
+                this.page=1;
+                if(res==1){
+                    this.marketBtn = "购买";
+                }else{
+                    this.marketBtn = "售出";
                 }
-                chartsEl.setOption(option)
+                coin.loadSales(this);
             },
-            loadData(page){
-                this.axios.post(this.session.coinSalelist, {"page":page,"pageSize":10,"type":1}, function (json) {
-                    var data = [];
-                    $(json.dataList).each(function(index,item){
-                        data.push( {
-
-                        });
-                    });
-                    _this.list = data;
-                },function(json){
-
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve) {
+                    coin.loadSales(_this,resolve);
                 });
             },
-            toggle(){
-              this.isShow = true; 
-          }
+            setChartsData() {
+                coin.loadKline(this,7,function(data){
+                    var date = eval('(' + data[0] + ')');
+                    var x =  eval('(' + data[1] + ')');
+                    var y =  eval('(' + data[2] + ')');
+                    let option = {
+                        title: {
+                            show: false
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: [ '价格', '交易量' ],
+                            y: 'top',
+                            x: 'left',
+                            top: 10,
+                            left: 10,
+                            textStyle: {
+                                color: '#999999'
+                            }
+                        },
+                        grid: {
+                            top: 40,
+                            left: 40,
+                            right: 20,
+                            bottom: 40
+                        },
+                        toolbox: {
+                            show: false,
+                        },
+                        color: [ '#ff0066', '#fec800' ],
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: date,
+                            axisLabel: {
+                                show: true,
+                                color: '#ffffff'
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                show: true,
+                                color: '#ffffff'
+                            }
+                        },
+                        series: [
+                            {
+                                name: '价格',
+                                type: 'line',
+                                data: x,
+                            },
+                            {
+                                name: '交易量',
+                                type: 'line',
+                                data: y,
+                            }
+                        ]
+                    }
+                    chartsEl.setOption(option)
+                });
+
+            },
+            market(item){
+                this.isShow = true;
+                this.marketItem = item;
+                this.cointotal = item.lessCount;
+            },
+            myAction(type){
+                this.isShowSell = true;
+                this.sealType = type;
+                if (type == 2) {
+                    this.marketAction = "卖单";
+                } else {
+                    this.marketAction = "买单";
+                }
+            },
+            userBuy(id){
+                if (id == "ok") {
+                    if(this.marketItem==null){
+                        return;
+                    }
+                    var cointotal = this.cointotal;
+                    if(cointotal==""||cointotal<=0){
+                        this.$Message.error("交易数量必须填写");
+                        return;
+                    }
+                    if(cointotal>this.marketItem.lessCount){
+                        this.$Message.error("交易数量必须小于"+this.marketItem.lessCount);
+                        return;
+                    }
+                    if(this.password==""){
+                        this.$Message.error("交易密码必须填写");
+                        return;
+                    }
+                    var unitprice = this.marketItem.unitPrice;
+                    var handlingfee = 0;
+                    if(this.marketItem.type==2){
+                        handlingfee = (cointotal*unitprice*this.tradecharge).toFixed(1);
+                    }
+                    coin.saleCoinAction(this,this.marketItem.id,cointotal,unitprice,this.password,this.marketItem.type,handlingfee);
+                }else{
+                    this.isShow = false;
+                }
+            },
+            marketSell(id){
+                if (id == "ok") {
+                    var cointotal = this.cointotal2;
+                    if(cointotal==""||cointotal<=0){
+                        this.$Message.error("交易数量必须填写");
+                        return;
+                    }
+                    if(cointotal>this.myCoin){
+                        this.$Message.error("交易数量必须小于"+this.myCoin);
+                        return;
+                    }
+                    var currentprice = this.current;
+                    var unitprice = this.unitprice;
+                    if(unitprice<=0){
+                        this.$Message.error("交易单价必须大于0");
+                        return;
+                    }
+                    if(unitprice>currentprice*2){
+                        this.$Message.error("只允许两倍溢价");
+                        return;
+                    }
+                    var handlingfee = 0;
+                    if(this.sealType==2){
+                        handlingfee = (cointotal*unitprice*this.tradecharge).toFixed(1);
+                    }
+                    coin.saleAddAction(this,cointotal,unitprice,this.sealType,handlingfee);
+                }else{
+                    this.isShowSell = false;
+                }
+            },init(){
+                var _this = this;
+                this.page = 1;
+
+                coin.loadBaseInfo(this);
+                coin.loadSales(this);
+                users.getCacheMyInfo(this,function(user){
+                    _this.myCoin = user.cointotal.toFixed(0);
+                    _this.tradecharge = user.tradecharge;
+                },true)
+            }
         },
-        mounted() {
+        activated() {
             chartsEl = App.eCharts.echarts.init(document.getElementById('trading-charts'))
             this.setChartsData();
-            _this = this;
+            this.init();
+
         }
     }
 </script>
@@ -395,7 +510,8 @@
          .buyBox{background:#25252B;width:100%; padding: 80px 0;
          .buying{font-size:34px; color:#fff}
          .buyleft{font-size:24px; color:#999;padding:30px 0;}
-         .buyText input{background:#333339; height:80px;border-radius:10px; width:60%;padding:0 10px;}
+         .buyText input{background:#333339; height:80px;border-radius:10px; width:60%;padding:0 10px;margin-bottom: 10px;color: #FFF;}
+         .buyText label{width: 120px;display: inline-block;text-align: right;margin-right: 10px;}
         }
     }
 </style>

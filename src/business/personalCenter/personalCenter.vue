@@ -142,9 +142,9 @@
                     _this.description = data.personality;
                     _this.basicList[0].value= data.memberlevel;
                     _this.basicList[1].value= data.activity;
-                    _this.basicList[2].value= data.isrealauth;
+                    _this.basicList[2].value= data.contributionvalue;
                     _this.candyNum =  data.cointotal;
-                });
+                },true);
             }
         }
     }

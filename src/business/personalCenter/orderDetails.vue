@@ -32,67 +32,68 @@
             <div class="total-num">共{{ totalNum }}件商品</div>
             <div class="total-price">合计：￥{{ totalPrice }}</div>
         </div>
-        <div class="footer-btn">
-            <div class="btn" @click="toLogistics">查看物流</div>
-            <div class="btn btn-confirm">确认收货</div>
+        <div class="footer-btn" v-if="status!=4">
+            <div class="btn" ><div @click="toLogistics" v-if="status==3||status==5">查看物流</div></div>
+            <div class="btn btn-confirm"><div v-if="status==3">确认收货</div><div v-if="status==1">立即支付</div></div>
         </div>
     </div>
 </template>
 
 <script>
-    let _this
+    import goods from '../../api/goods.js'
     export default {
         name: 'order-details',
         data() {
             return {
                 orderId: '',
+                status:'0',
                 addressList: [
-                    {
-                        label: '收货人',
-                        value: '李大嘴'
-                    },
-                    {
-                        label: '联系电话',
-                        value: '188-0878-9438'
-                    },
-                    {
-                        label: '收货地址',
-                        value: '湖南省长沙市岳麓区中电软件园C1-1029'
-                    }
+//                    {
+//                        label: '收货人',
+//                        value: '李大嘴'
+//                    },
+//                    {
+//                        label: '联系电话',
+//                        value: '188-0878-9438'
+//                    },
+//                    {
+//                        label: '收货地址',
+//                        value: '湖南省长沙市岳麓区中电软件园C1-1029'
+//                    }
                 ],
                 orderInfo: [
-                    {
-                        label: '订单状态',
-                        value: '待收货'
-                    },
-                    {
-                        label: '订单号',
-                        value: '473289101244578'
-                    },
-                    {
-                        label: '交易金额',
-                        value: '100人民币+50糖果'
-                    },
-                    {
-                        label: '交易时间',
-                        value: '2018.5.12 12:00'
-                    }
+//                    {
+//                        label: '订单状态',
+//                        value: '待收货'
+//                    },
+//                    {
+//                        label: '订单号',
+//                        value: '473289101244578'
+//                    },
+//                    {
+//                        label: '交易金额',
+//                        value: '100人民币+50糖果'
+//                    },
+//                    {
+//                        label: '交易时间',
+//                        value: '2018.5.12 12:00'
+//                    }
                 ],
                 goodsList: [
-                    {
-                        imgPath: '/static/img/goods/2.jpg',
-                        name: '夏季鸳鸯4音速驭帅运动鞋',
-                        unitPrice: '255',
-                        candy: 40,
-                        num: 1
-                    },
-                    {
-                        imgPath: '/static/img/goods/1.jpg',
-                        name: '夏季鸳鸯4音速驭帅运动鞋',
-                        unitPrice: '255',
-                        candy: 40,
-                        num: 1
-                    }
+//                    {
+//                        imgPath: '/static/img/goods/2.jpg',
+//                        name: '夏季鸳鸯4音速驭帅运动鞋',
+//                        unitPrice: '255',
+//                        candy: 40,
+//                        num: 1
+//                    },
+//                    {
+//                        imgPath: '/static/img/goods/1.jpg',
+//                        name: '夏季鸳鸯4音速驭帅运动鞋',
+//                        unitPrice: '255',
+//                        candy: 40,
+//                        num: 1
+//                    }
                 ],
                 totalNum: 2,
                 totalPrice: '512+40活力币'
@@ -100,15 +101,18 @@
         },
         methods: {
             toLogistics() {
-                this.$router.push({name: 'logistics', params: {id: _this.orderId}})
+                this.$router.push({name: 'logistics', params: {id: this.orderId}})
             }
         },
+        activated () {
+            this.orderId = this.$route.params.id
+            goods.loadOrderDetail(this,this.$route.params.id);
+        },
         mounted() {
-            _this = this
-            _this.orderId = _this.$route.params.id
             this.$nextTick(function () {
-                let height = $('.view-container').height()
-                $(_this.$el).css('min-height', height)
+                var headerHeight = this.appUtil.getHeaderHeight();
+                var height = $(window).height()-headerHeight;
+                $(".order-details").height(height);
             })
         }
     }
@@ -118,7 +122,6 @@
     .order-details {
         background-color: #F5F5F5;
         color: #333333;
-        position: relative;
         .order-info {
             width: 100%;
             background-color: #ffffff;
@@ -245,7 +248,7 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             .btn {

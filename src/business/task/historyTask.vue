@@ -78,9 +78,9 @@
                                         needSugar: item.coinprice,
                                         rewardSugar: item.coinget,
                                         hanselSugar: 0,
-                                        dateTime: _this.appUtil.dateFormat(itme.begintime,"yyyy.MM.dd")+"-"+
-                                        _this.appUtil.dateFormat(itme.endtime,"yyyy.MM.dd"),
-                                        code: '—'
+                                        dateTime: _this.appUtil.dateFormat(item.begintime,"yyyy.MM.dd")+"-"+
+                                        _this.appUtil.dateFormat(item.endtime,"yyyy.MM.dd"),
+                                        code:  item.no
                                     }
                             );
                         })

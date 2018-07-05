@@ -97,7 +97,7 @@
         beforeUpdate(){
 //            this.loadData();
         },
-        mounted() {
+        activated() {
             this.loadData();
         }
     }

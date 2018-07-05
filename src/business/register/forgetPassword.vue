@@ -5,8 +5,6 @@
             忘记密码
         </l-head>
         <div class="forget-password-form">
-
-
             <div class="forget-password-form-item">
                 <input type="text" placeholder="手机号"   v-model="userInfo.mobile" v-verify.mobile="userInfo.mobile" v-verify="userInfo.mobile">
             </div>
@@ -55,6 +53,10 @@
             }
         }, mounted() {
             _this = this;
+            if(_this.session.isAPPRuntime()){
+                var header = $api.dom('.header-menu');
+                var  headerHeight = $api.fixStatusBar(header);
+            }
         },
         methods: {
             submitForm() {

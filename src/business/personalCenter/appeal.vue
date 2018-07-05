@@ -32,19 +32,21 @@
                 <div class="title">申诉说明</div>
             </div>
             <div class="item-container">
-                <textarea></textarea>
+                <textarea v-model="appeal"></textarea>
             </div>
             <div class="item-title">申诉证据</div>
             <div class="photo">
                 <l-icon name="shangchuantupian"/>
                 <div class="text">上传图片{{ photoNum }}/1</div>
+                <l-imageUpload   :limit="1"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
             </div>
         </div>
-        <div class="btn">提交</div>
+        <div class="btn" @click="submit">提交</div>
     </div>
 </template>
 
 <script>
+    import coin from '../../api/coin.js'
     export default {
         name: 'appeal',
         data() {
@@ -54,7 +56,28 @@
                 unitPrice: '13213',
                 totalPrice: '1232131',
                 time: '2018/06/28 00:49:32',
-                photoNum: 0
+                appealphoto: "",
+                appeal:"",
+                photoNum:0,
+            }
+        },activated () {
+            coin.loadDetail(this,this.$route.params.id)
+        },
+        methods: {
+            uploadPhotosSuccess(res,item){
+                this.photoNum = 1;
+                this.appealphoto = res;
+            },
+            removePhotos(res){
+                this.appealphoto = res;
+                this.photoNum = 0;
+            },
+            submit(){
+                if(this.appeal==""){
+                    this.$Message.error("申诉说明必须填写");
+                    return;
+                }
+                coin.appealAction(this,this.$route.params.id,this.appealphoto)
             }
         }
     }
@@ -105,6 +128,7 @@
                 }
             }
             .photo {
+                position: relative;
                 width: 210px;
                 height: 210px;
                 background-color: #25252b;

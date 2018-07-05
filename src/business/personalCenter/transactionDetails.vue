@@ -1,6 +1,6 @@
 <template>
     <div class="transaction-details">
-        <div class="transaction-details-item" v-for="item in list">
+        <div class="transaction-details-item" v-for="item in list" v-if="item">
             <div class="title">
                 <div class="title-item">{{ item.title }}</div>
                 <div class="label" v-if="item.label">{{ item.label }}</div>
@@ -18,46 +18,46 @@
         </div>
         <div class="footer-operation">
             <div class="btn-area pull-right">
-                <div class="btn" @click="appeal">申诉</div>
-                <div class="btn btn-confirm" @click="paySuccess">确认收款</div>
+                <div class="btn" @click="appeal" v-if="status==2||status==3">申诉</div>
+                <div class="btn btn-confirm" @click="paySuccess" v-if="status==2||status==3">确认收款</div>
             </div>
         </div>
     </div>
 </template>
-
 <script>
-    let _this
+    import coin from '../../api/coin.js'
     export default {
         name: 'transaction-details',
         data() {
             return {
+                status:0,
                 list: [
-                    {
-                        title: '订单信息',
-                        label: '待付款',
-                        details: [
-                            {
-                                title: '订单号',
-                                value: '12312321312321321'
-                            },
-                            {
-                                title: '交易数量',
-                                value: '200糖果'
-                            },
-                            {
-                                title: '单价',
-                                value: '2美元'
-                            },
-                            {
-                                title: '总金额',
-                                value: '400人民币'
-                            },
-                            {
-                                title: '交易时间',
-                                value: '2018.06.24 19:01'
-                            }
-                        ]
-                    },
+//                    {
+//                        title: '订单信息',
+//                        label: '待付款',
+//                        details: [
+//                            {
+//                                title: '订单号',
+//                                value: '12312321312321321'
+//                            },
+//                            {
+//                                title: '交易数量',
+//                                value: '200糖果'
+//                            },
+//                            {
+//                                title: '单价',
+//                                value: '2美元'
+//                            },
+//                            {
+//                                title: '总金额',
+//                                value: '400人民币'
+//                            },
+//                            {
+//                                title: '交易时间',
+//                                value: '2018.06.24 19:01'
+//                            }
+//                        ]
+//                    },
                     {
                         title: '卖家信息',
                         details: [
@@ -115,26 +115,33 @@
         },
         methods: {
             appeal() {
-                _this.$router.push({name: 'appeal', params: {id: _this.$route.params.id}})
+                this.$router.push({name: 'appeal', params: {id: this.$route.params.id}})
             },
             paySuccess() {
-                _this.$router.push('/paySuccess')
+                var id =  this.$route.params.id;
+                this.$router.replace('/paySuccess')
             }
         },
+        activated () {
+            coin.loadOrderDetail(this,this.$route.params.id);
+        },
         mounted() {
-            _this = this
         }
     }
 </script>
 
 <style lang="scss">
     .view-container .transaction-details {
-        padding-bottom: 0 !important;
+        padding-bottom: 100px !important;
     }
     
     .transaction-details {
         position: relative;
         .footer-operation {
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            width: 100%;
             overflow: hidden;
             margin-top: 120px;
             background-color: #333339;

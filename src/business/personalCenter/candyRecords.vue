@@ -4,56 +4,50 @@
             <div class="num">{{ candyNum }}</div>
             <div class="label">当前糖果</div>
         </div>
-        <div class="records-list-item" v-for="item in list">
-            <div class="left-details">
-                <div class="name">{{ item.name }}</div>
-                <div class="date">{{ item.time }}</div>
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
+            <div class="records-list-item" v-for="item in list">
+                <div class="left-details">
+                    <div class="name">{{ item.name }}</div>
+                    <div class="date">{{ item.time }}</div>
+                </div>
+                <div class="right-num" :class="{'payOut':item.num < 0}">{{ item.num }}
+                </div>
             </div>
-            <div class="right-num" :class="{'payOut':item.type === -1}">
-                {{ item.type === -1 ? '-' : '+' }}{{ item.num }}
-            </div>
-        </div>
+       </Scroll>
     </div>
 </template>
 
 <script>
+    import coin from '../../api/coin.js'
+    import users from '../../api/users.js'
     export default {
         name: 'candy-records',
         data() {
             return {
-                candyNum: '150.1321315124',
+                page:1,
+                candyNum: '0',
+                scrollHeight:0,
                 list: [
-                    {
-                        name: '兑换初级任务',
-                        time: '2018-06-23 12:22',
-                        num: '10',
-                        type: -1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    }
+
                 ]
+            }
+        },mounted(){
+            var headerHeight = this.appUtil.getHeaderHeight();
+            this.scrollHeight = $(window).height()-headerHeight-$(".current-candy").height()-80;
+            var _this = this;
+            users.getCacheMyInfo(this, function (myInfo) {
+                _this.candyNum = myInfo.cointotal;
+            })
+        },
+        activated(){
+            coin.loadCoinlog(this);
+        },
+        methods: {
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve){
+                    coin.loadCoinlog(_this,resolve);
+                });
             }
         }
     }
@@ -69,7 +63,7 @@
             -moz-border-radius: 8px;
             border-radius: 8px;
             padding: 50px 30px 60px 30px;
-            margin-top: 20px;
+            margin: 20px 0px;
             .num {
                 color: #F8C513;
                 font-size: 48px;
@@ -84,7 +78,7 @@
         }
         .records-list-item {
             background-color: #333339;
-            margin-top: 20px;
+            margin-bottom: 20px;
             padding: 30px 30px 30px;
             display: flex;
             justify-content: space-between;

@@ -3,7 +3,7 @@
         <l-tabs :list="listTab" :current="type"  @change="changeRoute"/>
         <div class="news-container">
             <div class="healthy-container">
-                <Scroll :on-reach-Bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="[0,0]">
+                <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
                     <div class="healthy-list-item" v-for="item in list">
                         <div class="news-left-img pull-left">
                             <img :src="item.imgPath" alt="">

@@ -4,23 +4,28 @@
             <div class="num">{{ activityNum }}</div>
             <div class="label">活跃度</div>
         </div>
-        <div class="records-list-item" v-for="item in list">
-            <div class="left-details">
-                <div class="name">{{ item.name }}</div>
-                <div class="date">{{ item.time }}</div>
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
+            <div class="records-list-item" v-for="item in list">
+                <div class="left-details">
+                    <div class="name">{{ item.name }}</div>
+                    <div class="date">{{ item.time }}</div>
+                </div>
+                <div class="right-num">
+                   {{ item.num }}
+                </div>
             </div>
-            <div class="right-num">
-               +{{ item.num }}
-            </div>
-        </div>
+        </Scroll>
     </div>
 </template>
 
 <script>
+    import users from '../../api/users.js'
     export default {
         name: 'activity-records',
         data() {
             return {
+                page:1,
+                scrollHeight:0,
                 activityNum: '150.1321315124',
                 list: [
                     {
@@ -49,6 +54,24 @@
                         num: '10'
                     }
                 ]
+            }
+        },mounted(){
+            var headerHeight = this.appUtil.getHeaderHeight();
+            this.scrollHeight = $(window).height()-headerHeight-$(".current-activity").height()-80;
+            var _this = this;
+            users.getCacheMyInfo(this, function (myInfo) {
+                _this.activityNum = myInfo.activity;
+            })
+        },
+        activated(){
+            users.loadActivityLog(this);
+        },
+        methods: {
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve){
+                    users.loadActivityLog(_this,resolve);
+                });
             }
         }
     }
