@@ -2,7 +2,7 @@
     <div class="task-list">
         <l-shortMenu :list="list" :currentRoute="currentRoute" @change="changeRoute"/>
         <div class="task-activity">
-            <div class="activity-item">今日活跃度:{{ activity }}</div>
+            <div class="activity-item">当前活跃度:{{ activity }}</div>
             <div class="activity-item">奖励糖果:{{ sugarNum }}</div>
             <div class="activity-item">步数:{{ stepNum }}</div>
         </div>
@@ -33,7 +33,7 @@
                 list: [
                     {
                         id: 'allTask',
-                        name: '所有任务'
+                        name: '任务卷轴'
                     },
                     {
                         id: 'myTask',

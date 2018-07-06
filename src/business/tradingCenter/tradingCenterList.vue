@@ -21,7 +21,7 @@
                 <div class="right-value pull-left">{{ volume }}</div>
             </div>
             <div class="trading-data-item pull-left">
-                <div class="left-label pull-left">需求</div>
+                <div class="left-label pull-left">当前买单</div>
                 <div class="right-value pull-left">{{ need }}</div>
             </div>
             <div class="trading-data-item pull-left">
