@@ -4,7 +4,7 @@
             <div class="home-head">
                 <l-banner/>
             </div>
-            <div class="home-notice">
+            <div class="home-notice" @click="showNoticeDetails">
                 <div class="left-icons pull-left">
                     <l-icon name="tongzhi-"/>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="step-num-info">
                         {{ stepNum }} <span class="steps">步</span>
                     </div>
-                    <div class="step-heat">{{ stepHeat }} Kal</div>
+                    <div class="step-heat">{{ stepHeat }} 卡路里</div>
                 </div>
             </div>
             <div class="reward-info text-center">奖励糖果:{{ rewardNum }}</div>
@@ -56,6 +56,7 @@
 <script type="text/javascript">
     let _this
     import pedometer from '../../api/pedometer.js'
+    
     export default {
         name: 'home',
         data() {
@@ -69,23 +70,25 @@
                 activity: 0,
                 totalReward: 0,
                 contribution: 0,
-                activity:0,
-                getCoinUnit:0,
+                getCoinUnit: 0,
             }
         },
         mounted() {
             _this = this
-            _this.getShortMenuList();
-
-        },activated () {
-            var _this = this;
-            _this.loadData();
-            var pedometerStart = this.session.appCache("pedometerStart");
-            if(!pedometerStart&&_this.session.isAPPRuntime()){
-                pedometer.start(this);
+            _this.getShortMenuList()
+            
+        }, activated() {
+            var _this = this
+            _this.loadData()
+            var pedometerStart = this.session.appCache('pedometerStart')
+            if (!pedometerStart && _this.session.isAPPRuntime()) {
+                pedometer.start(this)
             }
         },
         methods: {
+            showNoticeDetails() {
+                _this.$router.push({name: 'noticeDetails', params: {id: '1'}})
+            },
             getShortMenuList() {
                 _this.shortMenuList = [
                     {
@@ -132,47 +135,48 @@
             toShortMenu(router) {
                 this.$router.push(router)
             },
-            loadData(){
+            loadData() {
                 //登录检测
-                if(this.session.isLogin()){
-                    this.session.getMemberID(function(memberid){
-                        _this.axios.post(_this.session.indexinfo, {'memberid':memberid},function(json){
-                            var data = json.data;
-                            _this.vipLevel = data.memberLevel;
-                            _this.activity = data.activity;
-                            _this.totalReward = parseInt(data.cointotal);
-                            _this.contribution = parseInt(data.contributionvalue);
-
-                        });
-                        _this.axios.post(_this.session.todaystepinfo, {'memberid':memberid},function(json){
-                            var data = json.data;
-                            _this.stepHeat = data.distance;
-                        });
-                        var activity = 0;
-                        _this.axios.post(_this.session.myTask, {"memberid": memberid}, function (json) {
+                if (this.session.isLogin()) {
+                    this.session.getMemberID(function (memberid) {
+                        _this.axios.post(_this.session.indexinfo, {'memberid': memberid}, function (json) {
+                            var data = json.data
+                            _this.vipLevel = data.memberLevel
+                            _this.activity = data.activity
+                            _this.totalReward = parseInt(data.cointotal)
+                            _this.contribution = parseInt(data.contributionvalue)
+                            
+                        })
+                        _this.axios.post(_this.session.todaystepinfo, {'memberid': memberid}, function (json) {
+                            var data = json.data
+                            _this.stepHeat = data.distance
+                        })
+                        var activity = 0
+                        _this.axios.post(_this.session.myTask, {'memberid': memberid}, function (json) {
                             $(json.dataList).each(function (index, item) {
                                 activity += item.activity
                             })
-                            _this.axios.post(_this.session.myActivityAdd, {"memberid": memberid}, function (json) {
-                                activity += json.data.activityadd;
-                                _this.activity = activity;
+                            _this.axios.post(_this.session.myActivityAdd, {'memberid': memberid}, function (json) {
+                                activity += json.data.activityadd
+                                _this.activity = activity
                                 _this.axios.post(_this.session.getCoinUnit, null, function (json) {
-                                    _this.getCoinUnit = json.data.getcoinunit;
-                                    if(_this.session.isAPPRuntime()){
-                                        _this.stepNum  = pedometer.getSteps();
-                                        _this.rewardNum = (_this.stepNum * _this.getCoinUnit * _this.activity).toFixed(2);
+                                    _this.getCoinUnit = json.data.getcoinunit
+                                    if (_this.session.isAPPRuntime()) {
+                                        _this.stepNum = pedometer.getSteps()
+                                        _this.rewardNum = (_this.stepNum * _this.getCoinUnit * _this.activity).toFixed(
+                                            2)
                                     }
                                 }, function (json) {
                                     _this.$Message.error(json.msg)
-                                });
+                                })
                             }, function (json) {
                                 _this.$Message.error(json.msg)
-                            });
-
+                            })
+                            
                         }, function (json) {
                             _this.$Message.error(json.msg)
-                        });
-                    });
+                        })
+                    })
                 }
             }
         }
@@ -187,7 +191,7 @@
     
     .home-container {
         overflow: hidden;
-        padding-bottom:120px;
+        padding-bottom: 120px;
         .home-head {
             width: 750px;
             .head-img {
@@ -195,14 +199,17 @@
             }
         }
         .home-notice {
-            line-height: 24px;
-            font-size: 24px;
+            line-height: 32px;
+            font-size: 32px;
             padding: 28px 30px;
+            width: calc(100% - 60px);
+            border-bottom: 1px solid #000000;
+            margin: 0 auto;
             .left-icons {
                 margin-right: 30px;
                 .icons {
-                    width: 24px;
-                    height: 24px;
+                    width: 32px;
+                    height: 32px;
                 }
             }
         }

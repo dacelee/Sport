@@ -3,7 +3,7 @@
         <div v-for="item in menuList" class="pull-left menu-list-item text-center"
              :class="{'active':currentRoute === item.id}" @click="changeRoute(item.id)">
             <div class="footer-menu-icons">
-                <l-icon :name="item.icons"/>
+                <l-icon :name="currentRoute === item.id ? item.icons + '-active':item.icons"/>
             </div>
             <div class="footer-menu-name">{{item.name}}</div>
         </div>

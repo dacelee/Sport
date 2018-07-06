@@ -5,20 +5,24 @@
         </div>
         <div class="trading-data-board">
             <div class="trading-data-item pull-left">
-                <div class="left-label pull-left">最低价格</div>
+                <div class="left-label pull-left">最低</div>
                 <div class="right-value pull-left">{{ low }}美元</div>
             </div>
             <div class="trading-data-item pull-left">
-                <div class="left-label pull-left">最高价格</div>
+                <div class="left-label pull-left">最高</div>
                 <div class="right-value pull-left">{{ high }}美元</div>
             </div>
             <div class="trading-data-item pull-left">
-                <div class="left-label pull-left">当前价格</div>
+                <div class="left-label pull-left">当前</div>
                 <div class="right-value pull-left">{{ current }}美元</div>
             </div>
             <div class="trading-data-item pull-left">
-                <div class="left-label pull-left">成交量</div>
+                <div class="left-label pull-left">成交</div>
                 <div class="right-value pull-left">{{ volume }}</div>
+            </div>
+            <div class="trading-data-item pull-left">
+                <div class="left-label pull-left">当前买单</div>
+                <div class="right-value pull-left">{{ need }}</div>
             </div>
             <div class="trading-data-item pull-left">
                 <div class="left-label pull-left">涨跌幅度</div>
@@ -43,7 +47,7 @@
                         </div>
                         <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
                     </div>
-                    <div class="right-business-btn pull-left text-center" @click="market(item)"  v-if="item.lessCount>0">
+                    <div class="right-business-btn pull-left text-center" @click="market(item)" v-if="item.lessCount>0">
                         {{marketBtn}}
                     </div>
                 </div>
@@ -58,7 +62,8 @@
                 <div class="buying">正在{{marketBtn}}</div>
                 <div class="buyleft">当前糖果剩余额：{{myCoin}}</div>
                 <div class="buyText"><label>数量</label><input type="text" v-model="cointotal" placeholder="请输入数量"></div>
-                <div class="buyText"><label>交易秘密</label><input type="password" v-model="password" placeholder="输入交易秘密"></div>
+                <div class="buyText"><label>交易秘密</label><input type="password" v-model="password" placeholder="输入交易秘密">
+                </div>
             </div>
             <div class="pull-left" v-for="item in tabsListBuy" @click="userBuy(item.id)">{{item.name}}</div>
         </div>
@@ -66,7 +71,8 @@
             <div class="buyBox">
                 <div class="buying">发布{{marketAction}}</div>
                 <div class="buyleft">当前价格：{{current}}</div>
-                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2"   placeholder="请输入交易数量"></div>
+                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2" placeholder="请输入交易数量">
+                </div>
                 <div class="buyText"><label>单价</label><input type="text" v-model="unitprice" placeholder="允许两倍溢价"></div>
             </div>
             <div class="pull-left" v-for="item in tabsListBuy" @click="marketSell(item.id)">{{item.name}}</div>
@@ -75,36 +81,38 @@
 </template>
 
 <script>
-    let chartsEl;
+    let chartsEl
     import coin from '../../api/coin.js'
     import users from '../../api/users.js'
+    
     export default {
         name: 'trading-center-list',
         data() {
             return {
                 route: 'tradingCenter',
                 filterName: null,
-                isShow: false ,
-                isShowSell:false,
-                marketBtn:'购买',
-                marketAction:"买单",
-                marketItem:null,
-                page:1,
-                type:1,
-                myCoin:0,
-                scrollHeight:500,
-                high:0,
-                low:0,
-                current:0,
-                volume:0,
-                percent:0,
-                coinmysaleid:"",
-                cointotal:"",
-                cointotal2:"",
-                unitprice:"",
-                password:"",
-                sealType:1,
-                tradecharge:0,//手续费率
+                isShow: false,
+                isShowSell: false,
+                marketBtn: '购买',
+                marketAction: '买单',
+                marketItem: null,
+                page: 1,
+                type: 1,
+                myCoin: 0,
+                scrollHeight: 500,
+                high: 0,
+                low: 0,
+                current: 0,
+                volume: 0,
+                need: 0, // 需求数
+                percent: 0,
+                coinmysaleid: '',
+                cointotal: '',
+                cointotal2: '',
+                unitprice: '',
+                password: '',
+                sealType: 1,
+                tradecharge: 0,//手续费率
                 businessList: [
                     {
                         imgPath: 'static/img/personal/default.jpg',
@@ -153,11 +161,11 @@
                 tabsList: [
                     {
                         id: '1',
-                        name: '我要买'
+                        name: '买'
                     },
                     {
                         id: '2',
-                        name: '我要卖'
+                        name: '卖'
                     }
                 ],
                 tabsListBuy: [
@@ -173,31 +181,32 @@
             }
         },
         methods: {
-            search(){
-
+            search() {
+            
             },
             changeTabs(res) {
                 this.currentMenu = res
-                this.type = res;
-                this.page=1;
-                if(res==1){
-                    this.marketBtn = "购买";
-                }else{
-                    this.marketBtn = "售出";
+                this.type = res
+                this.page = 1
+                if (res == 1) {
+                    this.marketBtn = '购买'
                 }
-                coin.loadSales(this);
+                else {
+                    this.marketBtn = '售出'
+                }
+                coin.loadSales(this)
             },
-            handleReachBottom () {
-                var _this = this;
-                return new Promise(function(resolve) {
-                    coin.loadSales(_this,resolve);
-                });
+            handleReachBottom() {
+                var _this = this
+                return new Promise(function (resolve) {
+                    coin.loadSales(_this, resolve)
+                })
             },
             setChartsData() {
-                coin.loadKline(this,7,function(data){
-                    var date = eval('(' + data[0] + ')');
-                    var x =  eval('(' + data[1] + ')');
-                    var y =  eval('(' + data[2] + ')');
+                coin.loadKline(this, 7, function (data) {
+                    var date = eval('(' + data[ 0 ] + ')')
+                    var x = eval('(' + data[ 1 ] + ')')
+                    var y = eval('(' + data[ 2 ] + ')')
                     let option = {
                         title: {
                             show: false
@@ -255,97 +264,101 @@
                         ]
                     }
                     chartsEl.setOption(option)
-                });
-
+                })
+                
             },
-            market(item){
-                this.isShow = true;
-                this.marketItem = item;
-                this.cointotal = item.lessCount;
+            market(item) {
+                this.isShow = true
+                this.marketItem = item
+                this.cointotal = item.lessCount
             },
-            myAction(type){
-                this.isShowSell = true;
-                this.sealType = type;
+            myAction(type) {
+                this.isShowSell = true
+                this.sealType = type
                 if (type == 2) {
-                    this.marketAction = "卖单";
-                } else {
-                    this.marketAction = "买单";
+                    this.marketAction = '卖单'
+                }
+                else {
+                    this.marketAction = '买单'
                 }
             },
-            userBuy(id){
-                if (id == "ok") {
-                    if(this.marketItem==null){
-                        return;
+            userBuy(id) {
+                if (id == 'ok') {
+                    if (this.marketItem == null) {
+                        return
                     }
-                    var cointotal = this.cointotal;
-                    if(cointotal==""||cointotal<=0){
-                        this.$Message.error("交易数量必须填写");
-                        return;
+                    var cointotal = this.cointotal
+                    if (cointotal == '' || cointotal <= 0) {
+                        this.$Message.error('交易数量必须填写')
+                        return
                     }
-                    if(cointotal>this.marketItem.lessCount){
-                        this.$Message.error("交易数量必须小于"+this.marketItem.lessCount);
-                        return;
+                    if (cointotal > this.marketItem.lessCount) {
+                        this.$Message.error('交易数量必须小于' + this.marketItem.lessCount)
+                        return
                     }
-                    if(this.password==""){
-                        this.$Message.error("交易密码必须填写");
-                        return;
+                    if (this.password == '') {
+                        this.$Message.error('交易密码必须填写')
+                        return
                     }
-                    var unitprice = this.marketItem.unitPrice;
-                    var handlingfee = 0;
-                    if(this.marketItem.type==2){
-                        handlingfee = (cointotal*unitprice*this.tradecharge).toFixed(1);
+                    var unitprice = this.marketItem.unitPrice
+                    var handlingfee = 0
+                    if (this.marketItem.type == 2) {
+                        handlingfee = (cointotal * unitprice * this.tradecharge).toFixed(1)
                     }
-                    coin.saleCoinAction(this,this.marketItem.id,cointotal,unitprice,this.password,this.marketItem.type,handlingfee);
-                }else{
-                    this.isShow = false;
+                    coin.saleCoinAction(this, this.marketItem.id, cointotal, unitprice, this.password,
+                        this.marketItem.type, handlingfee)
+                }
+                else {
+                    this.isShow = false
                 }
             },
-            marketSell(id){
-                if (id == "ok") {
-                    var cointotal = this.cointotal2;
-                    if(cointotal==""||cointotal<=0){
-                        this.$Message.error("交易数量必须填写");
-                        return;
+            marketSell(id) {
+                if (id == 'ok') {
+                    var cointotal = this.cointotal2
+                    if (cointotal == '' || cointotal <= 0) {
+                        this.$Message.error('交易数量必须填写')
+                        return
                     }
-                    if(cointotal>this.myCoin){
-                        this.$Message.error("交易数量必须小于"+this.myCoin);
-                        return;
+                    if (cointotal > this.myCoin) {
+                        this.$Message.error('交易数量必须小于' + this.myCoin)
+                        return
                     }
-                    var currentprice = this.current;
-                    var unitprice = this.unitprice;
-                    if(unitprice<=0){
-                        this.$Message.error("交易单价必须大于0");
-                        return;
+                    var currentprice = this.current
+                    var unitprice = this.unitprice
+                    if (unitprice <= 0) {
+                        this.$Message.error('交易单价必须大于0')
+                        return
                     }
-                    if(unitprice>currentprice*2){
-                        this.$Message.error("只允许两倍溢价");
-                        return;
+                    if (unitprice > currentprice * 2) {
+                        this.$Message.error('只允许两倍溢价')
+                        return
                     }
-                    var handlingfee = 0;
-                    if(this.sealType==2){
-                        handlingfee = (cointotal*unitprice*this.tradecharge).toFixed(1);
+                    var handlingfee = 0
+                    if (this.sealType == 2) {
+                        handlingfee = (cointotal * unitprice * this.tradecharge).toFixed(1)
                     }
-                    coin.saleAddAction(this,cointotal,unitprice,this.sealType,handlingfee);
-                }else{
-                    this.isShowSell = false;
+                    coin.saleAddAction(this, cointotal, unitprice, this.sealType, handlingfee)
                 }
-            },init(){
-                var _this = this;
-                this.page = 1;
-
-                coin.loadBaseInfo(this);
-                coin.loadSales(this);
-                users.getCacheMyInfo(this,function(user){
-                    _this.myCoin = user.cointotal.toFixed(0);
-                    _this.tradecharge = user.tradecharge;
-                },true)
+                else {
+                    this.isShowSell = false
+                }
+            }, init() {
+                var _this = this
+                this.page = 1
+                
+                coin.loadBaseInfo(this)
+                coin.loadSales(this)
+                users.getCacheMyInfo(this, function (user) {
+                    _this.myCoin = user.cointotal.toFixed(0)
+                    _this.tradecharge = user.tradecharge
+                }, true)
             }
         },
         activated() {
             chartsEl = App.eCharts.echarts.init(document.getElementById('trading-charts'))
-            this.setChartsData();
-            this.init();
-
+            this.setChartsData()
+            this.init()
+            
         }
     }
 </script>

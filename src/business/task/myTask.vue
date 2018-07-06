@@ -2,7 +2,9 @@
     <div class="my-task">
         <div class="task-item task-list-piece" v-for="item in list">
             <div class="head-info">
-                <div class="name">{{ item.name }}</div>
+                <div class="name">
+                    <img :src="item.imgPath">{{ item.name }}
+                </div>
                 <div class="step-info">{{ item.currentStep+'步 / ' +item.targetStep + '步' }}</div>
             </div>
             <div class="task-item-container">
@@ -60,37 +62,37 @@
 //                    }
                 ]
             }
-        },mounted(){
-            this.loadTask();
-        },methods:{
-            loadTask(){
-                var _this = this;
-                this.session.getMemberID(function(memberid){
-                    _this.axios.post(_this.session.myTask, {"memberid":memberid}, function (json) {
-                        var data = [];
-                        $(json.dataList).each(function(index,item){
+        }, mounted() {
+            this.loadTask()
+        }, methods: {
+            loadTask() {
+                var _this = this
+                this.session.getMemberID(function (memberid) {
+                    _this.axios.post(_this.session.myTask, {'memberid': memberid}, function (json) {
+                        var data = []
+                        $(json.dataList).each(function (index, item) {
                             data.push(
-                                    {
-                                        id:item.id,
-                                        name: item.name,
-                                        currentStep:  item.name,
-                                        targetStep: item.steps,
-                                        activity: item.activity,
-                                        hanselActivity: item.activityadd,
-                                        needSugar: item.coinprice,
-                                        rewardSugar: item.coinget,
-                                        hanselSugar:  item.addcoinprofit,
-                                        dateTime: _this.appUtil.dateFormat(item.begintime,"yyyy.MM.dd")+"-"+
-                                        _this.appUtil.dateFormat(item.endtime,"yyyy.MM.dd"),
-                                        code: item.no
-                                    }
-                            );
+                                {
+                                    id: item.id,
+                                    name: item.name,
+                                    currentStep: item.name,
+                                    targetStep: item.steps,
+                                    activity: item.activity,
+                                    hanselActivity: item.activityadd,
+                                    needSugar: item.coinprice,
+                                    rewardSugar: item.coinget,
+                                    hanselSugar: item.addcoinprofit,
+                                    dateTime: _this.appUtil.dateFormat(item.begintime, 'yyyy.MM.dd') + '-' +
+                                    _this.appUtil.dateFormat(item.endtime, 'yyyy.MM.dd'),
+                                    code: item.no
+                                }
+                            )
                         })
-                        _this.list = data;
-                    },function(json){
+                        _this.list = data
+                    }, function (json) {
                         _this.$Message.error(json.msg)
-                    });
-                });
+                    })
+                })
             }
         }
     }
@@ -100,37 +102,41 @@
     .my-task {
         width: 690px;
         margin: 0 auto;
-    padding:15px 0px;
-    .task-item {
-        margin-bottom: 20px;
-    .head-info {
-        display: flex;
-        justify-content: space-between;
-    .name {
-        font-size: 32px;
-        line-height: 32px;
-    }
-    .step-info {
-        font-size: 30px;
-        line-height: 30px;
-        margin-top: 1px;
-    }
-    }
-    .task-item-container {
-        margin-top: 40px;
-    .task-container-item {
-        margin-bottom: 20px;
-        font-size: 24px;
-        line-height: 24px;
-    &:nth-last-child(1) {
-         margin-bottom: 0;
-     }
-    .hansel {
-        display: inline-block;
-        color: #62c627;
-    }
-    }
-    }
-    }
+        padding: 15px 0px;
+        .task-item {
+            margin-bottom: 20px;
+            .head-info {
+                display: flex;
+                justify-content: space-between;
+                .name {
+                    font-size: 32px;
+                    line-height: 32px;
+                    img {
+                        width: 32px;
+                        height: 32px;
+                    }
+                }
+                .step-info {
+                    font-size: 30px;
+                    line-height: 30px;
+                    margin-top: 1px;
+                }
+            }
+            .task-item-container {
+                margin-top: 40px;
+                .task-container-item {
+                    margin-bottom: 20px;
+                    font-size: 24px;
+                    line-height: 24px;
+                    &:nth-last-child(1) {
+                        margin-bottom: 0;
+                    }
+                    .hansel {
+                        display: inline-block;
+                        color: #62c627;
+                    }
+                }
+            }
+        }
     }
 </style>
