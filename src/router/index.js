@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import home from '@/business/home/home.vue'
+import noticeDetails from '@/business/home/noticeDetails.vue'
 import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
@@ -114,7 +115,15 @@ export default new Router({
                 title: '首页'
             }
         },
-
+        {
+            path: '/noticeDetails/:id',
+            name: 'noticeDetails',
+            component: noticeDetails,
+            meta: {
+                title: '消息详情',
+                back: '/'
+            }
+        },
         {
             path: '/stepDetails',
             name: 'stepDetails',
@@ -212,7 +221,7 @@ export default new Router({
             meta: {
                 title: '购物车',
                 back: '-1',
-                rightTitle:"管理"
+                rightTitle: '管理'
             }
         },
         {

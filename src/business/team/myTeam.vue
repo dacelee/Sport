@@ -29,8 +29,11 @@
                         <l-icon name="duichang" class="pull-left"/>
                         <div class="label">队长</div>
                     </div>
-                    <div class="personal-operation pull-left" v-if="item.status === 0"
+                    <div class="personal-operation pull-left" v-if="isManage && item.id !== personalId"
                          @click="delMember(item.teamid,item.id)">请出队伍
+                    </div>
+                    <div class="personal-operation pull-left" v-if="!isManage && item.id === personalId"
+                         @click="outTheTeam(item.teamid,item.id)">退出队伍
                     </div>
                 </div>
             </div>
@@ -54,21 +57,23 @@
                 teamInfo: {
                     personalCount: 8
                 },
+                personalId: 0, // 个人信息ID，用来判断是不是当前用户，做退出按钮判断
+                isManage: true, // 用来判断是否拥有踢人权限
                 teamMembers: [
 //                    {
-//                        id:0,
+//                        id: 0,
 //                        imgPath: 'static/img/club/1.jpg',
 //                        name: 'Louis',
 //                        status: 1
 //                    },
 //                    {
-//                        id:1,
+//                        id: 1,
 //                        imgPath: 'static/img/personal/default.jpg',
 //                        name: 'Judy',
 //                        status: 0
 //                    },
 //                    {
-//                        id:2,
+//                        id: 2,
 //                        imgPath: 'static/img/personal/default.jpg',
 //                        name: 'Hansen',
 //                        status: 0
@@ -146,6 +151,12 @@
                         _this.teamMembers = []
                         _this.$Message.error(json.msg)
                     })
+            },
+            /**
+             * @description 退出队伍
+             */
+            outTheTeam(teamid, memberid) {
+            
             },
             delMember(teamid, memberid) {
                 this.axios.post(this.session.teamDelMember, {'teamid': teamid, memberid: memberid}, function (json) {
@@ -263,7 +274,7 @@
                             margin-right: 40px;
                         }
                         &.captain {
-                            color: #ffffff;
+                            color: #f8c513;
                         }
                     }
                 }
