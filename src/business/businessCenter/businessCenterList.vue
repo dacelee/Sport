@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="recommend-goods-list">
-            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail(item.id)" >
+            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail(item.id)">
                 <div class="recommend-goods-img">
                     <img :src="item.imgPath" alt="">
                 </div>
@@ -31,15 +31,16 @@
 
 <script>
     import goods from '../../api/goods.js'
+    
     export default {
         name: 'business-center-list',
         data() {
             return {
-                page:1,
+                page: 1,
                 route: 'businessCenter',
                 menuList: [
                     {
-                        id:1,
+                        id: 1,
                         icons: 'paoxie',
                         name: '跑鞋'
                     },
@@ -87,7 +88,7 @@
 //                        price: '5231.00',
 //                        equal: '500'
 //                    },
-
+                
                 ],
                 recommendList: [
                     {
@@ -97,21 +98,21 @@
                     }
                 ]
             }
-        },mounted(){
-            goods.loadCateList(this);
+        }, mounted() {
+            goods.loadCateList(this)
             //热门
-            goods.loadGoods(this,"list",0,2,"addtime","desc",null,5);
+            goods.loadGoods(this, 'list', 0, 2, 'addtime', 'desc', null, 5)
             //推荐
-            goods.loadGoods(this,"recommendList",0,1,"addtime","desc",null,4);
+            goods.loadGoods(this, 'recommendList', 0, 1, 'addtime', 'desc', null, 4)
         }, methods: {
             businessProduct(id) {
-                this.$router.push({name:'businessProduct',params:{id:id}});
+                this.$router.push({name: 'businessProduct', params: {id: id}})
             },
             businessDetail(id) {
-                this.$router.push({name:'businessDetail',params:{id:id}})
+                this.$router.push({name: 'businessDetail', params: {id: id}})
             },
-            editEvent(){
-                this.$router.push("businessSettlement")
+            editEvent() {
+                this.$router.push('businessSettlement')
             },
         }
     }
@@ -130,10 +131,10 @@
             -webkit-box-pack: justify;
             -ms-flex-pack: justify;
             justify-content: space-between;
-            padding: 10px 60px 36px 60px;
+            padding: 10px 60px 30px 60px;
             .head-menu-item {
                 width: 120px;
-                .icons {
+                img {
                     width: 120px;
                     height: 120px;
                     margin-bottom: 10px;
@@ -179,44 +180,44 @@
                     color: #999999;
                 }
             }
-            .recommend-goods-list {
+        }
+        .recommend-goods-list {
+            margin-top: 10px;
+            overflow: hidden;
+            .recommend-goods-item {
+                width: calc(50% - 5px);
+                background-color: #ffffff;
                 margin-top: 10px;
-                overflow: hidden;
-                .recommend-goods-item {
-                    width: calc(50% - 5px);
-                    background-color: #ffffff;
-                    margin-top: 10px;
-                    .recommend-goods-img {
+                .recommend-goods-img {
+                    width: 100%;
+                    height: 370px;
+                    img {
                         width: 100%;
                         height: 370px;
-                        img {
-                            width: 100%;
-                            height: 370px;
-                        }
-                    }
-                    .recommend-goods-name {
-                        font-size: 30px;
-                        line-height: 30px;
-                        color: #333333;
-                        padding: 20px 20px 10px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
-                    .recommend-goods-price {
-                        font-size: 34px;
-                        line-height: 34px;
-                        padding: 0 20px 20px 20px;
-                        color: #ff0000;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
                     }
                 }
+                .recommend-goods-name {
+                    font-size: 30px;
+                    line-height: 30px;
+                    color: #333333;
+                    padding: 20px 20px 10px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .recommend-goods-price {
+                    font-size: 34px;
+                    line-height: 34px;
+                    padding: 0 20px 20px 20px;
+                    color: #ff0000;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
             }
-            .recommend-goods-item:nth-child(even) {
-                margin-left: 10px;
-            }
+        }
+        .recommend-goods-item:nth-child(even) {
+            margin-left: 10px;
         }
     }
 </style>
