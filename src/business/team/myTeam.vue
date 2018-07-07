@@ -24,7 +24,19 @@
                     <div class="personal-head-way pull-left">
                         <img :src="item.imgPath" alt="">
                     </div>
-                    <div class="personal-name pull-left">{{ item.name }}</div>
+                    <div class="left-personal-info pull-left">
+                        <div class="personal-name">
+                            {{ item.name }}
+                            <l-icon :name="item.sex === 1 ? 'chengyuan-nan' : 'chengyuan-nv'"/>
+                        </div>
+                        <div class="activity-info">
+                            活跃度:{{ item.activity }}
+                        </div>
+                        <div class="steps-info">
+                            今日步数:{{ item.steps }}
+                        </div>
+                        <div class="signature-info">{{ item.signature }}</div>
+                    </div>
                     <div class="personal-operation pull-left captain" v-if="item.status===1">
                         <l-icon name="duichang" class="pull-left"/>
                         <div class="label">队长</div>
@@ -60,49 +72,81 @@
                 personalId: 0, // 个人信息ID，用来判断是不是当前用户，做退出按钮判断
                 isManage: true, // 用来判断是否拥有踢人权限
                 teamMembers: [
-//                    {
-//                        id: 0,
-//                        imgPath: 'static/img/club/1.jpg',
-//                        name: 'Louis',
-//                        status: 1
-//                    },
-//                    {
-//                        id: 1,
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Judy',
-//                        status: 0
-//                    },
-//                    {
-//                        id: 2,
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Hansen',
-//                        status: 0
-//                    },
-//                    {
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Merry',
-//                        status: 0
-//                    },
-//                    {
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Hill',
-//                        status: 0
-//                    },
-//                    {
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Mountain',
-//                        status: 0
-//                    },
-//                    {
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Fish',
-//                        status: 0
-//                    },
-//                    {
-//                        imgPath: 'static/img/personal/default.jpg',
-//                        name: 'Roi',
-//                        status: 0
-//                    }
+                    {
+                        id: 0,
+                        imgPath: 'static/img/club/1.jpg',
+                        name: 'Louis',
+                        status: 1,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        id: 1,
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Judy',
+                        status: 0,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        id: 2,
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Hansen',
+                        status: 0,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Merry',
+                        status: 0,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Hill',
+                        status: 0,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Mountain',
+                        status: 0,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Fish',
+                        status: 0,
+                        sex: 1,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    },
+                    {
+                        imgPath: 'static/img/personal/default.jpg',
+                        name: 'Roi',
+                        status: 0,
+                        sex: 0,
+                        activity: 50,
+                        steps: 14123,
+                        signature: '没什么比什么更重要'
+                    }
                 ]
             }
         }, mounted() {
@@ -239,33 +283,58 @@
                 margin: 30px auto;
                 .personal-list-item {
                     background-color: #33333a;
-                    height: 140px;
                     padding: 30px 30px 30px;
+                    overflow: hidden;
                     -webkit-border-radius: 10px;
                     -moz-border-radius: 10px;
                     border-radius: 10px;
                     margin-bottom: 20px;
                     .personal-head-way {
-                        width: 80px;
-                        height: 80px;
+                        width: 140px;
+                        height: 140px;
                         img {
-                            width: 80px;
-                            height: 80px;
+                            width: 120px;
+                            height: 120px;
+                            margin: 10px;
                             -webkit-border-radius: 100%;
                             -moz-border-radius: 100%;
                             border-radius: 100%;
                         }
                     }
-                    .personal-name {
+                    .left-personal-info {
+                        width: calc(100% - 300px);
+                        margin-left: 20px;
+                        float: left;
                         font-size: 30px;
                         line-height: 30px;
-                        margin: 25px 0 25px 30px;
-                        width: 360px;
+                        .personal-name {
+                            margin-bottom: 10px;
+                        }
+                        .activity-info {
+                            font-size: 24px;
+                            line-height: 24px;
+                            color: #f8c513;
+                            margin-bottom: 10px;
+                        }
+                        .steps-info {
+                            font-size: 24px;
+                            line-height: 24px;
+                            color: #f8c513;
+                        }
+                        .signature-info {
+                            font-size: 24px;
+                            line-height: 24px;
+                            margin-top: 10px;
+                            width: 100%;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            word-wrap: normal;
+                        }
                     }
                     .personal-operation {
                         font-size: 30px;
                         line-height: 30px;
-                        margin: 25px 0 25px 0;
+                        margin: 51px 0 51px 0;
                         width: 140px;
                         color: #929292;
                         .icons {
