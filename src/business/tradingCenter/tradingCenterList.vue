@@ -36,7 +36,12 @@
         </div>
         <l-shortMenu :currentRoute="currentMenu" :list="tabsList" @change="changeTabs"/>
         <div class="search-area">
-            <l-search placeholder="搜索" v-model="filterName" @change="search"/>
+            <div class="filter-way">
+                <l-select v-model="currentFilter" :list="filterList" @change="changeFilterWay"/>
+            </div>
+            <div class="filter">
+                <input type="text" placeholder="搜索" @key.enter="search" v-model="filterName">
+            </div>
         </div>
         <div class="trading-center-list-business">
             <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
@@ -118,6 +123,20 @@
                 password: '',
                 sealType: 1,
                 tradecharge: 0,//手续费率
+                filterList: [  // 搜索方式区分
+                    {
+                        id: 1,
+                        name: '玩家ID和手机号'
+                    },
+                    {
+                        id: 2,
+                        name: '价格区间'
+                    }
+                ],
+                currentFilter: { // 当前选择项
+                    id: 1,
+                    name: '玩家ID和手机号'
+                },
                 chartsActive: 2,
                 rangeList: [
                     {
@@ -215,6 +234,9 @@
                     this.marketBtn = '售出'
                 }
                 coin.loadSales(this)
+            },
+            changeFilterWay(res) {
+                console.log(res)
             },
             handleReachBottom() {
                 var _this = this
@@ -464,6 +486,31 @@
         }
         .search-area {
             margin: 20px auto;
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 60px);
+            .filter-way {
+                width: 300px;
+                input {
+                    -webkit-border-radius: 8px 0 0 8px;
+                    -moz-border-radius: 8px 0 0 8px;
+                    border-radius: 8px 0 0 8px;
+                }
+            }
+            .filter {
+                width: calc(100% - 300px);
+                input {
+                    width: 100%;
+                    background-color: #33333a;
+                    color: #ffffff;
+                    font-size: 30px;
+                    line-height: 30px;
+                    padding: 30px 25px 30px 30px;
+                    -webkit-border-radius: 0 8px 8px 0;
+                    -moz-border-radius: 0 8px 8px 0;
+                    border-radius: 0 8px 8px 0;
+                }
+            }
         }
         .trading-center-list-business {
             margin: 0 auto;

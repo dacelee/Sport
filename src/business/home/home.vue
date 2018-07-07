@@ -265,6 +265,14 @@
                     top: -20px;
                     left: -20px;
                     z-index: 1;
+                    ::before {
+                        -webkit-border-radius: 20px 0 0 20px;
+                        -moz-border-radius: 20px 0 0 20px;
+                        border-radius: 20px 0 0 20px;
+                    }
+                    ::after {
+                    
+                    }
                 }
                 .rightcircle {
                     border-top: 10px solid green;
