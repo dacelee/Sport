@@ -24,6 +24,7 @@
                     <img src="static/img/home/men.png" alt="">
                 </div>
                 <div class="right-step-info text-center" @click="showStepDetails">
+                    <div class="circleProgress"></div>
                     <div class="step-num-info">
                         {{ stepNum }} <span class="steps">步</span>
                     </div>
@@ -248,10 +249,28 @@
             .right-step-info {
                 width: 330px;
                 height: 330px;
+                position: relative;
                 -webkit-border-radius: 100%;
                 -moz-border-radius: 100%;
                 border-radius: 100%;
-                border: 10px solid #d7dce6;
+                border: 20px solid #47474F;
+                .circleProgress {
+                    width: 330px;
+                    height: 330px;
+                    border: 20px solid transparent;
+                    border-radius: 50%;
+                    position: absolute;
+                    border-top: 20px solid #f8c513;
+                    border-right: 20px solid #f8c513;
+                    top: -20px;
+                    left: -20px;
+                    z-index: 1;
+                }
+                .rightcircle {
+                    border-top: 10px solid green;
+                    border-right: 10px solid green;
+                    right: 0;
+                }
                 .step-num-info {
                     width: 230px;
                     padding-bottom: 10px;
