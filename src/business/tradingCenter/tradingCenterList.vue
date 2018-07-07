@@ -1,5 +1,10 @@
 <template>
     <div class="trading-center-list">
+        <div class="charts-range-list">
+            <div class="charts-range-item" v-for="item in rangeList" :class="{'active':item.id === chartsActive}">{{
+                item.name }}
+            </div>
+        </div>
         <div class="trading-charts">
             <div class="charts" id="trading-charts"></div>
         </div>
@@ -113,6 +118,21 @@
                 password: '',
                 sealType: 1,
                 tradecharge: 0,//手续费率
+                chartsActive: 2,
+                rangeList: [
+                    {
+                        id: 1,
+                        name: '今日'
+                    },
+                    {
+                        id: 2,
+                        name: '一周'
+                    },
+                    {
+                        id: 3,
+                        name: '一月'
+                    }
+                ],
                 businessList: [
                     {
                         imgPath: 'static/img/personal/default.jpg',
@@ -212,7 +232,11 @@
                             show: false
                         },
                         tooltip: {
-                            trigger: 'axis'
+                            trigger: 'axis',
+                            formatter(item) {
+                                return item[ 0 ].marker + item[ 0 ].seriesName + ': $' + item[ 0 ].value + '<br/>' +
+                                    item[ 1 ].marker + item[ 1 ].seriesName + ' :' + item[ 1 ].value
+                            }
                         },
                         legend: {
                             data: [ '价格', '交易量' ],
@@ -366,6 +390,25 @@
 <style lang="scss">
     .trading-center-list {
         padding-bottom: 120px;
+        .charts-range-list {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: flex-end;
+            .charts-range-item {
+                font-size: 24px;
+                line-height: 24px;
+                padding: 15px 20px;
+                border: 1px solid #d7dce6;
+                margin: 0 0 0 20px;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+                &.active {
+                    color: #f8c513;
+                    border-color: #f8c513;
+                }
+            }
+        }
         .head-title {
             height: 80px;
             line-height: 80px;
@@ -382,7 +425,7 @@
         }
         .trading-charts {
             width: calc(100% - 60px);
-            margin: 20px auto;
+            margin: 0 auto 20px;
             height: 520px;
             background-color: #333339;
             -webkit-border-radius: 10px;
@@ -548,12 +591,21 @@
                 color: #999;
                 padding: 30px 0;
             }
-            .buyText input {
-                background: #333339;
-                height: 80px;
-                border-radius: 10px;
-                width: 60%;
-                padding: 0 10px;
+            .buyText {
+                label {
+                    margin-right: 20px;
+                }
+                input {
+                    background: #333339;
+                    height: 80px;
+                    border-radius: 10px;
+                    width: 60%;
+                    padding: 0 10px;
+                    color: #ffffff;
+                }
+                &:nth-last-child(1) {
+                    padding: 15px 0 0 0;
+                }
             }
         }
     }
