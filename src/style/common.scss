@@ -74,23 +74,23 @@ ul {
     color: #ffffff;
 }
 
-
-
 .head-title {
     line-height: 80px;
     font-size: 34px;
     width: 100%;
     z-index: 999;
     background: #404049;
-    position: fixed;
-    top:0px;
-    .content{
+    position: absolute;
+    top: 0;
+    .content {
         position: relative;
     }
-    .create{position: absolute;
+    .create {
+        position: absolute;
         right: 20px;
-        top:0px;
-        font-size: 24px;}
+        top: 0px;
+        font-size: 24px;
+    }
     .icons {
         width: 30px;
         height: 30px;
