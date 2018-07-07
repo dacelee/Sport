@@ -1,7 +1,9 @@
 <template>
     <div class="banner">
         <ul class="banner-images">
-            <li class="banner-images-list pull-left" v-for="item in list" :title="item.bannerName">
+            <li @touchstart="touchStart($event)" @touchmove="touchMove($event)" @touchend="touchEnd"
+                class="banner-images-list pull-left" v-for="item in list"
+                :title="item.bannerName">
                 <img :src="item">
             </li>
         </ul>
@@ -11,7 +13,7 @@
 </template>
 
 <script>
-    let t, _this, promise, promiseService, width, height
+    let t, _this, promise, promiseService, width, height, startX, moveEndX, X
     export default {
         name: 'banner',
         data() {
@@ -28,13 +30,38 @@
             this.getBannerData()
         },
         methods: {
+            touchStart(e) {
+                _this.stopBannerMoving()
+                startX = e.changedTouches[ 0 ].pageX
+            },
+            touchMove(e) {
+                _this.stopBannerMoving()
+                moveEndX = e.changedTouches[ 0 ].pageX
+                X = moveEndX - startX
+            },
+            touchEnd() {
+                if (X > 0) {
+                    if (_this.currentNum === 0) {
+                        _this.currentNum = _this.list.length - 1
+                    }
+                    else {
+                        _this.currentNum -= 1
+                    }
+                }
+                if (X < 0) {
+                    _this.currentNum += 1
+                }
+                _this.setBannerMoving()
+            }
+            ,
             getBannerData() {
                 _this = this
                 _this.list = [ 'static/img/home/head.png', 'static/img/home/head.png', 'static/img/home/head.png' ]
                 setTimeout(function () {
                     _this.setBannerInfo()
                 }, 50)
-            },
+            }
+            ,
             setBannerInfo() {
                 let _this = this
                 // 设置小圆点
@@ -48,7 +75,15 @@
                     _this.currentNum++
                     _this.setBannerMoving()
                 }, 3500)
-            },
+            }
+            ,
+            /**
+             * @description 停止Banner动画
+             */
+            stopBannerMoving() {
+                clearInterval(t)
+            }
+            ,
             /**
              * @description Banner图动起来
              */
