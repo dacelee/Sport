@@ -63,7 +63,7 @@
 
 <style lang="scss">
     .l-select {
-        width: 690px;
+        width: 100%;
         margin: 0 auto;
         position: relative;
         .l-select-input {
@@ -81,7 +81,7 @@
             transform: rotate(-90deg);
             position: absolute;
             right: 30px;
-            top: 30px;
+            top: 35px;
             width: 30px;
             height: 30px;
             transition: 0.3s ease-in-out;

@@ -76,6 +76,7 @@
         padding: 10px 40px 10px;
         width: 100%;
         background: #404049;
+        z-index: 10cc;
         .menu-list-item {
             .icons {
                 font-size: 44px;
