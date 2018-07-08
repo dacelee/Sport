@@ -420,7 +420,7 @@
                 font-size: 24px;
                 line-height: 24px;
                 padding: 15px 20px;
-                border: 1px solid #d7dce6;
+                border: 2px solid #d7dce6;
                 margin: 0 0 0 20px;
                 -webkit-border-radius: 10px;
                 -moz-border-radius: 10px;
