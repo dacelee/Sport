@@ -21,7 +21,8 @@
             </div>
             <div class="step-container">
                 <div class="left-people">
-                    <img src="static/img/home/men.png" alt="">
+                    <l-icon :name="Men ? 'nan' : 'nv'" v-if="!isRunning"/>
+                    <img :src="Men ? '/static/img/home/men.png' : '/static/img/home/woman.gif'" alt="" v-if="isRunning">
                 </div>
                 <div class="right-step-info text-center" @click="showStepDetails">
                     <div class="circleProgress"></div>
@@ -64,6 +65,8 @@
             return {
                 route: 'home',
                 shortMenuList: [],
+                Men: true,
+                isRunning: false,
                 stepNum: 0,
                 stepHeat: 0,
                 rewardNum: '0',
@@ -241,6 +244,10 @@
                 width: 191px;
                 height: 314px;
                 margin-top: 20px;
+                .icons {
+                    width: 280px;
+                    height: 314px;
+                }
                 img {
                     width: 191px;
                     height: 314px;
