@@ -39,8 +39,15 @@
             <div class="filter-way">
                 <l-select v-model="currentFilter" :list="filterList" @change="changeFilterWay"/>
             </div>
-            <div class="filter">
+            <div class="filter filter-id" v-if="currentFilter.id === 1">
                 <input type="text" placeholder="搜索" @key.enter="search" v-model="filterName">
+                <l-icon name="sousuo"/>
+            </div>
+            <div class="filter filter-price" v-if="currentFilter.id === 2">
+                <input type="text" placeholder="最低价" v-model="priceLow">
+                <div>~</div>
+                <input type="text" placeholder="最高价" @key.enter="search" v-model="priceHigh">
+                <l-icon name="sousuo"/>
             </div>
         </div>
         <div class="trading-center-list-business">
@@ -137,6 +144,8 @@
                     id: 1,
                     name: '玩家ID和手机号'
                 },
+                priceLow: '',
+                priceHigh: '',
                 chartsActive: 2,
                 rangeList: [
                     {
@@ -499,6 +508,7 @@
             }
             .filter {
                 width: calc(100% - 300px);
+                position: relative;
                 input {
                     width: 100%;
                     background-color: #33333a;
@@ -509,6 +519,34 @@
                     -webkit-border-radius: 0 8px 8px 0;
                     -moz-border-radius: 0 8px 8px 0;
                     border-radius: 0 8px 8px 0;
+                }
+                .icons {
+                    position: absolute;
+                    right: 20px;
+                    top: 35px;
+                    width: 30px;
+                    height: 30px;
+                }
+                &.filter-price {
+                    display: flex;
+                    justify-content: flex-start;
+                    input {
+                        width: calc(50% - 13px);
+                        border-radius: 0;
+                        &:nth-last-child(1) {
+                            -webkit-border-radius: 0 8px 8px 0;
+                            -moz-border-radius: 0 8px 8px 0;
+                            border-radius: 0 8px 8px 0;
+                        }
+                    }
+                    > div {
+                        background-color: #33333a;
+                        color: #ffffff;
+                        font-size: 30px;
+                        line-height: 40px;
+                        padding: 30px 5px 30px 5px;
+                        float: left;
+                    }
                 }
             }
         }
