@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    let _this ;
+    let _this
     export default {
         name: 'news-list',
         data() {
@@ -29,29 +29,29 @@
             }
         },
         methods: {
-            loadData(page){
-                this.axios.post(this.session.articleList, {"page":page,"pageSize":10,"type":3}, function (json) {
-                    var data = [];
-                    $(json.dataList).each(function(index,item){
-                        data.push( {
+            loadData(page) {
+                this.axios.post(this.session.articleList, {'page': page, 'pageSize': 10, 'type': 3}, function (json) {
+                    var data = []
+                    $(json.dataList).each(function (index, item) {
+                        data.push({
                             id: item.id,
                             name: item.title,
-                            imgPath:item.logo,
+                            imgPath: item.logo,
                             description: ''
-                        });
-
-                    });
-                    _this.list = data;
-                },function(json){
+                        })
+                        
+                    })
+                    _this.list = data
+                }, function (json) {
                     _this.$Message.error(json.msg)
-                });
+                })
             },
             toDetails(item) {
                 _this.$router.push({name: 'newsDetails', params: {id: item.id}})
             }
-        },mounted(){
-            this.loadData(1);
-            _this = this;
+        }, mounted() {
+            this.loadData(1)
+            _this = this
         }
     }
 </script>
@@ -61,49 +61,49 @@
         height: 100%;
         background-color: #ffffff;
         padding-bottom: 0 !important;
-    .share-list-item {
-        width: 690px;
-        height: 180px;
-        border-bottom: 2px solid #999999;
-        margin: 0 auto;
-        padding: 10px 0;
-        overflow: hidden;
-    .news-left-img {
-        width: 160px;
-        height: 160px;
-        margin: 0 10px 0 0;
-    img {
-        width: 160px;
-        height: 160px;
-    }
-    }
-    .news-right-container {
-        width: 510px;
-        height: 160px;
-    .title {
-        font-size: 40px;
-        line-height: 40px;
-        height: 40px;
-        overflow: hidden;
-        word-wrap: normal;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        color: #000000;
-    }
-    .description {
-        font-size: 26px;
-        line-height: 36px;
-        height: 110px;
-        margin-top: 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-wrap: normal;
-        color: #666666;
-    }
-    }
-    }
-    .share-list-item:nth-last-child(1) {
-        border-bottom: none;
-    }
+        .share-list-item {
+            width: 690px;
+            height: 180px;
+            border-bottom: 2px solid #999999;
+            margin: 0 auto;
+            padding: 10px 0;
+            overflow: hidden;
+            .news-left-img {
+                width: 160px;
+                height: 160px;
+                margin: 0 10px 0 0;
+                img {
+                    width: 160px;
+                    height: 160px;
+                }
+            }
+            .news-right-container {
+                width: 510px;
+                height: 160px;
+                .title {
+                    font-size: 40px;
+                    line-height: 40px;
+                    height: 40px;
+                    overflow: hidden;
+                    word-wrap: normal;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    color: #000000;
+                }
+                .description {
+                    font-size: 26px;
+                    line-height: 36px;
+                    height: 110px;
+                    margin-top: 10px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    word-wrap: normal;
+                    color: #666666;
+                }
+            }
+        }
+        .share-list-item:nth-last-child(1) {
+            border-bottom: none;
+        }
     }
 </style>
