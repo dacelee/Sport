@@ -6,8 +6,7 @@
         <div class="step-detail">
             <component :is="currentMenu"/>
         </div>
-        <div class="track-share-container" @click="showShareList = false"
-             v-if="currentMenu === 'trackMotion' && showShareList">
+        <div class="track-share-container" @click="showShareList = false" v-if="showShareList">
             <div class="track-share">
                 <div v-for="item in shareList" class="track-share-item text-center">
                     <l-icon :name="item.icon"/>
@@ -65,12 +64,6 @@
         methods: {
             changeTabs(res) {
                 this.currentMenu = res;
-                if(res==="stepStatistics"){
-                    this.$emit('changeRightIcon',null);
-                }else{
-                    this.$emit('changeRightIcon',"fenxiang");
-                }
-
             },
             backToHome() {
                 this.$router.push('/')

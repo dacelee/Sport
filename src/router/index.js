@@ -130,7 +130,8 @@ export default new Router({
             component: stepDetails,
             meta: {
                 title: '今日步数',
-                back: '/'
+                back: '/',
+                rightIcon:'fenxiang'
             }
         },
         {
