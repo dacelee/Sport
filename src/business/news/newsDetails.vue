@@ -227,6 +227,11 @@
                 line-height: 40px;
                 color: #333333;
                 padding-bottom: 60px;
+                overflow: hidden;
+                width: 100%;
+                img {
+                    width: 100%;
+                }
             }
         }
         .news-reward-info {
@@ -286,6 +291,7 @@
                     .news-evaluation-container {
                         font-size: 26px;
                         line-height: 30px;
+                        overflow: hidden;
                     }
                 }
             }
