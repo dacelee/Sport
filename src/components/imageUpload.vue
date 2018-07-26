@@ -2,7 +2,7 @@
     <div :class="limit > 1?'upload_more':'upload_one'" >
         <div class="upload-list" v-for="item in uploadList">
             <template v-if="item.status === 'finished'">
-                <img :src="item.url">
+                <img :src="item.url" :style="{width:imgWidth,height:imgHeight}" >
                 <Icon type="ios-trash-outline" @click.native="handleRemove(item)" v-if="limit > 1"></Icon>
             </template>
             <template v-else>
@@ -30,9 +30,14 @@
     export default {
         name: 'Upload',
         props: {
-            action: {
-                type: String,
-                required: true
+            imgWidth:{type:String,defult:"100%"},
+            imgHeight:{type:String,defult:"100%"},
+            uploadImgs:{
+                type: Array
+            },
+            sourceType:{
+                type:String,
+                default:"all"
             },
             limit: {
                 type: Number,
@@ -45,6 +50,18 @@
             height: {
                 type: Number,
                 default: 200
+            },
+            imageClipStart:{
+                type: Function,
+                default () {//截图开始
+                    return {};
+                }
+            },
+            imageClipEnd:{
+                type: Function,
+                default () { //截图结束
+                    return {};
+                }
             },
             onSuccess: {
                 type: Function,
@@ -73,6 +90,23 @@
                 uploadSuccessList: [],
                 tempIndex: 1,
                 success:0
+            }
+        },
+        watch: {
+            uploadImgs:function (imgs, oldVal) {
+                var _this= this;
+                if(imgs.length==0){
+                    _this.uploadList = [];
+                }
+                $(imgs).each(function(index,url){
+                    if(url&&url!=null&&url!=""){
+                        var item = {url:url, showProgress: false, percentage: 0,status:"finished",error:""}
+                        if(_this.uploadList.indexOf(item)==-1){
+                            _this.uploadList.push(item);
+                        }
+
+                    }
+                });
             }
         },
         methods: {
@@ -106,43 +140,69 @@
             getPicture(){
                 var _this = this;
                 if (_this.session.isAPPRuntime()) {
-                    _this.appUtil.actionSheet(function (ret) {
-                        if (ret.data) {
-                            var w = api.winWidth;
-                            var clipW = _this.width;
-                            var clipH = _this.height;
-                            var oldW = _this.width;
-                            if(_this.width > w*0.8){
-                                clipW = w*0.8;
-                                clipH = _this.height*(clipW/oldW)
+                    if(_this.sourceType=="all"){
+                        _this.appUtil.actionSheet(function (ret) {
+                            if (ret.data) {
+                                _this.imageClip(ret.base64Data);
+                            } else {
+    //                            _this.$Message.error("获取图片失败");
                             }
-                            if(_this.width<_this.height){
-                                var h = api.winHeight;
-                                var oldH = _this.height;
-                                if(_this.height> h*0.8){
-                                    clipH = h*0.8
-                                    clipW = _this.width*(clipW/oldH)
-                                }
+                        });
+                    }else{
+                        _this.appUtil.picture(function (ret) {
+                            if (ret.data) {
+                                _this.imageClip(ret.base64Data);
+                            } else {
+                                //                            _this.$Message.error("获取图片失败");
                             }
-                            var  context = "listener_"+Date.now() + _this.tempIndex++;
-                            _this.listener(context);
-                            _this.$router.push({
-                                name: 'imageClip',
-                                params:{"base64": ret.base64Data},
-                                query: {"context": context,"width":clipW,"height":clipH}
-                            });
-                        } else {
-//                            _this.$Message.error("获取图片失败");
-                        }
-                    });
+                        },_this.sourceType);
+                    }
                 }
+            },
+            imageClip(base64Data){
+                var _this = this;
+                var w = api.winWidth;
+                var clipW = _this.width;
+                var clipH = _this.height;
+                var oldW = _this.width;
+                if(_this.width > w*0.8){
+                    clipW = w*0.8;
+                    clipH = _this.height*(clipW/oldW)
+                }
+                if(_this.width<_this.height){
+                    var h = api.winHeight;
+                    var oldH = _this.height;
+                    if(_this.height> h*0.8){
+                        clipH = h*0.8
+                        clipW = _this.width*(clipW/oldH)
+                    }
+                }
+                var  context = "listener_"+Date.now() + _this.tempIndex++;
+                _this.listener(context);
+                _this.imageClipStart();
+                _this.$router.push({
+                    name: 'imageClip',
+                    params:{"base64": base64Data},
+                    query: {"context": context,"width":clipW,"height":clipH}
+                });
             },
             listener(context){
                 var _this = this;
                 if (this.session.isAPPRuntime()) {
                     api.addEventListener({
+                        name: 'clip_end_'+ context
+                    }, function (ret, err) {
+                        _this.imageClipEnd();
+                        api.removeEventListener({
+                            name: 'clip_end_'+ context
+                        });
+                    });
+                    api.addEventListener({
                         name: 'clip_success_'+ context
                     }, function (ret, err) {
+                        api.removeEventListener({
+                            name: 'clip_success_'+ context
+                        });
                         api.removeEventListener({
                             name: 'clip_success_'+ context
                         });
@@ -166,7 +226,8 @@
                                     }
                                 }
                             }
-                            axios.post(_this.action,qs.stringify({"base64":base64,"doc":"png"}), config).then(function(res){
+                            var action = _this.axios.host+"/my/uploadimg";
+                            axios.post(action,qs.stringify({"base64":base64,"doc":"png"}), config).then(function(res){
                                 if (res.data.code === 1) {
                                     _this.uploadFile.status  ="finished";
                                     _this.uploadFile.imgUrl = res.data.data.imgpath;

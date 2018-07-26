@@ -34,13 +34,13 @@ export default {
                    var reply = {};
                    if(item.reply){
                        reply = {
-                           time:  utils.dateFormat(item.replytime,"yyyy/MM/dd hh:ss"),
+                           time:  utils.dateFormat(item.replytime,"yyyy/MM/dd hh:mm"),
                            content: item.reply
                        };
                    }
                    data.push(
                        {questions:{
-                           time: utils.dateFormat(item.addtime,"yyyy/MM/dd hh:ss"),
+                           time: utils.dateFormat(item.addtime,"yyyy/MM/dd hh:mm"),
                            content:item.content
                        },
                            reply: reply
@@ -171,7 +171,7 @@ export default {
                 $(data).each(function(index,item){
                     context.list.push({
                         name: item.source,
-                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:ss"),
+                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:mm"),
                         num: item.activity
                     });
                 })
@@ -194,7 +194,7 @@ export default {
                 $(data).each(function(index,item){
                     context.list.push({
                         name: item.source,
-                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:ss"),
+                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:mm"),
                         num: item.contributionvalue
                     });
                 })

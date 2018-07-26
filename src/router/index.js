@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import home from '@/business/home/home.vue'
 import noticeDetails from '@/business/home/noticeDetails.vue'
+import home from '@/business/home/home.vue'
 import stepDetails from '@/business/home/stepDetails.vue'
 import tradingCenter from '@/business/tradingCenter/tradingCenterList.vue'
 import personalCenter from '@/business/personalCenter/personalCenter.vue'
@@ -43,9 +43,9 @@ import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
 import businessProduct from '@/business/businessCenter/businessProduct.vue'
 import businessDetail from '@/business/businessCenter/businessDetail.vue'
-import businessCart from '@/business/businessCenter/businessCart.vue'
 import businessSettlement from '@/business/businessCenter/businessSettlement.vue'
 import businessOrder from '@/business/businessCenter/businessOrder.vue'
+import orderPay from '@/business/businessCenter/orderPay.vue'
 import businessAddress from '@/business/businessCenter/businessAddress.vue'
 import businessAddressAdd from '@/business/businessCenter/businessAddressAdd.vue'
 import club from '@/business/club/clubList.vue'
@@ -61,14 +61,16 @@ import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
 import newsList from '@/business/news/news.vue'
 import newsDetails from '@/business/news/newsDetails.vue'
+import articleList from '@/business/news/articleList.vue'
+import articleDetails from '@/business/news/articleDetails.vue'
 import login from '@/business/login/login.vue'
 import register from '@/business/register/register.vue'
 import forgetPassword from '@/business/register/forgetPassword.vue'
 import selectGender from '@/business/register/selectGender.vue'
-//import faceapp from '@/business/face/faceapp.vue'
 import activity from '@/business/activity/activity.vue'
 import task from '@/business/task/task.vue'
 import imageClip from '@/vue-cropper/imageClip.vue'
+import videoRecorder from '@/business/personalCenter/face/videoRecorder.vue'
 
 Vue.use(Router)
 
@@ -159,13 +161,31 @@ export default new Router({
             component: newsList,
             meta: {
                 title: '资讯',
-                back: '/'
+                back: '-1'
             }
         },
         {
             path: '/newsList/newsDetails/:id',
             name: 'newsDetails',
             component: newsDetails,
+            meta: {
+                title: '详情',
+                back: '-1'
+            }
+        },
+        {
+            path: '/articleList',
+            name: 'articleList',
+            component: articleList,
+            meta: {
+                title: '消息',
+                back: '-1'
+            }
+        },
+        {
+            path: '/article/articleDetails/:id',
+            name: 'articleDetails',
+            component: articleDetails,
             meta: {
                 title: '详情',
                 back: '-1'
@@ -230,7 +250,16 @@ export default new Router({
             name: 'businessOrder',
             component: businessOrder,
             meta: {
-                title: '提交订单',
+                title: '订单支付',
+                back: '-1'
+            }
+        },
+        {
+            path: '/orderPay',
+            name: 'orderPay',
+            component: orderPay,
+            meta: {
+                title: '订单支付',
                 back: '-1'
             }
         },
@@ -240,7 +269,7 @@ export default new Router({
             component: businessAddress,
             meta: {
                 title: '选择收货地址',
-                back: '-1'
+                back: 'leftBtnEvent'
             }
         },
         {
@@ -268,6 +297,15 @@ export default new Router({
             meta: {
                 title: '裁剪图片',
                 back: '-1'
+            }
+        },
+        {
+            path: '/videoRecorder',
+            name: 'videoRecorder',
+            component: videoRecorder,
+            meta: {
+                title: '',
+                back: ''
             }
         },
         {
@@ -386,7 +424,7 @@ export default new Router({
             component: feedbackList,
             meta: {
                 title: '问题反馈',
-                back: '/personalSetting'
+                back: '-1'
             }
         },
         {
@@ -395,7 +433,7 @@ export default new Router({
             component: candyRecords,
             meta: {
                 title: '糖果明细',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -404,7 +442,7 @@ export default new Router({
             component: vipLevel,
             meta: {
                 title: '会员等级',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -412,8 +450,8 @@ export default new Router({
             name: 'basicInformation',
             component: basicInformation,
             meta: {
-                title: '基础资料',
-                back: '/personalCenter'
+                title: '基本资料',
+                back: '-1'
             }
         },
         {
@@ -422,7 +460,7 @@ export default new Router({
             component: feedback,
             meta: {
                 title: '提问',
-                back: '/feedbackList'
+                back: '-1'
             }
         },
         {
@@ -481,7 +519,7 @@ export default new Router({
             component: activityRecords,
             meta: {
                 title: '活跃度明细',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -490,7 +528,7 @@ export default new Router({
             component: contributionRecords,
             meta: {
                 title: '贡献值明细',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -499,7 +537,7 @@ export default new Router({
             component: verifiedForm,
             meta: {
                 title: '实名认证',
-                back: '/personalCenter'
+                back: '-1'
             }
         },
         {
@@ -696,14 +734,6 @@ export default new Router({
                 back: '-1'
             }
         },
-//{
-//    path: '/face/faceapp',
-//    name: 'faceapp',
-//    component: faceapp,
-//    meta: {
-//        title: '人脸识别'
-//    }
-//},
     ],
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {

@@ -20,7 +20,7 @@
 <script>
     import stepStatistics from './stepStatistics'
     import trackMotion from './trackMotion'
-    
+    import users from '../../api/users.js'
     export default {
         name: 'step-details',
         components: {
@@ -69,7 +69,20 @@
                 this.$router.push('/')
             },
             editEvent() {
-                this.showShareList = true
+//                this.showShareList = true
+                var _this = this;
+                users.shareAction(this,function(json,memberid){
+                    var steps = _this.db.loadTodaySteps(memberid,_this);
+                    var distance = _this.db.loadTodayDistance(_this,memberid);
+                    var mysteps_shareurl = json.mysteps_shareurl;
+                    var url = mysteps_shareurl+"?steps="+steps+"&onlineid="+memberid+"&kal="+0+"&distance="+distance+"&articleid=0";
+                    var sharedModule = api.require('shareAction');
+                    sharedModule.share({
+                        text:url,
+                        type: 'text'
+                    });
+                });
+
             }
         }
     }

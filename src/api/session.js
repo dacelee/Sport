@@ -31,6 +31,7 @@ export default {
         var loginUser = $api.getStorage('loginUser');
         //return loginUser.id;
         if(!loginUser){
+            callback(0);
             return false;
         }
         callback(loginUser.id);
@@ -44,18 +45,40 @@ export default {
         }
         return true;
     },
-    loginSuccess:function(user){
+    openSession(context){
+        if (this.isAPPRuntime()) {
+            context.pedometer.start(context, context.db);
+            context.amap.startLocation(context, context.db);
+        }
+    },
+    closeSession(context){
+        if (this.isAPPRuntime()) {
+            context.pedometer.stop();
+            context.amap.stopLocation();
+        }
+    },
+    loginSuccess:function(user,context){
         this.appCache('loginUser',user);
+        this.openSession(context);
+        //if (this.isAPPRuntime()) {
+        //    setTimeout(function(){
+        //        context.pedometer.start(context,context.db);
+        //    },200)
+        //}
     },
     clearCache:function(){
         $api.clearStorage();
     },
-    loginOut(){
+    loginOut(context){
         //退出
+        //if (this.isAPPRuntime()) {
+        //    context.pedometer.stop();
+        //}
+        this.closeSession(context);
         this.rmCache('loginUser');
     },
     appCache:function(key,val){
-        if(val&&val!=null){
+        if(val!=null){
             $api.setStorage(key,val);
             return val;
         }else{

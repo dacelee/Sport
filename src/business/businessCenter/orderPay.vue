@@ -1,24 +1,24 @@
 <template>
-    <div class="businessOrder"> 
-       <div class="address"  @click='getAddress'>
+    <div class="orderDetailPay">
+       <div class="address-info"  >
          <div class="pull-left juli"><l-icon name="juli1"/></div>
-         <div class="pull-left msg">
-           <p>收货人：{{delivery.linkman}}</p>
-           <p>联系电话：{{delivery.mobile}}</p>
-           <p>收货地址：{{delivery.address}}</p>
-         </div>
-         <div class="pull-right icon"><l-icon name="fanhui" class="link-icons" /></div>
+       <div class="address-details">
+           <div class="address-item" v-for="item in addressList">
+               <div class="left-label pull-left text-right">{{ item.label }}</div>
+               <div class="right-info pull-left">{{ item.value }}</div>
+           </div>
        </div>
-       <div class="wordPic" v-for="item in list">
-         <div class="smallPic pull-left"><img :src="item.pic"></div>
+       </div>
+       <div class="wordPic" v-for="item in goodsList">
+         <div class="smallPic pull-left"><img :src="item.imgPath"></div>
          <div class="pull-right">
           <div class="title">{{ item.name }}</div>
-          <div class="goods-price">{{ item.rmb }}</div>
-         <div class="bi">还需支付 <span>{{ item.hlb }} 糖果</span></div>
+          <div class="goods-price">{{ item.unitPrice }}</div>
+         <div class="bi">还需支付 <span>{{ item.candy }} 糖果</span></div>
           <div class="bi">数量:{{ item.num }}</div>
          </div>
        </div>
-       <div class="totals">共{{list.length}}件商品</div>
+       <div class="totals">共{{goodsList.length}}件商品</div>
         <RadioGroup v-model="payType"  >
             <div class="payStylelist">
                 <div class="payList">
@@ -48,7 +48,7 @@
             </div>
             <div class="pull-right">
               <p>人民币：￥{{totalPrice}}</p>
-              <p>糖果：{{totalCoin}}</p>
+              <p>糖果：&nbsp;{{totalCoin}}</p>
             </div>
             </div>
             <div class="pull-right rightBox"  @click="pay">支付</div>
@@ -60,59 +60,36 @@
 import goods from '../../api/goods.js'
 import address from '../../api/address.js'
 export default {
-    name: 'businessOrder',
+    name: 'orderDetailPay',
     data() {
         return {
             totalPrice:0,
             totalCoin:0,
             payType:1,
-            deliveryid:0,
-            cartids:"",
-            delivery:{
-                linkman:"",
-                mobile:"",
-                address:""
-            },
-            list: [
-//                {
-////                    pic: 'static/img/goods/44.gif',
-////                    name: '旋风无敌小队队队',
-////                    rmb: 12350,
-////                    hlb: 8987,
-////                    num: 3,
-//                }
-            ]
+            orderId:"",
+            orderno:"",
+            unorderno:"",//重新支付
+            addressList: [],
+            goodsList: []
         }
     },
     methods: {
         getAddress(){
-            var cartid =  this.$route.query.id;
-            this.$router.replace({name:'businessAddress',query:{id:cartid}})
+            this.$router.push({name:'businessAddress',query:{id:this.orderId}})
         },
         pay() {
-            if(this.deliveryid==0){
-                this.$Message.error("请填写收货人信息");
-                return;
-            }
-            var _this = this;
             if(this.payType==1){
-                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"wxpay",function(orderno){
-                    _this.wxpay(orderno);
-                });
+                this.wxpay();
             }else{
-                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"alipay",function(orderno){
-                    _this.alipay(orderno);
-                });
+                this.alipay();
             }
 //            this.$router.replace('paySuccess')
         },
-        wxpay(orderno){
+        wxpay(){
             this.$Message.info("微信支付");
-            this.$router.replace('orderCenter')
         },
-        alipay(orderno){
+        alipay(){
             this.$Message.info("支付宝支付");
-            this.$router.replace('orderCenter')
         },
         changeNum(){
             this.totalPrice = 0;
@@ -126,44 +103,68 @@ export default {
         }
     },
     activated(){
-        var addressid =  this.$route.query.addressid;
-        if(addressid){
-            this.deliveryid = addressid;
-            address.useAddress(this,this.deliveryid);
-        }else{
-            address.useAddress(this);
-        }
-        var cartids =  this.$route.query.id;
-        if(this.cartids!=cartids){
-            this.cartids =  cartids;
-            goods.loadCartGoods(this,cartids);
+        var orderId =  this.$route.query.id;
+        if(this.orderId!=orderId){
+            this.orderId =  orderId;
+            goods.loadOrderDetail(this,orderId);
         }
     },
     mounted() {
         this.$nextTick(function () {
             var headerHeight = $("header").outerHeight();
             var height = $(window).height()-headerHeight;
-            $(".businessOrder").css("min-height",height);
+            $(".orderDetailPay").css("min-height",height);
         })
     }
 }
 </script>
 
 <style lang="scss">
-.businessOrder {
+.orderDetailPay {
 background-color: #F5F5F5;
 padding-bottom:125px;
 .cartPic img{max-width:100%;width:100%}
 .title{font-size: 32px;
 padding: 0px 0 10px 20px;
 color: #333;}
-.address{display: flex;
-justify-content:center;
-align-items:Center;overflow:hidden;color:#333;padding:20px;border-bottom:#f5f5f5 solid 15px;background-color:#fff}
-.address .juli{font-size:32px;width:5%}
-.address .msg{width:90%;padding-left:20px;font-size:24px;}
-.address .msg p{margin-bottom:10px;}
-.address .icon{width:5%;transform: rotate(180deg);}
+.address-info {
+    color: #333333;
+    background-color: #ffffff;
+    padding: 40px 35px 40px 35px;
+    margin-top: 10px;
+    display: inline-block;
+    width: 100%;
+    position: relative;
+.icons {
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 50%;
+    margin-top: -17.5px;
+}
+.address-details {
+    float: left;
+    margin-left: 30px;
+    width: calc(100% - 65px);
+.address-item {
+    width: 100%;
+    margin-bottom: 20px;
+    display: inline-block;
+    font-size: 24px;
+    line-height: 24px;
+.left-label {
+    width: 120px;
+}
+.right-info {
+    width: calc(100% - 130px);
+    margin-left: 10px;
+}
+&:nth-last-child(1) {
+     margin-bottom: 0;
+ }
+}
+}
+}
 .wordPic{padding:20px;overflow:hidden;background-color:#fff}
 .smallPic{width:35%;}
 .smallPic img{width:100%;}

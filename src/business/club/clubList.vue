@@ -4,6 +4,7 @@
             <l-search placeholder="搜索" v-model="filterName"  @change="change"/>
         </div>
         <div class="club-list-container">
+            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  >
             <div class="club-list-item" v-for="item in list"  @click="toDetails(item)">
                 <div class="left-img pull-left">
                     <img :src="item.imgPath" alt="">
@@ -17,7 +18,7 @@
                         </div>
                         <div class="club-num-info">
                             <div class="people-count pull-left">人数:{{ item.peopleCount }}</div>
-                            <div class="activity-count pull-left">活跃:{{ item.activity }}</div>
+                            <div class="activity-count pull-left">活跃度:{{ item.activity }}</div>
                         </div>
                     </div>
                     <div class="right-distance text-center pull-left">
@@ -26,6 +27,7 @@
                     </div>
                 </div>
             </div>
+            </Scroll>
         </div>
         <l-footerMenu :currentRoute="route"/>
     </div>
@@ -39,13 +41,14 @@
         data() {
             return {
                 route: 'club',
+                scrollHeight:0,
                 filterName: '',
                 x:0,
                 y:0,
                 page:1,
                 list: [
 //                    {
-//                        id:4,
+//                        id:6,
 //                        imgPath: 'static/img/club/1.jpg',
 //                        name: '旋风无敌小队',
 //                        peopleCount: 12350,
@@ -53,14 +56,15 @@
 //                        status: 0,
 //                        distance: '500m'
 //                    },
-////                    {
-////                        imgPath: 'static/img/club/2.jpg',
-////                        name: '夜跑都市人',
-////                        peopleCount: 4210,
-////                        activity: 3511,
-////                        status: 1,
-////                        distance: '1.5km'
-////                    },
+//                    {
+//                    id:2,
+//                        imgPath: 'static/img/club/2.jpg',
+//                        name: '夜跑都市人',
+//                        peopleCount: 4210,
+//                        activity: 3511,
+//                        status: 1,
+//                        distance: '1.5km'
+//                    },
 ////                    {
 ////                        imgPath: 'static/img/club/3.jpg',
 ////                        name: '酷跑狂人',
@@ -98,27 +102,35 @@
                     this.$Message.error("定位失败,请开启GPS");
                     return;
                 }
-                this.session.getMemberID(function(memberid){
-                    club.loadClub(_this,_this.filterName,memberid,_this.x,_this.y,_this.page,10);
+                _this.page = 1;
+                club.loadClub(_this,_this.filterName,_this.x,_this.y);
+            },
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve){
+                    club.loadClub(_this,_this.filterName,_this.x,_this.y,resolve);
                 });
-
             }
-
+        },
+        activated() {
+            var _this = this;
+//            this.loadData();
+            //获取位置
+            this.amap.getLocation(this,function (ret) {
+                if (ret.status) {
+                    _this.x = ret.lon;
+                    _this.y = ret.lat;
+                    _this.loadData();
+                } else {
+                    _this.$Message.error("定位失败,请开启GPS");
+                }
+            }, false);
         },
         mounted() {
             _this = this;
-            //获取位置
-            if(_this.session.isAPPRuntime()) {
-                citys.location(function (ret) {
-                    if (ret.status) {
-                        _this.x = ret.lon;
-                        _this.y = ret.lat;
-                        _this.loadData();
-                    } else {
-                        _this.$Message.error("定位失败,请开启GPS");
-                    }
-                }, false);
-            }
+            var headerHeight = $("header").outerHeight(true);
+            this.scrollHeight = $(window).height()-headerHeight-$(".search-area").outerHeight(true)-50;
+
         }
     }
 </script>

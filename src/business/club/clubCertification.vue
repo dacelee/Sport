@@ -48,7 +48,7 @@
             <!--<div class="select-upload-label text-center">上传图片 0/1</div>-->
             <!---->
             <!--</div>-->
-            <l-imageUpload   :limit="4"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
+            <l-imageUpload   :limit="4"   :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
         </div>
         <div class="save-btn text-center" @click="clubCertificationSuccess">提交</div>
     </div>

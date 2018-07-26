@@ -1,7 +1,7 @@
 <template>
     <div class="track-motion">
-        <div class="track-motion">
-            <img src="static/img/home/map.png" alt="">
+        <div class="track-motion" id="container">
+
         </div>
         <div class="step-num-info text-center">
             <ul>
@@ -27,10 +27,133 @@
         name: 'track-motion',
         data() {
             return {
-                totalStep: 132,
-                calories: 3123,
-                mileage: 423
+                totalStep: 0,
+                calories: 0,
+                mileage: 0
             }
+        },
+        methods: {
+            initMap(){
+                var _this = this;
+                var herderHeight =  $("header").outerHeight(true)+$(".menu-step-way").outerHeight(true)+10;
+                var height = $(window).height() - herderHeight -$(".step-num-info").outerHeight(true)-20;
+                $(".track-motion").height(height);
+                this.amap.open(this);
+                _this.session.getMemberID(function(memberid) {
+                    _this.mileage = _this.amap.getTodayMileage(_this,memberid);
+                });
+
+                return;
+//                aMap.getLocation(function (ret, err) {
+//                    if(ret.status){
+//                        aMap.stopLocation();
+//                        aMap.open({
+//                            rect: {
+//                                x: 0,
+//                                y: herderHeight,
+//                                w: 'atuo',
+//                                h: height
+//                            },
+//                            zoomLevel: 15,
+//                            center: {
+//                                lon: ret.lon,
+//                                lat: ret.lat
+//                            },
+//                        }, function(ret, err) {
+//                            if (ret.status) {
+////                    alert(JSON.stringify(ret));
+//                            } else {
+//                                alert(JSON.stringify(err));
+//                            }
+//                        });
+//                        _this.session.getMemberID(function(memberid) {
+//                            _this.totalStep = _this.db.loadTodaySteps(memberid,_this);
+//                            var locusData = _this.db.loadLocus(_this,memberid);
+//                            var amapLocusData = [];
+//                            console.log(JSON.stringify(locusData));
+//                            var totalDis = 0;
+//                            var colors = _this.amap.getItemColors(locusData.length);
+//                            for(var i =0;i<locusData.length-1;i++){
+//                                var l1 = locusData[i];   var l2 = locusData[i+1];
+//                                var dis = _this.amap.distance(l1.lng,l1.lat,l2.lng, l2.lat);
+//                                totalDis+=dis;
+//                                aMap.addLine({
+//                                    id: 0,
+//                                    styles: {
+//                                        type: 'arrow',
+//                                        borderColor: 'rgba(125, 66, 156,0.8)',
+//                                        borderWidth: 10,
+//                                        lineDash: false,
+//                                        strokeImg: ''
+//                                    },
+//                                    points: [{
+//                                        lon: l1.lng, lat: l1.lat
+//                                    },
+//                                        {
+//                                            lon: l2.lng, lat: l2.lat
+//                                        }]
+//                                });
+//                            }
+//                            _this.mileage = (totalDis/1000).toFixed(2);
+//
+////                            if (amapLocusData.length > 0) {
+////
+////                            }
+//                            return;
+////                            console.log(JSON.stringify(amapLocusData));
+//                            var fs = api.require('fs');
+//                            var file = 'widget://res/runningRecord.json';
+//                            var ret = fs.existSync({
+//                                path: file
+//                            });
+//                            if (!ret.exist) {
+//                                var ret = fs.createFileSync({
+//                                    path: file
+//                                });
+//                            }
+//                            fs.open({
+//                                path: file,
+//                                flags: 'read_write'
+//                            }, function(ret, err) {
+//                                if (ret.status) {
+////                                    alert(JSON.stringify(ret));
+//                                    var ret = fs.writeSync({
+//                                        fd: ret.fd,
+//                                        data: JSON.stringify(amapLocusData),
+//                                        offset: 0
+//                                    });
+//                                    if (ret.status) {
+//                                        if (amapLocusData.length > 0) {
+//                                            aMap.addLocus({
+//                                                id: 1,
+//                                                borderWidth: 5,
+//                                                autoresizing: true,
+//                                                locusData: file
+//                                            });
+//                                        }
+//                                    } else {
+//                                        console.log("写文件失败");
+//                                    }
+//                                } else {
+////                                    alert(JSON.stringify(err));
+//                                }
+//                            });
+//
+//
+////                        alert(amapLocusData.length)
+//
+//                        })
+//                    }
+//
+//                });
+
+            }
+        },
+        activated(){
+            this.initMap();
+        },
+        mounted() {
+            this.initMap();
         }
     }
 </script>
@@ -38,7 +161,7 @@
 <style lang="scss">
     .track-motion {
         .track-motion {
-            width: 690px;
+            width: 100%;
             margin: 20px auto 0;
             img {
                 width: 690px;

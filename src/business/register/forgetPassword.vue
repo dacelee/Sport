@@ -55,7 +55,7 @@
             _this = this;
             if(_this.session.isAPPRuntime()){
                 var header = $api.dom('.header-menu');
-                var  headerHeight = $api.fixStatusBar(header);
+                $api.fixStatusBar(header);
             }
         },
         methods: {
@@ -64,8 +64,6 @@
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
                     this.$toast(errMsg);
                 }else{
-                    clearInterval(_this.timer);
-                    //
                     if(this.userInfo.loginpwd2!=this.userInfo.loginpwd){
                         _this.$Message.error("两次密码输入不一致");
                         return;

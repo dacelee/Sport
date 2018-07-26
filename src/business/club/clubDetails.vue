@@ -51,9 +51,9 @@
         data() {
             return {
                 router: 'clubDetails',
-                headPhoto: '/static/img/personal/default.jpg',
-                clubName: '长沙酷跑俱乐部',
-                idNum: '如果回忆会心痛',
+                headPhoto: '',
+                clubName: '',
+                idNum: '',
                 createTime: '2018.4.12',
                 InfoValue1: [ '岳麓区', 89, 56 ],
                 InfoValue2: [ '地区', '人数', '总活跃度' ],
@@ -83,7 +83,8 @@
                 this.$router.push({name:router,query:{id:clubid}})
             },
             editEvent() {
-                this.$router.push('publishActivity');
+                var clubid = this.$route.query.id;
+                this.$router.push({name:'publishActivity',query:{id:clubid}});
             },
             loadData(){
                 var clubid = this.$route.query.id;
@@ -99,6 +100,8 @@
         },
         activated() {
             this.loadData();
+            var clubid = this.$route.query.id;
+            club.checkClubMemberAction(this,clubid);
         }
     }
 </script>

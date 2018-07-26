@@ -26,19 +26,19 @@
                         name: '登录密码',
                         padding: true
                     },
-                    {
-                        id: 'userGuide',
-                        name: '钱包地址',
-                        padding: true
-                    },
-                    {
-                        id: 'userGuide',
-                        name: '新手入门'
-                    },
-                    {
-                        id: 'feedbackList',
-                        name: '问题反馈'
-                    }
+//                    {
+//                        id: 'userGuide',
+//                        name: '钱包地址',
+//                        padding: true
+//                    },
+//                    {
+//                        id: 'userGuide',
+//                        name: '新手入门'
+//                    },
+//                    {
+//                        id: 'feedbackList',
+//                        name: '问题反馈'
+//                    }
                 ]
             }
         },
@@ -49,9 +49,8 @@
             quitApp(){
                 var _this = this;
                 App.confirm({"title":'警告',"content":"确定要退出应用?"}).then(function(){
-                    pedometer.stop();
-                    _this.session.loginOut();
                     _this.$router.replace("/login");
+                    _this.session.loginOut(_this);
                 });
 
             }

@@ -68,7 +68,7 @@
         },mounted(){
             _this = this;
             this.loadData();
-            this.scrollHeight = $(window).height() -$("header").height()-80;
+            this.scrollHeight = $(window).height() - $("header").outerHeight()-80;
         },methods:{
             handleReachBottom () {
                 return new Promise(resolve => {

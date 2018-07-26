@@ -1,7 +1,8 @@
 <template>
     <div class="my-team">
-        <div class="my-team-introduction" v-if="myTeamInfo.name">
+        <div class="my-team-introduction" v-if="myTeamInfo!=null">
             <div class="my-team-head-info">
+                <div class="team-logo"><img :src="myTeamInfo.logo"/></div>
                 <div class="my-team-name text-white">{{ myTeamInfo.name }}</div>
                 <div class="my-team-dateTime">{{ myTeamInfo.dateTime }}</div>
             </div>
@@ -10,16 +11,17 @@
             </div>
             <div class="team-description">{{ myTeamInfo.description }}</div>
         </div>
-        <div class="my-team-introduction text-center noTeam" v-if="!myTeamInfo.name">
+        <div class="my-team-introduction text-center noTeam" v-if="myTeamInfo==null">
             <l-icon name="cry"/>
             你当前不在队伍中，邀请好友组队，享受活跃度加成，赚取更多糖果
         </div>
-        <div class="my-team-info" v-if="myTeamInfo.name">
+        <div class="my-team-info" v-if="myTeamInfo!=null">
             <div class="basic-info">
-                <div class="left-label">{{ '队伍成员 ('+teamInfo.personalCount+')' }}</div>
-                <l-icon name="bianji" class="right-icons"/>
+                <div class="left-label">{{ '队伍成员 ('+teamMembers.length+')' }}</div>
+                <div v-if="isManage && teamMembers.length==1"  @click="delTeam(myTeamInfo.teamid)">解散队伍  <l-icon name="bianji" class="right-icons"/></div>
             </div>
             <div class="personal-list">
+                <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
                 <div class="personal-list-item" v-for="item in teamMembers">
                     <div class="personal-head-way pull-left">
                         <img :src="item.imgPath" alt="">
@@ -27,7 +29,7 @@
                     <div class="left-personal-info pull-left">
                         <div class="personal-name">
                             {{ item.name }}
-                            <l-icon :name="item.sex === 1 ? 'chengyuan-nan' : 'chengyuan-nv'"/>
+                            <l-icon :name="item.sex === '男' ? 'chengyuan-nan' : 'chengyuan-nv'"/>
                         </div>
                         <div class="activity-info">
                             活跃度:{{ item.activity }}
@@ -40,15 +42,18 @@
                     <div class="personal-operation pull-left captain" v-if="item.status===1">
                         <l-icon name="duichang" class="pull-left"/>
                         <div class="label">队长</div>
+
                     </div>
                     <div class="personal-operation pull-left" v-if="isManage && item.id !== personalId"
-                         @click="delMember(item.teamid,item.id)">请出队伍
+                         @click="delMember(item.teamid,item.id,1)">请出队伍
                     </div>
-                    <div class="personal-operation pull-left" v-if="!isManage && item.id === personalId"
-                         @click="outTheTeam(item.teamid,item.id)">退出队伍
+                    <div class="personal-operation pull-left" v-if="!isManage && item.id === memberid"
+                         @click="delMember(item.teamid,item.id,2)">退出队伍
                     </div>
                 </div>
+              </Scroll>
             </div>
+
         </div>
     </div>
 </template>
@@ -59,163 +64,214 @@
         name: 'my-team',
         data() {
             return {
-                myTeamInfo: {
-                    teamid: 0,
-                    name: '骚骚跑跑步',
-                    dateTime: '2018/06/03 19:30',
-                    address: '沿江风光带',
-                    description: '今晚8点，不见不散。今晚8点，不见不散。'
-                },
-                teamInfo: {
-                    personalCount: 8
-                },
+                init:false,
+                page:1,
+                scrollHeight:400,
+                myTeamInfo: null,
                 personalId: 0, // 个人信息ID，用来判断是不是当前用户，做退出按钮判断
-                isManage: true, // 用来判断是否拥有踢人权限
+                isManage: false, // 用来判断是否拥有踢人权限
+                memberid:0,
                 teamMembers: [
-                    {
-                        id: 0,
-                        imgPath: 'static/img/club/1.jpg',
-                        name: 'Louis',
-                        status: 1,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        id: 1,
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Judy',
-                        status: 0,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        id: 2,
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hansen',
-                        status: 0,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Merry',
-                        status: 0,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hill',
-                        status: 0,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Mountain',
-                        status: 0,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Fish',
-                        status: 0,
-                        sex: 1,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Roi',
-                        status: 0,
-                        sex: 0,
-                        activity: 50,
-                        steps: 14123,
-                        signature: '没什么比什么更重要'
-                    }
+//                    {
+//                        id: 0,
+//                        imgPath: 'static/img/club/1.jpg',
+//                        name: 'Louis',
+//                        status: 1,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        id: 1,
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Judy',
+//                        status: 0,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        id: 2,
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Hansen',
+//                        status: 0,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Merry',
+//                        status: 0,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Hill',
+//                        status: 0,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Mountain',
+//                        status: 0,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Fish',
+//                        status: 0,
+//                        sex: 1,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    },
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Roi',
+//                        status: 0,
+//                        sex: 0,
+//                        activity: 50,
+//                        steps: 14123,
+//                        signature: '没什么比什么更重要'
+//                    }
                 ]
             }
-        }, mounted() {
-            _this = this
-            this.getMyTeam()
+        },mounted() {
+            _this = this;
+            this.init = true;
+            this.$nextTick(function () {
+                this.getMyTeam();
+                var headerHeight = $("header").outerHeight();
+                this.scrollHeight = $(window).height()-headerHeight-120;
+            })
+        },
+        activated() {
+            if(!this.init){
+                this.page=1;
+                this.getMyTeam();
+            }
+        },
+        deactivated(){
+            this.init = false;
         },
         methods: {
+            handleReachBottom() {
+                var _this = this
+                return new Promise(function (resolve) {
+                    _this.loadTeamMember( _this.myTeamInfo.teamid, resolve);
+                })
+            },
             getMyTeam() {
+                var  _this = this;
                 this.session.getMemberID(function (memberid) {
+                    _this.memberid = memberid;
                     _this.axios.post(_this.session.teamDetail, {'memberid': memberid}, function (json) {
                         var team = json.data
-                        _this.myTeamInfo.teamid = team.teamid
-                        _this.myTeamInfo.name = team.name
-                        _this.myTeamInfo.dateTime = _this.appUtil.dateFormat(team.addtime, 'yyyy/MM/dd hh:mm')
-                        _this.myTeamInfo.address = team.areaname
-                        _this.myTeamInfo.description = team.intro
-                        _this.loadTeamMember(team.teamid, 1)
+                        _this.myTeamInfo = {
+                            teamid: team.teamid,
+                            name: team.name,
+                            dateTime: _this.appUtil.dateFormat(team.addtime, 'yyyy/MM/dd hh:mm'),
+                            address: team.address,
+                            description: team.intro,
+                            logo: team.logo
+                        };
+                        _this.loadTeamMember(team.teamid);
                     }, function (json) {
-                        _this.teamInfo.personalCount = 0
+                        _this.$emit('changeData', 0,true);
                         _this.teamMembers = []
-                        _this.myTeamInfo = {name: '暂无组队'}
-//                    _this.$Message.error(json.msg);
+                        _this.myTeamInfo = null;
                     })
                 })
                 
             },
-            loadTeamMember(teamid, page) {
-                this.axios.post(this.session.teamMember, {'teamid': teamid, 'page': page, 'pageSize': 10},
-                    function (json) {
-                        var teamList = json.dataList
-                        _this.teamInfo.personalCount = teamList ? teamList.length : 0
-                        var teamMembers = []
-                        $(teamList).each(function (index, item) {
-                            teamMembers.push(
-                                {
-                                    teamid: teamid,
-                                    id: item.teammemberid,
-                                    imgPath: item.logo,
-                                    name: item.nikename,
-                                    status: item.level
+            loadTeamMember(teamid,resolve) {
+                var _this = this;
+                _this.personalId = 0 ;
+                this.session.getMemberID(function (memberid) {
+                    _this.axios.post(_this.session.teamMember, {'teamid': teamid, 'page': _this.page, 'pageSize': 10},
+                            function (json) {
+                                var teamList = json.dataList
+                                if (_this.page == 1) {
+                                    _this.teamMembers = []
                                 }
-                            )
-                        })
-                        _this.teamMembers = teamMembers
-                    }, function (json) {
-                        _this.teamMembers = []
-                        _this.$Message.error(json.msg)
-                    })
+                                $(teamList).each(function (index, item) {
+                                    _this.teamMembers.push(
+                                            {
+                                                teamid: teamid,
+                                                id: item.teammemberid,
+                                                imgPath: item.logo,
+                                                name: item.nikename,
+                                                sex: item.sex,
+                                                activity: item.activity,
+                                                steps: item.steps == null ? 0 : item.steps,
+                                                signature: item.personality,
+                                                status: item.level
+                                            }
+                                    )
+                                    if (item.level == 1) {
+                                        _this.personalId = item.teammemberid;
+                                        if (memberid == item.teammemberid) {
+                                            _this.isManage = true;
+                                        }else{
+                                            _this.isManage = false;
+                                        }
+                                    }
+                                })
+                                if (teamList.length > 0) {
+                                    _this.page++;
+                                }
+                                _this.$emit('changeData', teamid, _this.isManage);
+                            }, function (json) {
+                                _this.teamMembers = []
+                                _this.$Message.error(json.msg)
+                            }, resolve);
+                });
             },
             /**
              * @description 退出队伍
              */
-            outTheTeam(teamid, memberid) {
-            
+            delTeam(teamid){
+                var _this = this;
+                App.confirm({"title":'警告',"content":'确定解散队伍吗?'}).then(function() {
+                    _this.axios.post('/team/del', {
+                        'teamid': teamid,
+                    }, function (json) {
+                        _this.$Message.info(json.msg);
+                        _this.page = 1;
+                        _this.getMyTeam();
+                    }, function (json) {
+                        _this.$Message.info(json.msg)
+                    })
+                });
             },
-            delMember(teamid, memberid) {
-                this.axios.post(this.session.teamDelMember, {'teamid': teamid, memberid: memberid}, function (json) {
-                    _this.$Message.info(json.msg)
-                    if (json.code == 1) {
-                        $(_this.teamMembers).each(function (index, item) {
-                            if (item.id == id) {
-                                _this.teamMembers.splice(index, 1)
-                                return
-                            }
-                        })
-                    }
-                }, function (json) {
-                    _this.$Message.info(json.msg)
-                })
+            delMember(teamid, memberid,type) {
+                var _this = this;
+                var msg = type==1?'确定要请TA退出组队吗?':'确定要退出组队吗?'
+                App.confirm({"title":'警告',"content":msg}).then(function() {
+                    _this.axios.post(_this.session.teamDelMember, {
+                        'teamid': teamid,
+                        memberid: memberid
+                    }, function (json) {
+                        _this.$Message.info(json.msg);
+                        _this.page = 1;
+                        _this.getMyTeam();
+                    }, function (json) {
+                        _this.$Message.info(json.msg)
+                    })
+                });
             }
         }
     }
@@ -241,11 +297,18 @@
             .my-team-head-info {
                 display: flex;
                 justify-content: space-between;
+                .team-logo{
+                    flex: 0.2;
+                    height: 44px;
+                }
+                .team-logo img{height: 44px;width: 44px;}
                 .my-team-name {
+                    flex:1;
                     font-size: 34px;
                     line-height: 34px;
                 }
                 .my-team-dateTime {
+                    flex:1;
                     font-size: 24px;
                     line-height: 24px;
                     margin-top: 5px;

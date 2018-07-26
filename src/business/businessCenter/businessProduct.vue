@@ -124,7 +124,7 @@
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = this.appUtil.getHeaderHeight();
+                var headerHeight = $("header").outerHeight();;
                 this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
             })
         }

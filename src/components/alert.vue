@@ -61,6 +61,11 @@
         },
         created() {
             _this = this
+            window.App = {
+                extend(sources) {
+                    Object.assign(this, sources)
+                }
+            }
             App.extend({
                 alert(obj) {
                     return _this.alert(obj)

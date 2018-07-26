@@ -24,11 +24,11 @@
     let _this;
     export default {
         name: 'select-gender',
-        created() {
+        mounted()  {
             _this = this;
             if(this.session.isAPPRuntime()){
                 var header = $api.dom('.header-menu');
-                var  headerHeight = $api.fixStatusBar(header);
+                $api.fixStatusBar(header);
             }
         },
         methods: {
@@ -55,8 +55,12 @@
 </script>
 
 <style lang="scss">
-    .view-container{margin-top:0px;padding-top:0px;}
     .select-gender {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 750px;
+        height: 100%;
     .head-title {
         background-color: #25252B;
     }

@@ -23,18 +23,19 @@
                 <div class="goods-details">
                     <div class="goods-name">{{ item.name }}</div>
                     <div class="unit-price">￥{{ item.unitPrice }}</div>
-                    <div class="other">还需要支付<span class="price">{{ item.candy }}活力币</span></div>
+                    <div class="other">还需要支付<span class="price">{{ item.candy }}糖果</span></div>
                     <div class="goods-num">数量：{{ item.num }}</div>
                 </div>
             </div>
         </div>
         <div class="total-info">
             <div class="total-num">共{{ totalNum }}件商品</div>
-            <div class="total-price">合计：￥{{ totalPrice }}</div>
+            <div class="total-price">合计：￥{{ totalPrice }} + {{totalCoin}} 糖果</div>
         </div>
         <div class="footer-btn" v-if="status!=4">
-            <div class="btn" ><div @click="toLogistics" v-if="status==3||status==5">查看物流</div></div>
-            <div class="btn btn-confirm"><div v-if="status==3">确认收货</div><div v-if="status==1">立即支付</div></div>
+            <div class="btn" @click="clearOrder" v-if="status==1"><div>取消订单</div></div>
+            <div class="btn" @click="toLogistics" v-if="status==3||status==5"><div>查看物流</div></div>
+            <div class="btn btn-confirm"><div v-if="status==3" @click="confirmOrder">确认收货</div><div v-if="status==1" @click="toPay">立即支付</div></div>
         </div>
     </div>
 </template>
@@ -47,6 +48,7 @@
             return {
                 orderId: '',
                 status:'0',
+                orderno:'',
                 addressList: [
 //                    {
 //                        label: '收货人',
@@ -102,6 +104,22 @@
         methods: {
             toLogistics() {
                 this.$router.push({name: 'logistics', params: {id: this.orderId}})
+            },
+            clearOrder(){
+                this.orderId = this.$route.params.id
+                var _this = this;
+                App.confirm({"title":'警告',"content":"确定取消订单吗?"}).then(function(){
+                    goods.orderStatusAction(_this,orderId,"cancel");
+                });
+            },
+            confirmOrder(){
+                this.orderId = this.$route.params.id
+                var _this = this;
+                App.confirm({"title":'警告',"content":"确定收货吗?"}).then(function(){
+                    goods.orderStatusAction(_this,orderId,"confirm");
+                });
+            },toPay(){
+                this.$router.push({path:'/orderPay', query: {id: this.orderId}});
             }
         },
         activated () {
@@ -110,9 +128,9 @@
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = this.appUtil.getHeaderHeight();
-                var height = $(window).height()-headerHeight;
-                $(".order-details").height(height);
+                var headerHeight = $("header").outerHeight(true);
+                var height = $(window).height()-headerHeight+20;
+                $(".order-details").css({"min-height":height});
             })
         }
     }

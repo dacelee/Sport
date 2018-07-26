@@ -6,7 +6,7 @@
                 <div class="head-menu-label">{{ item.name }}</div>
             </div>
         </div>
-        <div class="business-center-list-item" v-for="item in list">
+        <div class="business-center-list-item" v-for="item in list" @click="businessDetail(item.id)">
             <div class="left-goods-img pull-left">
                 <img :src="item.imgPath" alt="">
             </div>

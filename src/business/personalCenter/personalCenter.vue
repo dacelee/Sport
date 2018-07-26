@@ -41,6 +41,12 @@
                     <div class="left-label">{{ item.name }}</div>
                     <l-icon name="fanhui" class="link-icons"/>
                 </li>
+                <li class="user-menu-list-item team" @click="toDetailsPage(item.id)" :class="{'mt10':index === 0}"
+                    v-for="(item,index) in helpList">
+                    <l-icon :name="item.icons" class="left-icons"/>
+                    <div class="left-label">{{ item.name }}</div>
+                    <l-icon name="fanhui" class="link-icons"/>
+                </li>
             </ul>
         </div>
         <l-footerMenu :currentRoute.sync="route"/>
@@ -55,9 +61,9 @@
             return {
                 route: 'personalCenter',
                 headPhoto: '/static/img/personal/default.jpg',
-                userName: 'Louis',
-                idNum: 45462331218,
-                description: '菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.菩提本无树，明镜亦非台，心中无一物，何处惹尘埃.',
+                userName: '',
+                idNum: 0,
+                description: '',
                 basicList: [
                     {
                         value: 0,
@@ -75,7 +81,7 @@
                         route: 'contributionRecords'
                     }
                 ],
-                candyNum: 123213.00312312,
+                candyNum: 0,
                 personalMenuList: [
                     {
                         id: 'basicInformation',
@@ -121,6 +127,16 @@
                         name: '团队招募',
                         icons: 'tuanduizhaomu'
                     }
+                ],
+                helpList: [
+                {
+                    id: 'userGuide',
+                    name: '新手入门'
+                },
+                {
+                    id: 'feedbackList',
+                    name: '问题反馈'
+                }
                 ]
             }
         },activated () {
@@ -138,13 +154,19 @@
                 users.getCacheMyInfo(this,function(data){
                     _this.headPhoto = data.logo;
                     _this.userName = data.nikename;
-                    _this.idNum = data.id;
+                    _this.idNum = data.inviter;
                     _this.description = data.personality;
                     _this.basicList[0].value= data.memberlevel;
-                    _this.basicList[1].value= data.activity;
+                    _this.basicList[1].value= data.activity+"+";
                     _this.basicList[2].value= data.contributionvalue;
-                    _this.candyNum =  data.cointotal;
+                    _this.candyNum =  data.cointotal.toFixed(4);
+                    _this.session.getMemberID(function (memberid) {
+                        _this.axios.post(_this.session.myActivityAdd, {'memberid': memberid}, function (json) {
+                            _this.basicList[1].value += json.data.activityadd;
+                        })
+                    });
                 },true);
+
             }
         }
     }

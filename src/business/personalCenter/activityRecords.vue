@@ -10,7 +10,7 @@
                     <div class="name">{{ item.name }}</div>
                     <div class="date">{{ item.time }}</div>
                 </div>
-                <div class="right-num">
+                <div class="right-num " :class="{'payOut':item.num < 0}">
                    {{ item.num }}
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 ]
             }
         },mounted(){
-            var headerHeight = this.appUtil.getHeaderHeight();
+            var headerHeight = $("header").outerHeight();
             this.scrollHeight = $(window).height()-headerHeight-$(".current-activity").height()-80;
             var _this = this;
             users.getCacheMyInfo(this, function (myInfo) {

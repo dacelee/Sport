@@ -24,7 +24,9 @@
             return {
                 userInfo: {
                     phone: '',
-                    password: ''
+                    password: '',
+                    ip:'',
+                    deviceId:'',
                 }
             }
         }, verify: {
@@ -33,7 +35,6 @@
                 password: [ {minLength: 6, message: '密码不得小于6位'} ]
             }
         }, mounted() {
-            _this = this
             if (this.session.isLogin()) {
                 _this.$router.replace('/')
             }
@@ -43,31 +44,41 @@
         }
         , methods: {
             login() {
+                var _this = this;
+                if(this.session.isAPPRuntime()){
+                    var ipAddress = api.require('ipAddress');
+                    ipAddress.getIp(
+                            {isNetIp: true},
+                            function (ret, err) {
+                                //                                alert(JSON.stringify(ret) + "   " + JSON.stringify(err));
+                                if (ret.status) {
+                                    _this.ip = ret.ip;
+                                }
+                            });
+                    this.deviceId = api.deviceId;
+                }else{
+                    this.$Message.error("ip 无法获取")
+                }
                 if (!this.$verify.check()) {
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors)
                     this.$Message.error(errMsg)
                 }
                 else {
-                    //登录
-                    this.axios.post(this.session.login,
-                        {
-                            'mobile': this.userInfo.phone,
-                            'loginpwd': this.userInfo.password
+                //登录
+                _this.axios.post(_this.session.login, {
+                            'mobile': _this.userInfo.phone,
+                            'loginpwd': _this.userInfo.password,
+                            "bindmobile": _this.deviceId,
+                            'ip': _this.ip
                         },
                         function (json) {
-//                                console.log(json);
                             _this.$Message.info(json.msg)
                             var user = json.data
-                            _this.session.loginSuccess(user)
+                            _this.session.loginSuccess(user,_this);
                             _this.$router.replace('/')
                         }, function (json) {
-//                                console.log(json);
-//                                mui.toast(json.msg);
                             _this.$Message.error(json.msg)
-//                                _this.session.loginSuccess(true);
-//                                _this.$router.replace('/')
-                        })
-                    return
+                        });
                 }
             },
             register(){

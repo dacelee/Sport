@@ -32,7 +32,7 @@
                 ]
             }
         },mounted(){
-            var headerHeight = this.appUtil.getHeaderHeight();
+            var headerHeight = $("header").outerHeight();
             this.scrollHeight = $(window).height()-headerHeight-$(".current-candy").height()-80;
             var _this = this;
             users.getCacheMyInfo(this, function (myInfo) {

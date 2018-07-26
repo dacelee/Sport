@@ -61,11 +61,11 @@ export default {
     picture:function(callback,sourceType){
         api.getPicture({
             sourceType: sourceType,
-            encodingType: 'jpg',
+            encodingType: 'png',
             mediaValue: 'pic',
             destinationType: 'base64',
             quality:90,
-            allowEdit: true,
+            allowEdit: false,
             saveToPhotoAlbum: false
         }, function(ret, err){
             if(ret){
@@ -73,14 +73,14 @@ export default {
             }
         });
     },
-    getHeaderHeight:function(){
-        if(session.isAPPRuntime()){
-            var header = $api.dom('header')
-            return $api.fixStatusBar(header);
-        }else{
-            return $("header").height();
-        }
-    },
+    //getHeaderHeight:function(){
+    //    if(session.isAPPRuntime()){
+    //        var header = $api.dom('header')
+    //        return $api.fixStatusBar(header);
+    //    }else{
+    //        return $("header").outerHeight();
+    //    }
+    //},
     dentityCodeValid: function (code) {
         var city = {
             11: "北京",

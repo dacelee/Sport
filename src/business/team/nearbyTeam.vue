@@ -1,19 +1,21 @@
 <template>
     <div class="nearby-team">
-        <div class="nearby-team-item" v-for="item in list">
-            <div class="nearby-name">{{ item.name }}</div>
-            <div class="nearby-info pull-left">
-                <div class="nearby-address">
-                    <l-icon name="juli"/>
-                    {{ item.address }}
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="0">
+            <div class="nearby-team-item" v-for="item in list">
+                <div class="nearby-name"> <div class="team-logo"><img :src="item.logo"/></div>{{ item.name }}</div>
+                <div class="nearby-info pull-left">
+                    <div class="nearby-address">
+                        <l-icon name="juli"/>
+                        {{ item.address }}
+                    </div>
+                    <div class="nearby-personal">
+                        <l-icon name="zudui"/>
+                        {{ item.personalCount }}
+                    </div>
                 </div>
-                <div class="nearby-personal">
-                    <l-icon name="zudui"/>
-                    {{ item.personalCount }}
-                </div>
+                <div class="nearby-join pull-left" @click="join(item.id)">加入</div>
             </div>
-            <div class="nearby-join pull-left" @click="join(item.id)">加入</div>
-        </div>
+        </Scroll>
     </div>
 </template>
 <script>
@@ -23,6 +25,8 @@
         name: 'nearby-team',
         data() {
             return {
+                scrollHeight:400,
+                page:1,
                 list: [
 //                    {
 //                        name: '一起去跑步',
@@ -44,44 +48,60 @@
             }
         }, mounted() {
             _this = this
-            this.nearbyTeam(1,10);
+            var headerHeight = $("header").outerHeight(true);
+            this.scrollHeight = $(window).height()-headerHeight-90;
+            this.nearbyTeam();
         }, methods: {
-            nearbyTeam(page,pageSize){
+            handleReachBottom() {
+                var _this = this
+                return new Promise(function (resolve) {
+                    _this.nearbyTeam(resolve);
+                })
+            },
+            nearbyTeam(resolve){
                 //附近组队
                 if(_this.param.x ==0|| _this.param.y==0){
-                    citys.location(function(ret){
+                    this.amap.getLocation(this,function(ret){
                         if(!ret.status){
                             _this.$Message.error("定位失败,请开启GPS后再试试");
                             return;
                         }
                         _this.param.x = ret.lon;
                         _this.param.y = ret.lat;
-                        _this.param.page = page;
-                        _this.loadData();
+                        _this.loadData(resolve);
                     },false);
                 }else{
-                    this.loadData();
+                    this.loadData(resolve);
                 }
             },
-            loadData(){
+            loadData(resolve){
+                _this.param.page = _this.page;
                 this.axios.post(this.session.nearReam, this.param, function (json) {
-                    var data = [];
+                    if(_this.page==1){
+                        _this.list = [];
+                    }
                     $(json.dataList).each(function(index,item){
-                        data.push(  {
+                        _this.list.push(  {
                             id:item.id,
                             name:item.name,
+                            logo:item.logo,
                             address: item.address,
                             personalCount: item.memberCount
                         });
                     });
-                    _this.list = data;
-
-                });
+                    if(json.dataList.length>0){
+                        _this.page++;
+                    }
+                }, function (json) {
+                    _this.list = []
+                    _this.$Message.error(json.msg)
+                }, resolve);
             },
             join(id){
                this.session.getMemberID(function(memberid){
-                   _this.axios.post(_this.session.nearReam, {"memberid":memberid,"teamid":id}, function (json) {
+                   _this.axios.post("/team/jointeam", {"memberid":memberid,"teamid":id}, function (json) {
                        _this.$Message.info(json.msg);
+
                    },function(json){
                        _this.$Message.error(json.msg);
                    });
@@ -103,10 +123,11 @@
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
         border-radius: 10px;
+    .team-logo{display: inline-block;width: 44px;vertical-align: middle;margin-right: 10px}
+    .team-logo img{width: 44px;height: 44px;}
     .nearby-name {
         font-size: 32px;
         line-height: 32px;
-        margin-bottom: 10px;
     }
     .nearby-info {
         width: 500px;
@@ -126,6 +147,7 @@
         border-radius: 100%;
         line-height: 80px;
         text-align: center;
+        margin-top: -20px;
     }
     }
     }

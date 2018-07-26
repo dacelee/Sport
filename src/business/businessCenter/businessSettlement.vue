@@ -3,7 +3,7 @@
         <CheckboxGroup v-model="goodsId" >
           <div class="SettlementList" v-for="item in list">
             <div class="icon pull-left">
-                <Checkbox :label="item.id"  v-if="delModel"><span></span></Checkbox>
+                <Checkbox :label="item.id" ><span></span></Checkbox>
           </div>
            <div class="wordPic pull-right">
             <div class="smallPic pull-left"><img :src="item.pic"></div>
@@ -30,7 +30,7 @@
                    合计
                 </div>
                 <div class="pull-right">
-                  <p>人民币：{{totalPrice}}</p>
+                  <p>人民币：￥{{totalPrice}}</p>
                   <p >糖果：{{totalCoin}}</p>
                 </div>
             </div>
@@ -82,7 +82,14 @@
         },
         methods: {
             businessOrder() {
-                this.$router.push('businessOrder')
+//                this.$router.push('orderCenter')
+
+                if(this.goodsId.length==0){
+                    this.$Message.error("请选择要结算的商品");
+                    return;
+                }
+                var cartids = this.goodsId.toString();
+                this.$router.push({name:'businessOrder',query:{id:cartids}})
             },
             selectAll(){
                 if(this.all){
@@ -101,6 +108,7 @@
                 if(this.delModel){
                     this.delModel = false;
                     this.$emit('changeRightTitle',"管理");
+
                     this.updateNum();
                 }else{
                     this.delModel = true;
@@ -124,6 +132,11 @@
                     _this.totalPrice +=item.rmb*item.num;
                     _this.totalCoin += parseFloat((item.hlb*item.num).toFixed(2));
                 });
+                if(this.goodsId.length==0) {
+                    $(list).each(function (index, item) {
+                        _this.goodsId.push(item.id);
+                    });
+                }
             },
             updateNum(){
                 var list = this.list;
@@ -139,7 +152,7 @@
             initData(){
                 this.delModel = false;
                 this.all= false;
-                this.goodsId=[];
+//                this.goodsId=[];
                 this.totalPrice=0;
                 this.totalCoin=0;
             }
@@ -150,7 +163,7 @@
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = this.appUtil.getHeaderHeight();
+                var headerHeight = $("header").outerHeight();
                 var height = $(window).height()-headerHeight+40;
                 $(".businessSettlement").height(height);
             })
@@ -198,10 +211,10 @@ white-space: nowrap;}
             text-align:center;
             font-size:34px;
             color:#000;
-            .leftBox{display:flex;align-items:Center;
+            .leftBox{align-items:Center;
              background-color:#404148;padding:20px;color:#fff;width:70%;
              .pull-left{color:#F8C513!important}
-              .pull-right{font-size:24px;color:#F8C513;float:right;margin-left:200px;}
+              .pull-right{font-size:24px;color:#F8C513;float:right;}
             }
             .rightBox{background-color: #F8C513;padding:30px;color: #000;width:30%;}
             .delBox{background-color: #ff4816;padding:30px;color: #fff;width:30%;}

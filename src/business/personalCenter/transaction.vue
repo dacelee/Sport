@@ -2,7 +2,18 @@
     <div class="order-list">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
         <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
-            <div class="order-list-item" v-for="item in list" @click="showDetails(item)">
+            <div class="order-list-item" v-for="item in list" v-if="status<3">
+                <div class="details details2">
+                    <div class="base-info-name">{{ item.name }}</div>
+                    <div class="base-info-price-info">
+                        <div class="unit-price pull-left">{{ '单价:'+item.unitPrice }}</div>
+                        <div class="less-count pull-left">{{ '数量:' +item.lessCount}}</div>
+                    </div>
+                    <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
+                </div>
+                <div class="right-business-btn pull-right text-center clear" @click="clear(item.id)" v-if="item.lessCount>0">取消</div>
+            </div>
+            <div class="order-list-item" v-for="item in list" @click="showDetails(item)"  v-if="status>3">
                 <div class="photo">
                     <img :src="item.imgPath" alt="">
                 </div>
@@ -31,19 +42,19 @@
                 statusList: [
                     {
                         id: '1',
-                        name: '待付款'
+                        name: '买'
                     },
                     {
                         id: '2',
-                        name: '已付款'
+                        name: '卖'
                     },
                     {
-                        id: '3',
-                        name: '已付币'
+                        id: '10',
+                        name: '交易中'
                     },
                     {
-                        id: '4',
-                        name: '已取消'
+                        id: '20',
+                        name: '已完成'
                     }
                 ],
                 list: [
@@ -96,14 +107,17 @@
                 return new Promise(function(resolve) {
                     coin.loadOrderList(_this,_this.status,resolve);
                  });
+            },clear(id){
+                coin.mySaleCancelAction(this,id,true);
             }
         },
         activated () {
+            this.page=1;
             coin.loadOrderList(this,this.status);
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = this.appUtil.getHeaderHeight();
+                var headerHeight = $("header").outerHeight();
                 this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
             })
         }
@@ -157,10 +171,51 @@
                     color: #666666;
                 }
             }
+            .details2 {
+                width: calc(100% - 120px);
+            }
             .status {
                 font-size: 30px;
                 line-height: 120px;
                 color: #F5A623;
+            }
+            .base-info-name {
+                font-size: 30px;
+                line-height: 30px;
+                margin-bottom: 25px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .base-info-price-info {
+                font-size: 24px;
+                line-height: 24px;
+                margin-bottom: 17px;
+                overflow: hidden;
+            .unit-price {
+                width: 45%;
+            }
+            .less-count {
+                width: 45%;
+                margin-left: 10%;
+            }
+            }
+            .trading-info {
+                color: #999999;
+                font-size: 24px;
+                line-height: 24px;
+
+            }
+            .right-business-btn {
+                width: 116px;
+                height: 116px;
+                border: 2px solid #F8C513;
+                color: #F8C513;
+                font-size: 30px;
+                line-height: 116px;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
             }
         }
     }

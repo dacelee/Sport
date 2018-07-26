@@ -4,6 +4,7 @@
             <l-search placeholder="搜索" v-model="filterName"   @change="change"/>
         </div>
         <div class="club-list-container">
+            <CheckboxGroup v-model="memberids" >
             <div class="club-list-item" v-for="item in list">
                 <div class="left-img pull-left" >
                     <img :src="item.imgPath" alt="">
@@ -22,11 +23,12 @@
                             <div class="already pull-left">{{ item.already }}</div>
                         </div>
                     </div>
-                   <div class="right-deletes text-center pull-right" v-if="delModel">
-                        <l-icon name="weigouxuan"/>
+                   <div class="right-deletes text-center pull-right" v-if="delModel&&item.mgrid!=item.memberid">
+                       <Checkbox :label="item.memberid"  v-if="delModel"><span></span></Checkbox>
                     </div>
                 </div>
             </div>
+           </CheckboxGroup>
         </div>
         
     </div>
@@ -39,6 +41,7 @@
         data() {
             return {
                 page: 1,
+                memberids:[],
                 delModel:false,
                 filterName: '',
                 list: [
@@ -91,12 +94,30 @@
                 var clubid = this.$route.query.id;
                 club.loadMemberList(this,clubid,this.filterName);
             },
-
+            editEvent(){
+                if(this.delModel){
+                    if (this.memberids.length == 0) {
+                        this.delModel = false;
+                        this.$emit('changeRightTitle', "管理");
+                        return;
+                    }
+                    var clubid = this.$route.query.id;
+                    club.delMemberAction(this,clubid,this.memberids.toString());
+                }else{
+                    this.delModel = true;
+                    this.$emit('changeRightTitle',"删除");
+                }
+            },
+            init(){
+                this.filterName = "";
+                this.page = 1;
+                this.delModel = false;
+                this.list = [];
+                this.memberids = [];
+            }
         },
         activated() {
-            this.filterName = "";
-            this.page = 1;
-            this.list = [];
+            this.init();
             var clubid = this.$route.query.id;
             club.loadMemberList(this,clubid,this.filterName);
         }

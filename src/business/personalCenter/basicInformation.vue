@@ -5,7 +5,7 @@
             <div class="right">
                 <div class="photo" >
                     <img :src="baseData.photos" alt="">
-                    <l-imageUpload   :limit="1"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
+                    <l-imageUpload   :limit="1" :onSuccess="uploadPhotosSuccess" />
                 </div>
                 <l-icon name="fanhui"/>
             </div>
@@ -44,16 +44,16 @@
                 sexList: [
                     {
                         id: 1,
-                        name: '帅哥'
+                        name: '男'
                     },
                     {
                         id: 2,
-                        name: '美女'
+                        name: '女'
                     }
                 ],
                 currentSex:{
                     id: 1,
-                    name: '帅哥'
+                    name: '男'
                 },
                 list: [
                     {
@@ -78,11 +78,20 @@
                         isSex: true
                     },
                     {
-                        name: '微信号',
+                        name: '电话',
+                        base:"mobile",
+                        split: true
+                    },
+                    {
+                        name: '微信',
                         showIcons: true,
                         base:"wxpay",
+                    },
+                    {
+                        name: '钱包地址',
+                        base:"mywallet",
                         split: true
-                    }
+                    },
                 ]
             }
         },
@@ -101,7 +110,7 @@
                 users.editInfo(this, "sex", data.name,true);
             },
             changePage(data) {
-                if(data.base=="id"){
+                if(data.base=="id"||data.base=="mobile"||data.base=="mywallet"){
                     return;
                 }
                 if (data.isSex) {
@@ -120,9 +129,6 @@
             ,uploadPhotosSuccess(res){
                 this.baseData.photos = res;
                 users.editInfo(this, "logo", res,true);
-            },
-            removePhotos(res){
-                this.baseData.photos = res;
             }
         }
     }
@@ -160,7 +166,7 @@
                     margin-top: 65px;
                 }
             }
-            .photo{position: relative;}
+            .photo{position: relative;  width: 160px; height: 160px;}
             .value {
                 color: #ffffff;
             }
