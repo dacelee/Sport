@@ -1,6 +1,7 @@
 <template>
     <div class="activityList">
         <div class="activityList-container">
+            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  >
             <div class="activityList-item" v-for="item in list"  @click="toDetails(item.id)">
                 <div class="left-img pull-left">
                     <img :src="item.imgPath" alt="">
@@ -13,8 +14,10 @@
                             {{ item.theTime }}
                         </div>
                     </div>
+                    <div class="del" v-if="item.my" @click="delItem(item.id)">删除</div>
                 </div>
             </div>
+                </Scroll>
         </div>
     </div>
 </template>
@@ -25,7 +28,8 @@
         name: 'activityList',
         data() {
             return {
-                router: 'activityList',
+                page:1,
+                scrollHeight:0,
                 filterName: '',
                 page:1,
                 list: [
@@ -45,20 +49,34 @@
                 var clubid = this.$route.query.id;
                 this.$router.push({name:'publishActivity', query: {id: clubid}});
             },
-            loadData(page){
+            loadData(){
                 var clubid = this.$route.query.id;
-                club.loadActivityList(this,clubid,page,10);
+                club.loadActivityList(this,clubid);
             },
             toDetails(id){
-//                this.$router.push({name:'publishActivity', query: {id: id}});
+                this.$router.push({name:'newsDetails', params: {id: id}});
+            },
+            delItem(id){
+                var clubid = this.$route.query.id;
+                club.delrticleAction(this,id,clubid);
+            },
+            handleReachBottom () {
+                var _this = this;
+                var clubid = this.$route.query.id;
+                return new Promise(function(resolve){
+                    club.loadActivityList(_this,clubid,resolve);
+                });
             }
         },
         activated(){
             this.page = 1;
-            this.loadData(this.page)
+            this.loadData(this.page);
+            var clubid = this.$route.query.id;
+            club.checkClubMemberAction(this,clubid);
         },
         mounted() {
-
+            var headerHeight = $("header").outerHeight();
+            this.scrollHeight = $(window).height()-headerHeight;
         }
     }
 </script>
@@ -108,8 +126,10 @@
     .right-container {
         margin-left: 20px;
         width: calc(100% - 130px);
+    .del{float: right;border: 2px solid #ff0000;color: #ff0000;padding: 5px;border-radius: 5px;}
     .left-basic-info {
         width: calc(100% - 0);
+
     .name {
         font-size: 32px;
         line-height: 32px;
@@ -129,6 +149,7 @@
         margin-left: 20px;
     }
     }
+
     }
     .right-distance {
         width: 100px;

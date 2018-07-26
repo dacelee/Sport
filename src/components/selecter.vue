@@ -5,15 +5,13 @@
         <l-icon class="select-tips-icon" name="fanhui" :class="{'active':showSelectList}"/>
         <div class="select-list" v-if="showSelectList">
             <li class="select-list-item" :class="{'active':nVal.id === item.id}" v-for="item in list"
-                @click="selectItem(item)">{{
-                item.name }}
+                @click="selectItem(item)">{{ item.name }}
             </li>
         </div>
     </div>
 </template>
 
 <script>
-    let _this
     export default {
         name: 'l-select',
         props: {
@@ -35,26 +33,27 @@
         },
         methods: {
             toggleList() {
-                _this.showSelectList = !_this.showSelectList
+                this.showSelectList = !this.showSelectList
             },
             selectItem(item) {
-                _this.nVal = item
-                _this.$emit('input', item)
-                _this.showSelectList = false
+                this.nVal = item
+                this.$emit('input', item)
+                this.$emit('change');
+                this.showSelectList = false
             }
         },
         mounted() {
-            _this = this
-            _this.nVal = _this.value
-            _this.list.forEach(function (item) {
+            var _this = this
+            this.nVal = this.value
+            this.list.forEach(function (item) {
                 if (item.id === _this.nVal || item.id === _this.nVal.id) {
-                    _this.nVal = item
+                    _this.nVal = item;
                 }
             })
             $('html').click(function () {
-                _this.showSelectList = false
+                this.showSelectList = false
             })
-            $(_this.$el).click(function (e) {
+            $(this.$el).click(function (e) {
                 e.stopPropagation()
             })
         }

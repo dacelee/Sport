@@ -2,9 +2,9 @@
     <div class="order-center">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
         <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
-            <div class="order-list-item" v-for="order in list" @click="showDetails(order.id)">
-                <div class="order-goods-info">
-                    <div class="order-goods-details" v-for="good in order.goods" >
+            <div class="order-list-item" v-for="order in list">
+                <div class="order-goods-info" >
+                    <div class="order-goods-details" v-for="good in order.goods"  @click="showDetails(order.id)">
                         <div class="goods-img">
                             <img :src="good.imgPath" alt="">
                         </div>
@@ -17,7 +17,7 @@
                             <div class="class-amount">{{ '数量：'+good.amount }}</div>
                         </div>
                     </div>
-                    <div class="goods-details">
+                    <div class="goods-details"  @click="showDetails(order.id)">
                         <div class="goods-num">{{ '共'+order.amount+'件商品' }}</div>
                         <div class="goods-total">{{ '合计：'+order.totalPrice }}<span v-if="order.extendData">+{{ order.extendData+'糖果' }}</span>
                         </div>
@@ -27,7 +27,7 @@
                         <div class="btn-area">
                             <div class="btn" @click.stop="showLogistics(order.id)" v-if="order.status==3||order.status==5">查看物流</div>
                             <div class="btn btn-confirm" v-if="order.status==3">确认收货</div>
-                            <div class="btn btn-confirm" v-if="order.status==1">立即支付</div>
+                            <div class="btn btn-confirm" v-if="order.status==1"  @click="pay(order.id)">立即支付</div>
                         </div>
                     </div>
                 </div>
@@ -98,6 +98,15 @@
             },
             showLogistics(id) {
                 this.$router.push({name: 'logistics', params: {id: id}})
+            },
+            pay(id){
+                this.$router.push({name: 'orderPay', query: {id: id}})
+            },
+            handleReachBottom () {
+                var _this = this;
+                return new Promise(function(resolve) {
+                    goods.loadOrderList(_this,_this.status,resolve);
+                });
             }
         },
         activated () {
@@ -105,7 +114,7 @@
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = this.appUtil.getHeaderHeight();
+                var headerHeight = $("header").outerHeight();
                 this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
             })
         }
@@ -119,6 +128,7 @@
     }
     
     .order-center {
+        .order-list-item:first-child{margin-top: 0px;}
         .order-list-item {
             width: 100%;
             margin-top: 20px;

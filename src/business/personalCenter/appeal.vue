@@ -77,7 +77,7 @@
                     this.$Message.error("申诉说明必须填写");
                     return;
                 }
-                coin.appealAction(this,this.$route.params.id,this.appealphoto)
+                coin.appealAction(this,this.$route.params.id,this.appeal,this.appealphoto)
             }
         }
     }

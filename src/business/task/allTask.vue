@@ -14,8 +14,15 @@
                         <div class="task-details-info-item">奖励糖果：{{ item.rewardSugar }}枚</div>
                         <div class="task-details-info-item">所需步数：{{ item.steps }}</div>
                     </div>
-                    <div class="task-details-btn" @click="buy(item.id)">兑换</div>
+                    <div class="task-details-btn" @click="sales(item.id)">兑换</div>
                 </div>
+            </div>
+            <div class="bottomBtnBuy" v-show="isShow">
+                <div class="buyBox">
+                    <div class="buyText"><label>交易密码</label><input type="password" v-model="password" placeholder="输入交易密码">
+                    </div>
+                </div>
+                <div class="pull-left" v-for="item in tabsListSales" @click="buy(item.id)">{{item.name}}</div>
             </div>
         </div>
     </div>
@@ -26,6 +33,9 @@
         name: 'all-task',
         data() {
             return {
+                isShow:false,
+                password:'',
+                salesId:0,
                 list: [
 //                    {
 //                        name: '试炼任务',
@@ -34,6 +44,16 @@
 //                        steps: 3000,
 //                        activity: 1
 //                    }
+                ],
+                tabsListSales: [
+                    {
+                        id: 'cancel',
+                        name: '取消'
+                    },
+                    {
+                        id: 'ok',
+                        name: '确定'
+                    }
                 ]
             }
         }, mounted() {
@@ -53,6 +73,7 @@
                                 needSugar: item.coinprice,
                                 rewardSugar: item.coinget,
                                 steps: item.steps,
+                                imgPath:item.logo,
                                 activity: item.activity
                             }
                         )
@@ -62,14 +83,27 @@
                 
                 })
             },
+            sales(id){
+                this.isShow =  true;
+                this.salesId = id;
+            },
             buy(id) {
-                this.session.getMemberID(function (memberid) {
-                    _this.axios.get(_this.session.buyTask, {'memberid': memberid, 'taskid': id}, function (json) {
-                        _this.$Message.info(json.msg)
-                    }, function (json) {
-                        _this.$Message.error(json.msg)
+                if(id=="ok"){
+                    if(this.password==""){
+                        this.$Message.error("请输入交易秘密");
+                        return;
+                    }
+                    this.session.getMemberID(function (memberid) {
+                        _this.axios.get(_this.session.buyTask, {'memberid': memberid, 'taskid': _this.salesId,tradepwd:_this.password}, function (json) {
+                            _this.$Message.info(json.msg)
+                        }, function (json) {
+                            _this.$Message.error(json.msg)
+                        })
                     })
-                })
+                }else{
+                    this.isShow =  false;
+                }
+
             }
         }
     }
@@ -131,6 +165,62 @@
                 }
             }
             
+        }
+        .bottomBtnBuy {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 999;
+            overflow: hidden;
+            width: 100%;
+            text-align: center;
+            background: #25252B;
+        div.pull-left {
+            font-size: 34px;
+            line-height: 34px;
+            padding: 33px 0;
+
+            color: #fff;
+        }
+        .pull-left {
+            width: 50%;
+            background-color: #404148;
+        }
+        .pull-left:last-child {
+            width: 50%;
+            background-color: #F8C513;
+            color: #000;
+        }
+            .buyBox {
+                background: #25252B;
+                width: 100%;
+                padding: 80px 0;
+            .buying {
+                font-size: 34px;
+                color: #fff
+            }
+            .buyleft {
+                font-size: 24px;
+                color: #999;
+                padding: 30px 0;
+            }
+            .buyText {
+            label {
+                margin-right: 20px;
+            }
+            input {
+                background: #333339;
+                height: 80px;
+                border-radius: 10px;
+                width: 60%;
+                padding: 0 10px;
+                color: #ffffff;
+            }
+            &:nth-last-child(1) {
+                 padding: 15px 0 0 0;
+             }
+            }
+            }
         }
     }
 </style>

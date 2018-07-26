@@ -4,7 +4,7 @@
                 ref="cropper"
                 :img="option.img"
                 :info="option.info"
-                :outputSize="option.size"
+                :outputSize="option.outputSize"
                 :outputType="option.outputType"
                 :canScale="option.canScale"
                 :autoCrop="option.autoCrop"
@@ -28,6 +28,7 @@
         data() {
 //            var option = this.init();
             return {
+                context:null,
                 option: {}
             }
         },components: {
@@ -35,19 +36,18 @@
         },
         methods: {
             startCrop(){
-                var context =  this.$route.query.context;
-                this.$refs.cropper.getCropData((data) => {
+                var _this = this;
+                this.$refs.cropper.getCropData(function(data){
                     api.sendEvent({
-                        name: 'clip_success_'+context,
+                        name: 'clip_success_'+_this.context,
                         extra: {
                             base64: data
                         }
                     });
-                    this.$router.go(-1);
+                    _this.$router.go(-1);
                 });
             },
             init(){
-
                 var base64 = this.$route.params.base64;
                 var autoCropWidth = this.$route.query.width||200;
                 var autoCropHeight = this.$route.query.height||200;
@@ -58,7 +58,7 @@
                 return {
                     img: base64,
                     info: false,
-                    size: 1,
+                    outputSize: 1,
                     outputType: 'png',
                     canScale: false,
                     autoCrop: true,
@@ -72,6 +72,12 @@
         activated(){
             var option = this.init();
             this.option = option;
+            this.context = this.$route.query.context;
+        },
+        deactivated(){
+            api.sendEvent({
+                name: 'clip_end_'+this.context
+            });
         },
         mounted() {
             _this = this;

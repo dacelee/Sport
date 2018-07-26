@@ -2,14 +2,14 @@
     <div class="home">
         <div class="home-container">
             <div class="home-head">
-                <l-banner/>
+                <l-banner2/>
             </div>
-            <div class="home-notice" @click="showNoticeDetails">
-                <div class="left-icons pull-left">
-                    <l-icon name="tongzhi-"/>
+            <div class="home-notice" >
+                <div class="left-icons pull-left" @click="noticeList">
+                    <l-icon name="tongzhi-" />
                 </div>
-                <div class="right-container">
-                    您的俱乐部有新成员加入...
+                <div class="right-container" @click="showNoticeDetails">
+                    {{ news.title }}
                 </div>
             </div>
             <div class="short-menu">
@@ -19,20 +19,22 @@
                     <div class="short-menu-label">{{ item.name }}</div>
                 </div>
             </div>
-            <div class="step-container">
+            <div class="step-container"  @click="showStepDetails">
                 <div class="left-people">
                     <l-icon :name="Men ? 'nan' : 'nv'" v-if="!isRunning"/>
-                    <img :src="Men ? '/static/img/home/men.gif' : '/static/img/home/woman.gif'" alt="" v-if="isRunning">
+                    <img :src="Men ? './static/img/home/men.gif' : './static/img/home/woman.gif'" alt="" v-if="isRunning">
                 </div>
-                <div class="right-step-info text-center" @click="showStepDetails">
-                    <div class="circleProgress"></div>
-                    <div class="step-num-info">
-                        {{ stepNum }} <span class="steps">步</span>
+                <div class="right-step-info">
+                    <div  id="trading-charts" class="chart"></div>
+                    <div class=" text-center" >
+                        <div class="step-num-info">
+                            {{ stepNum }} <span class="steps">步</span>
+                        </div>
+                        <div class="step-heat">{{ stepHeat }} 卡路里</div>
                     </div>
-                    <div class="step-heat">{{ stepHeat }} 卡路里</div>
                 </div>
             </div>
-            <div class="reward-info text-center">奖励糖果:{{ rewardNum }}</div>
+            <div class="reward-info text-center">今日奖励糖果:{{ rewardNum }}</div>
             <div class="user-basic-info">
                 <div class="text-center user-basic-info-list">
                     <div class="basic-info-value isVip">{{ vipLevel }}</div>
@@ -57,41 +59,62 @@
 </template>
 <script type="text/javascript">
     let _this
-    import pedometer from '../../api/pedometer.js'
-    
+
+    import users from '../../api/users.js'
     export default {
         name: 'home',
         data() {
             return {
+                status:'',
+                timer:0,
+                news:'',
                 route: 'home',
                 shortMenuList: [],
                 Men: false,
-                isRunning: true,
+                isRunning: false,
                 stepNum: 0,
                 stepHeat: 0,
                 rewardNum: '0',
                 vipLevel: '',
                 activity: 0,
+                taskSteps:0,
                 totalReward: 0,
                 contribution: 0,
                 getCoinUnit: 0,
+                charts:null
             }
         },
         mounted() {
-            _this = this
-            _this.getShortMenuList()
-            
+            _this = this;
+            _this.getShortMenuList();
+            this.loadNews();
+            _this.pedometer.setBackAction(function (stepNum) {
+//                console.info("home:"+stepNum);
+                _this.backAction(stepNum);
+            })
         }, activated() {
-            var _this = this
-            _this.loadData()
-            var pedometerStart = this.session.appCache('pedometerStart')
-            if (!pedometerStart && _this.session.isAPPRuntime()) {
-                pedometer.start(this)
+            if (!this.session.isLogin()) {
+                this.$router.push('login');
+                return;
             }
+            this.status = "activated";
+            var _this = this
+            _this.loadData();
+            users.getCacheMyInfo(this,function(user){
+                _this.Men = user.sex=="男"?true:false;
+            });
+//            _this.pedometer.setBackAction(function (stepNum) {
+////                console.info("home:"+stepNum);
+//                _this.backAction(stepNum);
+//            })
+        },
+        deactivated(){
+            this.status = "deactivated";
+//            this.pedometer.setBackAction(null);
         },
         methods: {
             showNoticeDetails() {
-                _this.$router.push({name: 'noticeDetails', params: {id: '1'}})
+                _this.$router.push({name: 'articleDetails', params: {id: _this.news.id}})
             },
             getShortMenuList() {
                 _this.shortMenuList = [
@@ -119,26 +142,11 @@
             },
             showStepDetails() {
                 this.$router.push('stepDetails')
-//                this.$router.push('/face/faceapp')
-//                var demo = api.require('baiduFaceLive');
-//                demo.openFaceDetectView(function(ret, err){
-//                    if(ret.evenType=='success'){
-//                        //由于base64数据量大，请不要用JSON.stringify(ret)调试
-//                        alert(ret.data.bestImage);
-//                        demo.closeFaceDetectView(function(ret, err){
-//                            //alert(JSON.stringify(ret));
-//                        });
-//                    }else{
-//                        demo.continueFaceDetect(function(ret, err){
-////                            api.toast(JSON.stringify(ret));
-//                        });
-//                        api.toast({ msg : JSON.stringify(ret) +"  "+JSON.stringify(err)});
-//                    }
-//                });
             },
             toShortMenu(router) {
                 this.$router.push(router)
             },
+
             loadData() {
                 //登录检测
                 if (this.session.isLogin()) {
@@ -147,9 +155,9 @@
                             var data = json.data
                             _this.vipLevel = data.memberLevel
                             _this.activity = data.activity
-                            _this.totalReward = parseInt(data.cointotal)
+                            _this.totalReward = parseFloat(data.cointotal).toFixed(2)
                             _this.contribution = parseInt(data.contributionvalue)
-                            
+
                         })
                         _this.axios.post(_this.session.todaystepinfo, {'memberid': memberid}, function (json) {
                             var data = json.data
@@ -157,6 +165,9 @@
                         })
                         var activity = 0
                         _this.axios.post(_this.session.myTask, {'memberid': memberid}, function (json) {
+                            if(json.dataList.length>0){
+                                _this.taskSteps = json.dataList[0].steps;
+                            }
                             $(json.dataList).each(function (index, item) {
                                 activity += item.activity
                             })
@@ -165,23 +176,118 @@
                                 _this.activity = activity
                                 _this.axios.post(_this.session.getCoinUnit, null, function (json) {
                                     _this.getCoinUnit = json.data.getcoinunit
-                                    if (_this.session.isAPPRuntime()) {
-                                        _this.stepNum = pedometer.getSteps()
-                                        _this.rewardNum = (_this.stepNum * _this.getCoinUnit * _this.activity).toFixed(
-                                            2)
+                                    _this.stepNum = _this.pedometer.getSteps();
+                                    if(isNaN(_this.stepNum)){
+                                        _this.stepNum = 0;
                                     }
+                                    if(isNaN(_this.activity)){
+                                        _this.activity = 0;
+                                    }
+                                    var steps = _this.stepNum<_this.taskSteps?_this.stepNum:_this.taskSteps;
+                                    _this.rewardNum = (steps * _this.getCoinUnit * _this.activity);
+                                    _this.stepHeat = (steps*0.03175).toFixed(2);
+                                    _this.eCharts();
                                 }, function (json) {
                                     _this.$Message.error(json.msg)
                                 })
                             }, function (json) {
                                 _this.$Message.error(json.msg)
                             })
-                            
+
                         }, function (json) {
                             _this.$Message.error(json.msg)
                         })
-                    })
+                    });
                 }
+            },
+            backAction(stepNum){
+                if(this.status=="deactivated"){
+                    return;
+                }
+                this.stepNum = stepNum;
+                var steps = this.stepNum<this.taskSteps?this.stepNum:this.taskSteps;
+                this.rewardNum = (steps * this.getCoinUnit * this.activity);
+                this.stepHeat = (steps*0.03175).toFixed(2);
+                this.isRunning = true;
+                clearTimeout(this.timer);
+                var _this = this;
+                this.timer = setTimeout(function(){
+                    _this.isRunning = false;
+                },2000);
+                this.eCharts();
+            },
+            eCharts(){
+//                alert(this.stepNum);
+                this.charts = this.$echarts.init(document.getElementById('trading-charts'));
+                var total = this.taskSteps-this.stepNum;
+                var step = this.stepNum;
+                if(total<=0){
+                    total = 0;
+                    step = 3000;
+                }
+                var _this = this;
+                var option = {
+                    title: {
+                        show: false
+                    },
+                    tooltip: {
+                        show: false
+                    },
+                    legend: {
+                        show: false,
+                    },
+                    color:['#f8c513','#47474F'],
+                    grid:{ left: '0',
+                        right: '0',
+                        bottom: '0',
+                        top:'0'
+
+                    },
+                    series: [
+                        {
+                            name:'运动圈',
+                            type:'pie',
+                            radius: ['90%', '100%'],
+                            avoidLabelOverlap: false,
+                            legendHoverLink:false,
+                            hoverAnimation:false,
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    show: false
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:[
+                                {value:step},
+                                {value:total},
+                            ]
+                        }
+                    ]
+                };
+                this.charts.setOption(option);
+//                chartsEl.on('click', function (params) {
+//                    console.log(params);
+//                });
+            },
+            loadNews(){
+                var _this = this;
+                this.axios.post("/msg/notice", {'page': 1,pageSize:1}, function (json) {
+                    var news = json.dataList;
+                    $(news).each(function (index, item) {
+                        _this.news = item;
+                    })
+                })
+            },
+            noticeList(){
+                this.$router.push({name: 'articleList', query: {type:1}})
             }
         }
     }
@@ -257,10 +363,6 @@
                 width: 330px;
                 height: 330px;
                 position: relative;
-                -webkit-border-radius: 100%;
-                -moz-border-radius: 100%;
-                border-radius: 100%;
-                border: 20px solid #47474F;
                 .circleProgress {
                     width: 330px;
                     height: 330px;
@@ -281,6 +383,7 @@
                     
                     }
                 }
+                .chart{position: absolute;top:0px;left: 0px;width: 100%;height: 100%; }
                 .rightcircle {
                     border-top: 10px solid green;
                     border-right: 10px solid green;

@@ -43,8 +43,18 @@
             }
         },
         methods: {
-            selected(id){
-                this.$router.replace({name: 'businessOrder', query: {addressid: id}})
+            leftBtnEvent(){
+                var id =  this.$route.query.id;
+                var query =  {id: id};
+                this.$router.replace({name: 'businessOrder', query:query})
+            },
+            selected(addressid){
+                var id =  this.$route.query.id;
+                var query =  {addressid: addressid};
+                if(id){
+                    query.id = id;
+                }
+                this.$router.replace({name: 'businessOrder', query:query})
             },
             editAddress(id) {
                 this.$router.push({name: 'businessAddressAdd', query: {id: id}})

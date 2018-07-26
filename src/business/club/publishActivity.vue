@@ -12,6 +12,12 @@
                 <textarea placeholder="在此输入活动内容" v-model="formData.content" v-verify="formData.content"></textarea>
             </div>
         </div>
+        <div class="club-item text-area">
+            <div class="left-label pull-left">分享</div>
+            <div class="right-input pull-left">
+                <div class="setDefaul" @click="setShare" ><l-icon :name="formData.isshare==1?'morenkai':'morenguan'" /></div>
+            </div>
+        </div>
         <div class="select-pic text-center">
             <!--<div class="upload-box">-->
             <!--<div class="upload-pic">-->
@@ -31,7 +37,9 @@
         name: 'publishActivity',
         data(){
             return {
+                init:false,
                 formData:{
+                    isshare:0,
                     title:"",
                     content:"",
                     photos:""
@@ -58,6 +66,9 @@
                     });
                 }
             },
+            setShare(){
+                this.formData.isshare =  this.formData.isshare==1?0:1;
+            },
             uploadPhotosSuccess(res,item){
                 this.formData.photos = res;
             },
@@ -66,6 +77,18 @@
             }
         },
         mounted() {
+        },
+        activated() {
+            if(!this.init){
+                this.init = true;
+                this.formData={
+                    isshare:0,
+                    title:"",
+                    content:"",
+                    photos:""
+                }
+            }
+
         }
     }
 </script>
@@ -160,5 +183,6 @@
     .mt-20 {
         margin-top:0;
     }
+    .setDefaul{font-size: 50px;}
     }
 </style>

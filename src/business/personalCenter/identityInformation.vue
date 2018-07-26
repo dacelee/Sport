@@ -1,7 +1,7 @@
 <template>
     <div class="identity-information">
         <div class="identity-list-item" v-for="item in list">
-            <div class="label">{{ item.name }}</div>
+            <div class="label" :class="{'is':item.passed === 1}">{{ item.name }}</div>
             <div class="pass" v-if="item.passed === 1">
                 <l-icon name="shenfenxinxirenzheng"/>
             </div>
@@ -17,25 +17,22 @@
             return {
                 list: [
 //                    {
-//                        name: '市级代理',
-//                        passed: 1
+//                        name: '圈主',
+//                        passed: 0
 //                    },
 //                    {
-//                        name: '俱乐部圈主',
-//                        passed: 1
+//                        name: '星级达人',
+//                        passed: 0
 //                    },
 //                    {
 //                        name: '商家',
-//                        passed: 1
+//                        passed: 0
 //                    },
 //                    {
-//                        name: '一星达人',
-//                        passed: 1
-//                    },
-//                    {
-//                        name: '省级代理',
+//                        name: '城市代理',
 //                        passed: 0
 //                    }
+
                 ]
             }
         },
@@ -68,11 +65,14 @@
                 width: 43px;
                 height: 50px;
             }
+
             .label {
+                color: #808080;
                 font-size: 32px;
                 line-height: 32px;
                 margin-top: 9px;
             }
+            .is{color: #FFF}
         }
     }
 </style>

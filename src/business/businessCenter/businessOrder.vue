@@ -47,11 +47,11 @@
                合计
             </div>
             <div class="pull-right">
-              <p>人民币：{{totalPrice}}</p>
+              <p>人民币：￥{{totalPrice}}</p>
               <p>糖果：{{totalCoin}}</p>
             </div>
             </div>
-            <div class="pull-right rightBox"  @click="paySuccess">提交</div>
+            <div class="pull-right rightBox"  @click="pay">支付</div>
         </div>
     </div>
 </template>
@@ -67,37 +67,52 @@ export default {
             totalCoin:0,
             payType:1,
             deliveryid:0,
+            cartids:"",
             delivery:{
                 linkman:"",
                 mobile:"",
                 address:""
             },
             list: [
-                {
-//                    pic: 'static/img/goods/44.gif',
-//                    name: '旋风无敌小队队队',
-//                    rmb: 12350,
-//                    hlb: 8987,
-//                    num: 3,
-                }
+//                {
+////                    pic: 'static/img/goods/44.gif',
+////                    name: '旋风无敌小队队队',
+////                    rmb: 12350,
+////                    hlb: 8987,
+////                    num: 3,
+//                }
             ]
         }
     },
     methods: {
         getAddress(){
-            this.$router.push('businessAddress')
+            var cartid =  this.$route.query.id;
+            this.$router.replace({name:'businessAddress',query:{id:cartid}})
         },
-        paySuccess() {
+        pay() {
             if(this.deliveryid==0){
                 this.$Message.error("请填写收货人信息");
                 return;
             }
+            var _this = this;
             if(this.payType==1){
-                goods.orderSubmitAction(this, this.deliveryid,"wxpay");
+                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"wxpay",function(orderno){
+                    _this.wxpay(orderno);
+                });
             }else{
-                goods.orderSubmitAction(this, this.deliveryid,"alipay");
+                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"alipay",function(orderno){
+                    _this.alipay(orderno);
+                });
             }
 //            this.$router.replace('paySuccess')
+        },
+        wxpay(orderno){
+            this.$Message.info("微信支付");
+            this.$router.replace('orderCenter')
+        },
+        alipay(orderno){
+            this.$Message.info("支付宝支付");
+            this.$router.replace('orderCenter')
         },
         changeNum(){
             this.totalPrice = 0;
@@ -118,12 +133,15 @@ export default {
         }else{
             address.useAddress(this);
         }
-        goods.loadCartGoods(this);
-
+        var cartids =  this.$route.query.id;
+        if(this.cartids!=cartids){
+            this.cartids =  cartids;
+            goods.loadCartGoods(this,cartids);
+        }
     },
     mounted() {
         this.$nextTick(function () {
-            var headerHeight = this.appUtil.getHeaderHeight();
+            var headerHeight = $("header").outerHeight();
             var height = $(window).height()-headerHeight;
             $(".businessOrder").css("min-height",height);
         })
@@ -176,10 +194,10 @@ white-space: nowrap;}
             font-size:34px;
             color:#000;
             background-color:#404148;
-            .leftBox{display:flex;align-items:Center;
+            .leftBox{align-items:Center;
              padding:20px;color:#fff;width:70%;
              .pull-left{color:#F8C513!important}
-              .pull-right{font-size:24px;color:#F8C513;float:right;margin-left:200px;}
+              .pull-right{font-size:24px;color:#F8C513;float:right;}
             }
             .rightBox{background-color: #F8C513;padding:30px;color: #000;width:30%;}
         }

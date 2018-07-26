@@ -28,7 +28,7 @@ export default {
                 $(data).each(function(index,item){
                     context.list.push({
                         name: item.logrecord,
-                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:ss"),
+                        time:utils.dateFormat(item.addtime,"yyyy/MM/dd hh:mm"),
                         num: item.coinnum
                     });
                 })
@@ -71,7 +71,7 @@ export default {
                     },
                     {
                         title: '交易时间',
-                        value: utils.dateFormat(coinorder.addtime,"yyyy.MM.dd hh:ss"),
+                        value: utils.dateFormat(coinorder.addtime,"yyyy.MM.dd hh:mm"),
                     }
                 ]
             }

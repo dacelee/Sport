@@ -12,7 +12,7 @@
        </div>
         <div class="businessCart" v-show="carShow">
             <div class="hideCart" @click="hideCart"></div>
-            <div class="content">
+            <div class="contentCart">
                 <div class="wordPic">
                     <div class="smallPic pull-left"><img :src="logo"></div>
                     <div class="pull-right">
@@ -166,8 +166,8 @@
             .title{font-size: 32px;
             padding: 0px 0 20px 20px;
             color: #333;}
-            .content{background: #FFF;bottom: 0px;position: absolute;left: 0px;width: 100%;padding-bottom: 120px;}
-            .hideCart{height:100%;}
+            .contentCart{background: #FFF;bottom: 0px;position: absolute;left: 0px;width: 100%;padding-bottom: 120px;}
+            .hideCart{height:100%;background: transparent;width:100%;}
         .wordPic{padding:20px;overflow:hidden}
         .smallPic{width:35%;}
         .smallPic img{width:100%;}

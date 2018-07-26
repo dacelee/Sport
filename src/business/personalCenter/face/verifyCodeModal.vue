@@ -10,17 +10,18 @@
                     <span v-for="items in codeResult">{{items}}</span>
                 </div>
                 <div class="modal-wrapper"
-                    :class="{'modal-point': btnPoint}">
+                    :class="{'modal-point': btnPoint}" @click="recordVideo">
                     <span class="modal-confirm-btn"
                             :disabled="timeHaveToStay > 0">
                         {{timeHaveToStay | confirmBtnText}}
                     </span>
-                    <input type="file"
-                        class="camera-input"
-                        @change="iptChange($event)"
-                        ref="cameraInput"
-                        accept="video/*"
-                        capture="camcorder" v-show="timeHaveToStay == 0" />
+
+                    <!--<input type="file"-->
+                        <!--class="camera-input"-->
+                        <!--@change="iptChange($event)"-->
+                        <!--ref="cameraInput"-->
+                        <!--accept="video/*"-->
+                        <!--capture="camcorder" v-show="timeHaveToStay == 0" />-->
                 </div>
             </div>
             <div class="modal-layer-fail"
@@ -50,6 +51,7 @@
     let _this;
     export default {
         props: {
+
             videoFail: {
                 type: Boolean,
                 default: false
@@ -64,6 +66,7 @@
         },
         data() {
             return {
+                video:'',
                 // 需要等待的时间
                 timeHaveToStay: 3,
                 refreshTime: 60,
@@ -105,7 +108,6 @@
                 this.stayTimer = setTimeout(
                     () => {
                         if (--this.timeHaveToStay === 0) {
-
                             this.stayTimer = null;
                             this.btnPoint = true;
                             return;
@@ -115,7 +117,20 @@
                     1000
                 );
             },
+            recordVideo(){
+                if (this.timeHaveToStay > 0) {
+                    return;
+                }
+                var _this = this;
+                _this.clearTimer();
 
+
+                _this.$router.push({
+                    name: 'videoRecorder',
+                });
+                return ;
+
+            },
             getVerifyCodeModal() {
                 let formdata = {
                     type: 'faceliveness_sessioncode',
@@ -132,7 +147,6 @@
                 _this.axios.post('extend/aibaidu',formdata,function(json){
 
                 },function(json){
-//                    console.log(json);
                     var res = json.data.result;
                     if (res) {
                         _this.codeResult = res.code;
@@ -147,29 +161,7 @@
                     }
 //                    _this.errorContent();
                 });
-//                request
-//                    .post('http://192.168.0.102:8088/aidemo')
-//                    .type('form')
-//                    .send(formdata)
-//                    .then(({body}) => {
-//                        const {errno, data} = body;
-//                        let res = data.result;
-//                        if (res) {
-//                            this.codeResult = res.code;
-//                            this.sessionId = res.session_id;
-//                            this.timeHaveToStay = 3;
-//                            this.stayTimerF();
-//                            this.btnPoint = false;
-//                        }
-//                        else {
-//                            console.log(res);
-//                            this.errorContent();
-//                        }
-//                    })
-//                    .catch(error => {
-//                        console.log(error);
-//                        this.errorContent();
-//                    });
+
                 this.refreshTime = 60;
                 this.timeout();
             },
@@ -217,6 +209,16 @@
 //                 this.$emit('videoResult', event, this.sessionId);
 //                 this.clearTimer();
 //             });
+            var _this = this;
+            api.addEventListener({
+                name: 'videoRecorder'
+            }, function (ret, err) {
+                var filePath = ret.value.file;
+//                alert(filePath);
+                _this.timeHaveToStay = 3;
+                _this.$emit('videoResult', filePath,_this.sessionId);
+            });
+
         },
         beforeDestroy() {
             this.clearTimer();

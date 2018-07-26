@@ -3,9 +3,9 @@
         <div class="task-item task-list-piece" v-for="item in list">
             <div class="head-info">
                 <div class="name">
-                    <img :src="item.imgPath">{{ item.name }}
+                    <img :src="item.imgPath"  v-if="item.imgPath">{{ item.name }}
                 </div>
-                <div class="step-info">{{ item.currentStep+'步 / ' +item.targetStep + '步' }}</div>
+                <div class="step-info">{{ item.targetStep + '步' }}</div>
             </div>
             <div class="task-item-container">
                 <div class="task-container-item">活跃度：{{ item.activity }}</div>
@@ -75,18 +75,20 @@
                                 {
                                     id: item.id,
                                     name: item.name,
-                                    currentStep: item.name,
+                                    currentStep: "",
                                     targetStep: item.steps,
                                     activity: item.activity,
                                     hanselActivity: item.activityadd,
                                     needSugar: item.coinprice,
                                     rewardSugar: item.coinget,
                                     hanselSugar: item.addcoinprofit,
+                                    imgPath:item.logo,
                                     dateTime: _this.appUtil.dateFormat(item.begintime, 'yyyy.MM.dd') + '-' +
                                     _this.appUtil.dateFormat(item.endtime, 'yyyy.MM.dd'),
                                     code: item.no
                                 }
                             )
+                            _this.db.addTask(item.id,item.name,item.steps,item.activity,item.begintime,item.endtime,0,memberid,_this);
                         })
                         _this.list = data
                     }, function (json) {

@@ -8,15 +8,22 @@
         </div>
         <div class="team-item">
             <div class="left-label pull-left">队标</div>
-            <div class="right-input pull-left teamIcon">
-                <l-icon name="teamIcon" v-if="teamIcon === ''"/>
-                <l-icon name="bianji" class="editIcon"/>
+            <div class="right-input pull-left teamIcon" id="uploadBtn">
+                <div class="uploadContent">
+                    <l-icon name="teamIcon" v-if="teamIcon === ''" />
+                    <l-imageUpload   :limit="1"
+                                     :onSuccess="uploadHeadSuccess"
+                                     :uploadImgs="logo"
+                                     :imgWidth="'auto'"
+                    />
+                    <l-icon name="bianji" class="editIcon"/>
+                </div>
             </div>
         </div>
         <div class="team-item">
-            <div class="left-label pull-left">地区</div>
+            <div class="left-label pull-left">位置</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="活动位置" v-model="area" @click="selCity" readonly>
+                <input type="text" placeholder="活动位置" v-model="formData.address" @click="selCity" readonly>
             </div>
         </div>
         <div class="team-item text-area">
@@ -35,18 +42,10 @@
         name: 'create-team',
         data() {
             return {
-                formData: {
-                    memberid: 0,
-                    name: '',
-                    proid: '',
-                    cityid: '',
-                    areaid: '',
-                    intro: '',
-                    x: '',
-                    y: ''
-                },
+                formData:this.initData(),
+                logo:[],
+                teamid:0,
                 teamIcon: '', // 队伍图标
-                area: '',
                 locationData: null,//定位数据
 //                province:[],
                 selectorJSON: null
@@ -58,10 +57,30 @@
         }, mounted() {
             this.loadCity()
         }, activated() {
-            if (this.session.isAPPRuntime() && this.area == '') {
-                this.location()//定位
+            var teamid = this.$route.query.teamid;
+            if(teamid>0&&this.teamid!=teamid){
+                this.teamid=teamid;
+                this.loadTeamDetail(teamid);
+            }else{
+                if (this.session.isAPPRuntime() && this.formData.address == '') {
+                    this.location()//定位
+                }
             }
         }, methods: {
+            initData(){
+                return {
+                    memberid: 0,
+                    name: '',
+                    proid: '',
+                    cityid: '',
+                    areaid: '',
+                    intro: '',
+                    logo:'',
+                    address:'',
+                    x: '',
+                    y: ''
+                }
+            },
             loadCity() {
                 var _this = this
                 citys.bulidJSONCity(function (json) {
@@ -73,9 +92,35 @@
                     }
                 })
             },
+            loadTeamDetail(teamid){
+                var _this = this
+                _this.axios.post("/team/editteaminfo", {teamid:teamid}, function (json) {
+                    var data = json.data;
+                    _this.logo = [data.logo];
+                    _this.formData={memberid: data.memberid,
+                        name:  data.name,
+                        proid:   data.proid,
+                        cityid:  data.cityid,
+                        areaid: data.areaid,
+                        intro: data.intro,
+                        logo:data.logo,
+                        address:data.address,
+                        x: data.x,
+                        y: data.y
+                    }
+                    if(!data.address||data.address==null||data.address==""){
+                        if (_this.session.isAPPRuntime()) {
+                            _this.location()//定位
+                        }
+                    }
+
+                }, function (json) {
+                    _this.$Message.error(json.msg)
+                })
+            },
             location() {
                 var _this = this
-                citys.location(function (ret) {
+                this.amap.getLocation(this,function (ret) {
                     if (!ret.status) {
                         _this.$Message.error('定位失败,请开启GPS')
                         return
@@ -89,15 +134,15 @@
                     var street = ret.street
                     var address = ret.address
                     var thoroughfare = ret.thoroughfare
+                    _this.formData.address = ret.address;
 //                    alert( street )
-                    if (!thoroughfare) {
-                        _this.area = address.replace(state, '').replace(city, '').replace(district, '').replace(street,
-                            '')
-                    }
-                    else {
-                        _this.area = thoroughfare
-                    }
-                    
+//                    if (!thoroughfare) {
+//                        _this.area = address.replace(state, '').replace(city, '').replace(district, '').replace(street,'')
+//                    }
+//                    else {
+//                        _this.area = thoroughfare
+//                    }
+//
                 }, true)
             },
             submitData() {
@@ -109,44 +154,69 @@
                     this.location()
                     return
                 }
-                var dbData = citys.locationToDBData(_this, ret)
-                if (dbData != null) {
-                    this.formData.proid = dbData.proid
-                    this.formData.cityid = dbData.cityid
-                    this.formData.areaid = dbData.areaid
+                if( this.formData.logo==""){
+                    this.$Message.error("请上传队标")
+                    return;
                 }
-                else {
-                    return
+                if( this.formData.proid==''||this.formData.cityid==''){
+                    var dbData = citys.locationToDBData(_this, ret)
+                    if (dbData != null) {
+                        this.formData.proid = dbData.proid
+                        this.formData.cityid = dbData.cityid
+                        this.formData.areaid = dbData.areaid
+                    }
+                    else {
+                        return
+                    }
                 }
                 if (!this.$verify.check()) {
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors)
                     this.$Message.error(errMsg)
                 }
                 else {
-                    var _this = this
-                    this.session.getMemberID(function (memberid) {
-                        _this.formData.memberid = memberid
-                        _this.axios.post(_this.session.teamCreate, _this.formData, function (data) {
-                            _this.$Message.info(data.msg)
-                            _this.$router.replace('/teamList')
-                        }, function (data) {
-                            _this.$Message.error(data.msg)
+                    var _this = this;
+                    var teamid = this.$route.query.teamid;
+                    if(teamid>0){
+                            _this.formData.id = teamid
+                            _this.axios.post("/team/editteam", _this.formData, function (data) {
+                                _this.$Message.info(data.msg)
+                                _this.formData= _this.initData();
+                                _this.teamid=0;
+                                _this.$router.replace('/teamList');
+                            }, function (data) {
+                                _this.$Message.error(data.msg)
+                            })
+                    }else{
+                        this.session.getMemberID(function (memberid) {
+                            _this.formData.memberid = memberid
+                            _this.axios.post(_this.session.teamCreate, _this.formData, function (data) {
+                                _this.$Message.info(data.msg)
+                                _this.formData= _this.initData();
+                                _this.teamid=0;
+                                _this.$router.replace('/teamList')
+                            }, function (data) {
+                                _this.$Message.error(data.msg)
+                            })
                         })
-                    })
+                    }
+
                     
                 }
             }, selCity() {
-                if (this.selectorJSON == null) {
-                    this.$Message.info('正在加载城市数据...')
-                    return
-                }
-                var _this = this
-                citys.actionSelector(this.selectorJSON, function (ret) {
-                    _this.area = ret.level1 + ' ' + ret.level2 + ' ' + ret.level3
-                    _this.formData.proid = ret.selectedInfo[ 0 ].id
-                    _this.formData.cityid = ret.selectedInfo[ 1 ].id
-                    _this.formData.areaid = ret.selectedInfo[ 2 ].id
-                })
+                this.location();
+//                if (this.selectorJSON == null) {
+//                    this.$Message.info('正在加载城市数据...')
+//                    return
+//                }
+//                var _this = this
+//                citys.actionSelector(this.selectorJSON, function (ret) {
+//                    _this.area = ret.level1 + ' ' + ret.level2 + ' ' + ret.level3
+//                    _this.formData.proid = ret.selectedInfo[ 0 ].id
+//                    _this.formData.cityid = ret.selectedInfo[ 1 ].id
+//                    _this.formData.areaid = ret.selectedInfo[ 2 ].id
+//                })
+            }, uploadHeadSuccess(res) {
+                this.formData.logo = res;
             }
         }
     }
@@ -225,4 +295,5 @@
             margin-top: 20px;
         }
     }
+    .uploadContent{position: relative; line-height: 30px;}
 </style>

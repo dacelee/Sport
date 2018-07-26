@@ -4,7 +4,6 @@
             <div class="upload-box text-center" >
                 <l-icon name="shangchuantouxiang"/>
                 <l-imageUpload   :limit="1"
-                                 :action="'http://api.bozhiyue.com/my/uploadimg'"
                                  style="border-radius: 50%;" :onSuccess="uploadHeadSuccess"/>
             </div>
             <div class="select-upload-label text-center">上传俱乐部头像</div>
@@ -35,7 +34,6 @@
 <script>
     import citys from '../../api/citys.js'
     import club from '../../api/club.js'
-    let _this
     export default {
         name: 'create-club',
         data() {
@@ -62,36 +60,15 @@
             }
         },
         mounted() {
-            _this = this
-            _this.loadCity();
-            if(this.session.isAPPRuntime()){
-                api.addEventListener({
-                    name:'clip_success'
-                }, function(ret, err){
-                    if (ret) {
-                        var base64 = ret.value.base64;
-                        var content = ret.value.content;
-                        if(content=="head"){
-                            _this.head_pic = base64;
-                        }else{
-                            _this.intor_pic = base64;
-                        }
-                        //上传图片
-                        _this.appUtil.imageUpload(base64,function(json){
 
-                        });
-                    } else {
-                        alert(JSON.stringify(err));
-                    }
-                });
-            }
         },activated(){
-            if (_this.session.isAPPRuntime() && this.area == '') {
-                _this.location();//定位
+            if (this.session.isAPPRuntime() && this.area == '') {
+                this.loadCity();
             }
         },
         methods: {
             submitData(){
+                var _this = this;
                 if (_this.formData.proid == "" || _this.formData.cityid == "" || _this.formData.areaid == "") {
                     _this.$Message.error("请选择俱乐部位置");
                     return;
@@ -104,6 +81,7 @@
                 }
             },
             selCity(){
+                var _this = this;
                 if (_this.selectorJSON == null) {
                     _this.$Message.info("正在加载城市数据...");
                     return;
@@ -116,16 +94,19 @@
                 });
             },
             loadCity(){
+                var _this = this;
                 citys.bulidJSONCity(function (json) {
                     if (json.code == 1) {
                         _this.selectorJSON = json.data;
+                        _this.location();//定位
                     } else {
                         _this.$Message.error("加载城市数据失败");
                     }
                 });
             },
             location(){
-                citys.location(function (ret) {
+                var _this = this;
+                this.amap.getLocation(this,function (ret) {
                     if (!ret.status) {
                         _this.$Message.error("定位失败,请开启GPS");
                         return;
@@ -136,9 +117,9 @@
                     var state = ret.state;
                     var city = ret.city;
                     var district = ret.district;
-                    var street = ret.street;
-                    var address = ret.address;
-                    var thoroughfare = ret.thoroughfare;
+//                    var street = ret.street;
+//                    var address = ret.address;
+//                    var thoroughfare = ret.thoroughfare;
                     _this.area = state + " " + city + " " + district;
                     //匹配城市ID
                     var dbData = citys.locationToDBData(_this, _this.locationData);

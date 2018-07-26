@@ -16,7 +16,7 @@
                 <input type="password" placeholder="密码"  v-verify="userInfo.loginpwd" v-model="userInfo.loginpwd">
             </div>
             <div class="register-form-item">
-                <input type="text" placeholder="推荐人" v-model="userInfo.onlineid" >
+                <input type="text" placeholder="推荐人" v-model="userInfo.inviter" >
             </div>
             <div class="register-form-item register-btn">
                 <div class="btn-register text-center" @click="submitForm">提&emsp;交</div>
@@ -38,7 +38,7 @@
                 userInfo: {
                     mobile: "",
                     loginpwd: "",
-                    onlineid: "",
+                    inviter: "",
                     smscode: ""
                 },
                 timer:0,
@@ -65,7 +65,7 @@
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
                     _this.$Message.error(errMsg);
                 }else{
-                    clearInterval(_this.timer);
+//                    clearInterval(_this.timer);
 //                    console.log( this.userInfo.mobile);
                     this.$router.push({name:'selectGender',params:this.userInfo}); //选择性别
                 }

@@ -1,8 +1,8 @@
 <template>
     <div class="transaction-details">
         <div class="transaction-details-item" v-for="item in list" v-if="item">
-            <div class="title">
-                <div class="title-item">{{ item.title }}</div>
+            <div class="title" v-if="item.title">
+                <div class="title-item" >{{ item.title }}</div>
                 <div class="label" v-if="item.label">{{ item.label }}</div>
             </div>
             <div class="container-list">
@@ -16,10 +16,31 @@
                 </div>
             </div>
         </div>
-        <div class="footer-operation">
+        <div class="transaction-details-item" v-if="status==1&&payment">
+            <div class="title">
+                <div class="title-item">支付截图</div>
+                <div class="label"></div>
+            </div>
+            <div class="container-list">
+                <div class="container-list-item">
+                    <div class="upload-box  text-center">
+                        <div class="upload-pic ">
+                            <l-icon name="shangchuantupian"/>
+                        </div>
+                        <div class="select-upload-label text-center">上传图片 0/1</div>
+                        <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="footer-operation" v-if="clear||payment||appeal||receivables">
             <div class="btn-area pull-right">
-                <div class="btn" @click="appeal" v-if="status==2||status==3">申诉</div>
-                <div class="btn btn-confirm" @click="paySuccess" v-if="status==2||status==3">确认收款</div>
+                <div class="btn btn-confirm" @click="clearOrder" v-if="clear">取消</div>
+                <div class="btn btn-confirm" @click="payOrder" v-if="payment">确认支付</div>
+                <div class="btn" @click="appealOrder" v-if="appeal">申诉</div>
+                <div class="btn btn-confirm" @click="paySuccess" v-if="receivables">发送糖果</div>
             </div>
         </div>
     </div>
@@ -30,100 +51,54 @@
         name: 'transaction-details',
         data() {
             return {
+                id:0,
+                clear:false,
+                payment:false,
+                appeal:false,
+                receivables:false,
                 status:0,
+                tradescreenshot:'',
                 list: [
-//                    {
-//                        title: '订单信息',
-//                        label: '待付款',
-//                        details: [
-//                            {
-//                                title: '订单号',
-//                                value: '12312321312321321'
-//                            },
-//                            {
-//                                title: '交易数量',
-//                                value: '200糖果'
-//                            },
-//                            {
-//                                title: '单价',
-//                                value: '2美元'
-//                            },
-//                            {
-//                                title: '总金额',
-//                                value: '400人民币'
-//                            },
-//                            {
-//                                title: '交易时间',
-//                                value: '2018.06.24 19:01'
-//                            }
-//                        ]
-//                    },
                     {
                         title: '卖家信息',
-                        details: [
-                            {
-                                imgPath: '/static/img/personal/default.jpg',
-                                value: '金色的鱼'
-                            },
-                            {
-                                title: '姓名',
-                                value: 'Faker'
-                            },
-                            {
-                                title: '电话',
-                                value: '133-1234-5678'
-                            }
-                        ]
-                    },
-                    {
-                        title: '银行卡信息',
-                        details: [
-                            {
-                                title: '银行',
-                                value: '浦发银行'
-                            },
-                            {
-                                title: '卡号',
-                                value: '6674432389965667'
-                            }
-                        ]
-                    },
-                    {
-                        title: '支付信息',
-                        details: [
-                            {
-                                title: '支付宝',
-                                value: '15855678093'
-                            },
-                            {
-                                title: '微信',
-                                value: '15855678093'
-                            }
-                        ]
-                    },
-                    {
-                        title: '支付截图',
-                        details: [
-                            {
-                                imgPath: '/static/img/goods/1.jpg',
-                                isBigImg: true
-                            }
-                        ]
+                        details: []
                     }
                 ]
             }
         },
         methods: {
-            appeal() {
-                this.$router.push({name: 'appeal', params: {id: this.$route.params.id}})
+            clearOrder(){
+                var id =  this.$route.params.id;
+                coin.editStatusAction(this,id,4);
+            },
+            payOrder(){
+                if(this.tradescreenshot==''){
+                    this.$Message.error("请上传支付截图");
+                    return;
+                }
+                var id =  this.$route.params.id;
+                coin.uploadPayPhotoAction(this,id,this.tradescreenshot);
+            },
+            appealOrder() {
+                var id =  this.$route.params.id;
+                this.id = 0;
+                this.$router.push({name: 'appeal', params: {id: id}})
             },
             paySuccess() {
                 var id =  this.$route.params.id;
-                this.$router.replace('/paySuccess')
-            }
+                coin.editStatusAction(this,id,3);//确认收款
+//                this.$router.replace('/paySuccess')
+            },
+            uploadPhotosSuccess(res,item) {
+                this.tradescreenshot = res;
+            },
         },
         activated () {
-            coin.loadOrderDetail(this,this.$route.params.id);
+            var id = this.$route.params.id;
+            if(this.id!=id){
+                this.id = id;
+                coin.loadOrderDetail(this,id);
+            }
         },
         mounted() {
         }
@@ -232,8 +207,35 @@
                     &:nth-last-child(1) {
                         margin-bottom: 0;
                     }
+                    .upload-box{
+                        display: inline-block;
+                        width: 210px;
+                        height: 210px;
+                        text-align: center;
+                        border: 1px solid transparent;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        background-color: #25252B;
+                        position: relative;
+                        margin-right: 15px;
+                        margin-bottom: 10px;
+                        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+                    }
+                    .upload-box .icons {
+                        width: 60px;
+                        height: 52px;
+                        color: #999999;
+
+                    }
+                    .upload-box .upload-pic{padding-top: 50px;padding-bottom: 5px;}
+
+                    .upload-box img {
+                        width: 100%;
+                        height: 100%;
+                    }
                 }
             }
         }
     }
+
 </style>

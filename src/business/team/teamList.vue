@@ -2,11 +2,10 @@
     <div class="team-list">
         <l-shortMenu class="team-menu" :currentRoute="currentMenu" :list="menuList" @change="changeTabs"/>
         <div class="team-container">
-            <component :is="currentMenu"/>
+            <component :is="currentMenu" @changeData="changeData"/>
         </div>
     </div>
 </template>
-<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.0&key=15934dbe4d83af9637f6fd067e86a2df"></script>
 <script>
     let _this
     import myTeam from './myTeam'
@@ -20,6 +19,7 @@
         data() {
             return {
                 currentMenu: 'myTeam',
+                teamId:0,
                 menuList: [
                     {
                         id: 'myTeam',
@@ -36,8 +36,21 @@
             changeTabs(res) {
                 _this.currentMenu = res;
             },
+            changeData(teamId,manager){
+                if(!manager){
+                    this.$emit('changeRightTitle',"");
+                }else{
+                    if(teamId>0){
+                        this.teamId = teamId;
+                        this.$emit('changeRightTitle',"修改");
+                    }else{
+                        this.teamId = 0;
+                        this.$emit('changeRightTitle',"创建");
+                    }
+                }
+            },
             editEvent() {
-                _this.$router.push('createTeam')
+                _this.$router.push({name:'createTeam',query:{teamid:this.teamId}})
             }
         },
         mounted() {

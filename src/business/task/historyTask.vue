@@ -3,7 +3,7 @@
         <div class="history-task-item task-list-piece" v-for="item in list">
             <div class="head-info">
                 <div class="name">
-                    <img :src="item.imgPath">{{ item.name }}
+                    <img :src="item.imgPath"  v-if="item.imgPath">{{ item.name }}
                 </div>
                 <div class="status">{{ item.statusDesc }}</div>
             </div>
@@ -80,6 +80,7 @@
                                     needSugar: item.coinprice,
                                     rewardSugar: item.coinget,
                                     hanselSugar: 0,
+                                    imgPath:item.logo,
                                     dateTime: _this.appUtil.dateFormat(item.begintime, 'yyyy.MM.dd') + '-' +
                                     _this.appUtil.dateFormat(item.endtime, 'yyyy.MM.dd'),
                                     code: item.no

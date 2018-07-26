@@ -1,12 +1,12 @@
 <template>
     <div class="trading-center-list">
         <div class="charts-range-list">
-            <div class="charts-range-item" v-for="item in rangeList" :class="{'active':item.id === chartsActive}">{{
-                item.name }}
+            <div class="charts-range-item" v-for="item in rangeList" :class="{'active':item.id === chartsActive}" @click="chartUpdate(item.id)">
+                {{ item.name }}
             </div>
         </div>
         <div class="trading-charts">
-            <div class="charts" id="trading-charts"></div>
+            <div class="charts" id="trading-charts2"></div>
         </div>
         <div class="trading-data-board">
             <div class="trading-data-item pull-left">
@@ -34,24 +34,28 @@
                 <div class="right-value pull-left">{{ percent }}</div>
             </div>
         </div>
-        <l-shortMenu :currentRoute="currentMenu" :list="tabsList" @change="changeTabs"/>
+        <l-shortMenu :currentRoute="type" :list="tabsList" @change="changeTabs"/>
         <div class="search-area">
             <div class="filter-way">
                 <l-select v-model="currentFilter" :list="filterList" @change="changeFilterWay"/>
             </div>
             <div class="filter filter-id" v-if="currentFilter.id === 1">
                 <input type="text" placeholder="搜索" @key.enter="search" v-model="filterName">
-                <l-icon name="sousuo"/>
+                <div @click="search">
+                <l-icon name="sousuo" />
+                </div>
             </div>
             <div class="filter filter-price" v-if="currentFilter.id === 2">
                 <input type="text" placeholder="最低价" v-model="priceLow">
                 <div>~</div>
                 <input type="text" placeholder="最高价" @key.enter="search" v-model="priceHigh">
-                <l-icon name="sousuo"/>
+                <div @click="search">
+                    <l-icon name="sousuo" />
+                </div>
             </div>
         </div>
         <div class="trading-center-list-business">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
+            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
                 <div class="trading-business-item" v-for="item in businessList">
                     <div class="left-img pull-left">
                         <img :src="item.imgPath" alt="">
@@ -64,14 +68,15 @@
                         </div>
                         <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
                     </div>
-                    <div class="right-business-btn pull-left text-center" @click="market(item)" v-if="item.lessCount>0">
+                    <div class="right-business-btn pull-left text-center" @click="market(item)" v-if="item.lessCount>0&&!item.clear">
                         {{marketBtn}}
                     </div>
+                    <div class="right-business-btn pull-left text-center clear" v-if="item.clear" @click="clear(item.id)">取消</div>
                 </div>
             </Scroll>
         </div>
         <div class="bottomBtn">
-            <div class="pull-left" v-for="item in tabsList" @click="myAction(item.id)">{{item.name}}</div>
+            <div class="pull-left" @click="myAction()">{{sealBtn}}</div>
         </div>
         <l-footerMenu :currentRoute.sync="route"/>
         <div class="bottomBtnBuy" v-show="isShow">
@@ -79,26 +84,27 @@
                 <div class="buying">正在{{marketBtn}}</div>
                 <div class="buyleft">当前糖果剩余额：{{myCoin}}</div>
                 <div class="buyText"><label>数量</label><input type="text" v-model="cointotal" placeholder="请输入数量"></div>
-                <div class="buyText"><label>交易秘密</label><input type="password" v-model="password" placeholder="输入交易秘密">
+                <div class="buyText"><label>交易密码</label><input type="password" v-model="password" placeholder="输入交易密码">
                 </div>
+                 <div class="pull-left" v-for="item in tabsListBuy" @click="userBuy(item.id)">{{item.name}}</div>
             </div>
-            <div class="pull-left" v-for="item in tabsListBuy" @click="userBuy(item.id)">{{item.name}}</div>
         </div>
         <div class="bottomBtnBuy" v-show="isShowSell">
             <div class="buyBox">
                 <div class="buying">发布{{marketAction}}</div>
-                <div class="buyleft">当前价格：{{current}}</div>
-                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2" placeholder="请输入交易数量">
-                </div>
-                <div class="buyText"><label>单价</label><input type="text" v-model="unitprice" placeholder="允许两倍溢价"></div>
-            </div>
+                <div class="buyleft">当前价格：${{current}}</div>
+                <div class="buyText"><label>单价</label><input type="text" v-model="unitprice" :placeholder="placeholder"></div>
+                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2" placeholder="请输入交易数量"></div>
+                <div class="buyText" v-if="sealType==2"><label>验证码</label>
+                    <input class="formcode" type="text" v-model="smscode" placeholder="请输入验证码">
+                    <div class="get_code" @click="getCode">{{codeSend}}</div></div>
             <div class="pull-left" v-for="item in tabsListBuy" @click="marketSell(item.id)">{{item.name}}</div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    let chartsEl
     import coin from '../../api/coin.js'
     import users from '../../api/users.js'
     
@@ -106,6 +112,7 @@
         name: 'trading-center-list',
         data() {
             return {
+                chartsEl:null,
                 route: 'tradingCenter',
                 filterName: null,
                 isShow: false,
@@ -113,8 +120,8 @@
                 marketBtn: '购买',
                 marketAction: '买单',
                 marketItem: null,
+                smscode:'',
                 page: 1,
-                type: 1,
                 myCoin: 0,
                 scrollHeight: 500,
                 high: 0,
@@ -129,11 +136,15 @@
                 unitprice: '',
                 password: '',
                 sealType: 1,
+                sealBtn:'买入',
                 tradecharge: 0,//手续费率
+                placeholder:'请勿超过平台2倍溢价',
+                codeSend:'获取验证码',
+                notGetCode:true,
                 filterList: [  // 搜索方式区分
                     {
                         id: 1,
-                        name: '玩家ID和手机号'
+                        name: '手机号'
                     },
                     {
                         id: 2,
@@ -144,75 +155,40 @@
                     id: 1,
                     name: '玩家ID和手机号'
                 },
+                chartsActive: 7,
                 priceLow: '',
                 priceHigh: '',
-                chartsActive: 2,
                 rangeList: [
                     {
-                        id: 1,
-                        name: '今日'
-                    },
-                    {
-                        id: 2,
+                        id: 7,
                         name: '一周'
                     },
                     {
-                        id: 3,
+                        id: 15,
+                        name: '半月'
+                    },
+                    {
+                        id: 31,
                         name: '一月'
                     }
                 ],
                 businessList: [
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Louis',
-                        unitPrice: (Math.random() * 500).toFixed(0),
-                        lessCount: (Math.random() * 1000).toFixed(0),
-                        tradingNum: (Math.random() * 5000).toFixed(0)
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Judy',
-                        unitPrice: (Math.random() * 500).toFixed(0),
-                        lessCount: (Math.random() * 1000).toFixed(0),
-                        tradingNum: (Math.random() * 5000).toFixed(0)
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Afari',
-                        unitPrice: (Math.random() * 500).toFixed(0),
-                        lessCount: (Math.random() * 1000).toFixed(0),
-                        tradingNum: (Math.random() * 5000).toFixed(0)
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hans',
-                        unitPrice: (Math.random() * 500).toFixed(0),
-                        lessCount: (Math.random() * 1000).toFixed(0),
-                        tradingNum: (Math.random() * 5000).toFixed(0)
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Hill',
-                        unitPrice: (Math.random() * 500).toFixed(0),
-                        lessCount: (Math.random() * 1000).toFixed(0),
-                        tradingNum: (Math.random() * 5000).toFixed(0)
-                    },
-                    {
-                        imgPath: 'static/img/personal/default.jpg',
-                        name: 'Memo',
-                        unitPrice: (Math.random() * 500).toFixed(0),
-                        lessCount: (Math.random() * 1000).toFixed(0),
-                        tradingNum: (Math.random() * 5000).toFixed(0)
-                    }
+//                    {
+//                        imgPath: 'static/img/personal/default.jpg',
+//                        name: 'Louis',
+//                        unitPrice: (Math.random() * 500).toFixed(0),
+//                        lessCount: (Math.random() * 1000).toFixed(0),
+//                        tradingNum: (Math.random() * 5000).toFixed(0)
+//                    },
                 ],
-                currentMenu: '1',
+                type: 1,
                 tabsList: [
                     {
-                        id: '1',
+                        id: 1,
                         name: '买'
                     },
                     {
-                        id: '2',
+                        id: 2,
                         name: '卖'
                     }
                 ],
@@ -230,19 +206,34 @@
         },
         methods: {
             search() {
-            
+                if(this.currentFilter.id==1){
+                    this.priceLow=''
+                    this.priceHigh='';
+                }else{
+                    this.filterName='';
+                }
+                this.page = 1;
+                coin.loadSales(this,this.filterName,this.priceLow,this.priceHigh);
             },
             changeTabs(res) {
-                this.currentMenu = res
                 this.type = res
                 this.page = 1
-                if (res == 1) {
+                this.sealType = res;
+                if (res == 2) {
                     this.marketBtn = '购买'
+                    this.sealBtn = "卖出"
+                } else {
+                    this.marketBtn = '出售'
+                    this.sealBtn = "买入"
                 }
-                else {
-                    this.marketBtn = '售出'
+                if ( this.sealType == 2) {
+                    this.marketAction = '卖单'
+                    this.placeholder='贡献值越高，手续费越低哟';
+                }else {
+                    this.marketAction = '买单'
+                    this.placeholder='请勿超过平台2倍溢价';
                 }
-                coin.loadSales(this)
+                coin.loadSales(this,this.filterName,this.priceLow,this.priceHigh)
             },
             changeFilterWay(res) {
                 console.log(res)
@@ -250,12 +241,18 @@
             handleReachBottom() {
                 var _this = this
                 return new Promise(function (resolve) {
-                    coin.loadSales(_this, resolve)
+                    coin.loadSales(_this,_this.filterName,_this.priceLow,_this.priceHigh, resolve)
                 })
             },
             setChartsData() {
+                var _this = this;
                 coin.loadKline(this, 7, function (data) {
-                    var date = eval('(' + data[ 0 ] + ')')
+                    var xAxis = eval('(' + data[0] + ')')
+                    var xAxisData = [];
+                    $(xAxis).each(function(index,item){
+                        var arr = item.split("-")
+                        xAxisData.push(arr[1]+"."+arr[2]+"");
+                    });
                     var x = eval('(' + data[ 1 ] + ')')
                     var y = eval('(' + data[ 2 ] + ')')
                     let option = {
@@ -292,7 +289,7 @@
                         xAxis: {
                             type: 'category',
                             boundaryGap: false,
-                            data: date,
+                            data: xAxisData,
                             axisLabel: {
                                 show: true,
                                 color: '#ffffff'
@@ -318,24 +315,46 @@
                             }
                         ]
                     }
-                    chartsEl.setOption(option)
+                    _this.chartsEl.setOption(option)
                 })
                 
             },
             market(item) {
                 this.isShow = true
-                this.marketItem = item
+                this.marketItem = item;
                 this.cointotal = item.lessCount
             },
-            myAction(type) {
+            myAction() {
                 this.isShowSell = true
-                this.sealType = type
-                if (type == 2) {
-                    this.marketAction = '卖单'
+            },
+            getCode(){
+                if(!this.notGetCode){
+                    return;
                 }
-                else {
-                    this.marketAction = '买单'
-                }
+                var _this=this;
+                const TIME_COUNT = 60;
+                var count = TIME_COUNT;
+                this.notGetCode = false;
+                var user  = this.session.getLoginUser()
+                this.axios.post(this.session.sendsmscode, {'mobile':user.mobile},function(data){
+//                        console.log(data);
+                    _this.$Message.info(data.msg);
+                },function(data){
+//                        console.log(data);
+                    _this.$Message.error(data.msg);
+                });
+                this.timer = setInterval(function(){
+                    if (count > 0 && count <= TIME_COUNT) {
+                        count--;
+                        _this.codeSend = count+"s";
+//                        console.log(_this.codeSend);
+                    } else {
+                        this.notGetCode = true;
+                        clearInterval(_this.timer);
+                        this.timer = null;
+                        _this.codeSend = "获取验证码";
+                    }
+                }, 1000);
             },
             userBuy(id) {
                 if (id == 'ok') {
@@ -347,6 +366,7 @@
                         this.$Message.error('交易数量必须填写')
                         return
                     }
+
                     if (cointotal > this.marketItem.lessCount) {
                         this.$Message.error('交易数量必须小于' + this.marketItem.lessCount)
                         return
@@ -357,7 +377,7 @@
                     }
                     var unitprice = this.marketItem.unitPrice
                     var handlingfee = 0
-                    if (this.marketItem.type == 2) {
+                    if (this.marketItem.type == 1) {
                         handlingfee = (cointotal * unitprice * this.tradecharge).toFixed(1)
                     }
                     coin.saleCoinAction(this, this.marketItem.id, cointotal, unitprice, this.password,
@@ -369,48 +389,82 @@
             },
             marketSell(id) {
                 if (id == 'ok') {
-                    var cointotal = this.cointotal2
-                    if (cointotal == '' || cointotal <= 0) {
+                    var cointotal = parseFloat(this.cointotal2);
+                    if (isNaN(cointotal)||cointotal == '' || cointotal <= 0) {
                         this.$Message.error('交易数量必须填写')
                         return
                     }
-                    if (cointotal > this.myCoin) {
+
+                    if (cointotal > this.myCoin&&this.sealType == 2) {
                         this.$Message.error('交易数量必须小于' + this.myCoin)
                         return
                     }
+
                     var currentprice = this.current
                     var unitprice = this.unitprice
-                    if (unitprice <= 0) {
+                    if (isNaN(unitprice)||unitprice <= 0) {
                         this.$Message.error('交易单价必须大于0')
                         return
                     }
                     if (unitprice > currentprice * 2) {
-                        this.$Message.error('只允许两倍溢价')
+                        this.$Message.error('请勿超过平台2倍溢价')
                         return
                     }
                     var handlingfee = 0
                     if (this.sealType == 2) {
-                        handlingfee = (cointotal * unitprice * this.tradecharge).toFixed(1)
+                        var smscode = this.smscode
+                        if (smscode=='') {
+                            this.$Message.error('请输入验证码')
+                            return
+                        }
+                        handlingfee = (cointotal * unitprice * this.tradecharge)
                     }
-                    coin.saleAddAction(this, cointotal, unitprice, this.sealType, handlingfee)
-                }
-                else {
+                    coin.saleAddAction(this, cointotal, unitprice, this.sealType, handlingfee,smscode)
+                }else {
                     this.isShowSell = false
                 }
             }, init() {
                 var _this = this
                 this.page = 1
-                
                 coin.loadBaseInfo(this)
                 coin.loadSales(this)
                 users.getCacheMyInfo(this, function (user) {
-                    _this.myCoin = user.cointotal.toFixed(0)
+                    _this.myCoin = user.cointotal;
                     _this.tradecharge = user.tradecharge
                 }, true)
+            },
+            chartUpdate(id){
+                this.chartsActive = id;
+                var _this = this;
+                coin.loadKline(this, id, function (data) {
+                    var xAxis = eval('(' + data[0] + ')')
+                    var xAxisData = [];
+                    $(xAxis).each(function(index,item){
+                        var arr = item.split("-")
+                        xAxisData.push(arr[1]+"."+arr[2]+"");
+                    });
+                    var x = eval('(' + data[1] + ')')
+                    var y = eval('(' + data[2] + ')')
+                    let option = {
+                        xAxis:{data: xAxisData},
+                        series: [
+                            {
+                                data: x,
+                            },
+                            {
+                                data: y,
+                            }
+                        ]
+                    }
+                    _this.chartsEl.setOption(option)
+                })
+            },
+            clear(id){
+                coin.mySaleCancelAction(this,id);
             }
         },
         activated() {
-            chartsEl = App.eCharts.echarts.init(document.getElementById('trading-charts'))
+            this.chartsEl = this.$echarts.init(document.getElementById('trading-charts2'))
             this.setChartsData()
             this.init()
             
@@ -602,6 +656,7 @@
                         color: #999999;
                         font-size: 24px;
                         line-height: 24px;
+
                     }
                 }
                 .right-business-btn {
@@ -615,6 +670,7 @@
                     -moz-border-radius: 10px;
                     border-radius: 10px;
                 }
+                 .clear{border-color:#f82715; color: #f82715;}
             }
         }
         .bottomBtn {
@@ -630,7 +686,7 @@
                 padding: 33px 0;
                 background-color: #F8C513;
                 color: #000;
-                width: 50%;
+                width: 100%;
             }
             z-index: 9;
             .pull-left {
@@ -638,6 +694,8 @@
             }
         }
         .bottomBtnBuy {
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
             position: fixed;
             bottom: 0;
             left: 0;
@@ -645,7 +703,6 @@
             overflow: hidden;
             width: 100%;
             text-align: center;
-            background: #25252B;
             div.pull-left {
                 font-size: 34px;
                 line-height: 34px;
@@ -653,6 +710,7 @@
                 
                 color: #fff;
             }
+
             .pull-left {
                 width: 50%;
                 background-color: #404148;
@@ -664,9 +722,12 @@
             }
         }
         .buyBox {
+            position: absolute;
+            bottom: 0px;
+            left:0px;
             background: #25252B;
             width: 100%;
-            padding: 80px 0;
+            padding-top: 80px;
             .buying {
                 font-size: 34px;
                 color: #fff
@@ -676,7 +737,9 @@
                 color: #999;
                 padding: 30px 0;
             }
+
             .buyText {
+                margin-bottom: 40px;
                 label {
                     margin-right: 20px;
                 }
@@ -688,6 +751,8 @@
                     padding: 0 10px;
                     color: #ffffff;
                 }
+                .formcode{width: 30%}
+                .get_code{width: 30%;display: inline-block;}
                 &:nth-last-child(1) {
                     padding: 15px 0 0 0;
                 }

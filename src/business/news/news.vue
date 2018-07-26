@@ -4,11 +4,11 @@
         <div class="news-container">
             <div class="healthy-container">
                 <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight">
-                    <div class="healthy-list-item" v-for="item in list">
+                    <div class="healthy-list-item" v-for="item in list" @click="toDetails(item)">
                         <div class="news-left-img pull-left">
                             <img :src="item.imgPath" alt="">
                         </div>
-                        <div class="news-right-container pull-left" @click="toDetails(item)">
+                        <div class="news-right-container pull-left" >
                             <div class="title">{{ item.name }}</div>
                             <div class="description">{{ item.description }}</div>
                         </div>
@@ -39,7 +39,6 @@
                 ],
                 scrollHeight: 300,
                 page: 1,
-                pageCount: 0,
                 list: [],
                 currentRoute: 'healthy',
                 type: '1'
@@ -58,11 +57,6 @@
                         if (_this.page == 1) {
                             _this.list = []
                         }
-                        _this.page++
-                        if (resolve) {
-                            resolve()
-                        }
-                        _this.pageCount = json.pageCount
                         $(json.dataList).each(function (index, item) {
                             _this.list.push({
                                 id: item.id,
@@ -71,24 +65,26 @@
                                 description: item.intro
                             })
                         })
-                    }, function (json) {
-                        if (resolve) {
-                            resolve()
+                        if(_this.page<json.pageCount){
+                            _this.page++
                         }
+                    }, function (json) {
                         _this.$Message.error(json.msg)
-                    })
+                    },resolve)
             },
             toDetails(item) {
                 this.$router.push({name: 'newsDetails', params: {id: item.id}})
             },
             handleReachBottom() {
-                return new Promise(resolve => {
-                    loadData(resolve)
-                })
+                var _this = this;
+                return new Promise(function(resolve){
+                    _this.loadData(resolve);
+                });
             }
         },
-        mounted() {
-            this.scrollHeight = $(window).height() - $('header').height() - $('.l-tabs').height() - 10
+        activated() {
+            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true)-5;
+            this.page =1;
             this.loadData()
         }
     }

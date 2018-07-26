@@ -26,67 +26,148 @@
 </template>
 
 <script>
-    let charts, _this
+    var moment = require('moment');
+    let charts
     export default {
         name: 'step-statistics',
         data() {
             return {
-                selected: 'day',
+                selected:  {id: '1'},
+                startTime:0,
+                endTime:0,
+                type:1,
+                xData:[],
+                startDay:'',
+                totalDay:7,
                 countWayList: [
                     {
-                        id: 'day',
-                        name: '按天统计'
-                    },
-                    {
-                        id: 'week',
+                        id: '1',
                         name: '按周统计'
                     },
                     {
-                        id: 'month',
+                        id: '2',
+                        name: '按半月统计'
+                    },
+                    {
+                        id: '3',
                         name: '按月统计'
                     }
                 ],
-                totalStep: 54321,
-                calories: 287,
-                mileage: 138
+                totalStep: 0,
+                calories: 0,
+                mileage: 0
             }
         },
         methods: {
             changeCountWay() {
-            
+
+                var _this= this;
+                _this.session.getMemberID(function(memberid) {
+                    _this.mileage = _this.amap.getTodayMileage(_this,memberid);
+                });
+                this.totalStep = 0;
+                if(this.selected.id==1){
+                    var startDay = moment().isoWeekday(1).format('YYYY/MM/DD 00:00:00');//周一日期
+                    var endDay = moment().isoWeekday(7).format('YYYY/MM/DD 23:59:59');
+                    this.startTime = Date.parse(new Date(startDay));
+                    this.endTime = Date.parse(new Date(endDay));
+                    this.xData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    this.totalDay = 7;
+                }else if(this.selected.id==2){
+                    this.xData = [];
+                    var startDay = moment().add('days',-14).format('YYYY/MM/DD 00:00:00');
+                    var endDay = moment().format('YYYY/MM/DD 23:59:59');
+                    this.startTime = Date.parse(new Date(startDay));
+                    this.endTime = Date.parse(new Date(endDay));
+                    for(var i=14;i>=0;i--){
+                        this.xData.push(moment().add('days',-i).format('DD'));
+                    }
+                    this.totalDay = 15;
+                }else if(this.selected.id==3){
+                    this.xData = [];
+                    var startDay = moment().startOf('month').format('YYYY/MM/DD 00:00:00');//周一日期
+                    var endDay = moment().endOf('month').format('YYYY/MM/DD 23:59:59');
+                    this.startTime = Date.parse(new Date(startDay));
+                    this.endTime = Date.parse(new Date(endDay));
+                    this.totalDay = parseInt(moment().endOf('month').format('DD'));
+                    for(var i=0;i<this.totalDay;i++){
+                        this.xData.push(moment(startDay, "YYYY/MM/DD 00:00:00").add('days',i).format('DD'));
+                    }
+                }
+                this.startDay = moment(startDay, "YYYY/MM/DD 00:00:00");
+                this.getChartsOption();
             },
             getChartsOption() {
-                charts.setOption({
-                    xAxis: {
-                        type: 'category',
-                        data: [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ],
-                        axisLabel: {
-                            show: true,
-                            color: '#ffffff'
+                charts = this.$echarts.init(document.getElementById('step-charts'))
+                var _this = this;
+                this.session.getMemberID(function (memberid) {
+                    var data = _this.db.loadStepCount(memberid,_this.startTime,_this.endTime,_this);
+//                    $(data).each(function(index,item) {
+//                        alert(_this.appUtil.dateFormat(item.addtime, "yyyy-MM-dd hh:ss"))
+//                    });
+                    var seriesData = [];
+                    for(var i=0;i<=_this.totalDay;i++){
+                        var time = _this.startDay.valueOf();
+                        _this.startDay.add('days',1);
+                        var push = false;
+                        $(data).each(function(index,item){
+                            if (time==item.addtime) {
+                                push = true;
+                                _this.totalStep+=parseInt(item.steps);
+                                seriesData.push(item.steps);
+                                return;
+                            }
+                        });
+                        _this.calories =  (_this.totalStep*0.03175).toFixed(2);
+                        if(!push){
+                            seriesData.push(0);
                         }
-                    },
-                    color: [ '#fec800' ],
-                    yAxis: {
-                        type: 'value',
-                        axisLabel: {
-                            show: true,
-                            color: '#ffffff'
-                        }
-                    },
-                    series: [
-                        {
-                            data: [ 120, 200, 150, 80, 70, 110, 130 ],
-                            type: 'bar'
-                        }
-                    ],
-                    barWidth: 5
-                })
+                    }
+                    if (seriesData.length == 0) {
+                        return;
+                    }
+                    charts.setOption({
+                        grid:{left:"15%"},
+                        xAxis: {
+                            type: 'category',
+                            data: _this.xData,
+                            axisLabel: {
+                                show: true,
+                                color: '#ffffff'
+                            }
+                        },
+                        color: ['#fec800'],
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                show: true,
+                                color: '#ffffff'
+                            }
+                        },
+                        series: [
+                            {
+                                data: seriesData,
+                                type: 'bar'
+                            }
+                        ],
+                        dataZoom: [
+                            {
+                                id: 'dataZoomX',
+                                type: 'inside',
+                                xAxisIndex: [0],
+                                filterMode: 'none'
+                            }
+                        ],
+                        barWidth: 5
+                    })
+                });
             }
         },
         mounted() {
-            _this = this
-            charts = App.eCharts.echarts.init(document.getElementById('step-charts'))
-            _this.getChartsOption()
+            this.changeCountWay();
+        },
+        activated() {
+            this.changeCountWay();
         }
     }
 </script>
