@@ -131,11 +131,13 @@
                 helpList: [
                 {
                     id: 'userGuide',
-                    name: '新手入门'
+                    name: '新手入门',
+                    icons: 'xinshourumen'
                 },
                 {
                     id: 'feedbackList',
-                    name: '问题反馈'
+                    name: '问题反馈',
+                    icons: 'wentifankui'
                 }
                 ]
             }
