@@ -60,6 +60,7 @@ import publishActivity from '@/business/club/publishActivity.vue'
 import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
 import newsList from '@/business/news/news.vue'
+import shareNews from '@/business/news/shareNews.vue'
 import newsDetails from '@/business/news/newsDetails.vue'
 import articleList from '@/business/news/articleList.vue'
 import articleDetails from '@/business/news/articleDetails.vue'
@@ -133,7 +134,7 @@ export default new Router({
             meta: {
                 title: '今日步数',
                 back: '/',
-                rightIcon:'fenxiang'
+                rightIcon: 'fenxiang'
             }
         },
         {
@@ -161,6 +162,15 @@ export default new Router({
             component: newsList,
             meta: {
                 title: '资讯',
+                back: '-1'
+            }
+        },
+        {
+            path: '/shareNews',
+            name: 'shareNews',
+            component: shareNews,
+            meta: {
+                title: '我来分享',
                 back: '-1'
             }
         },
