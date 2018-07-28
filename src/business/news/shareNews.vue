@@ -6,25 +6,34 @@
                 <input type="text" placeholder="请输入">
             </div>
         </div>
-        <div class="share-news-item">
-            <div class="left-label pull-left">位置</div>
-            <div class="right-input pull-left">
-                <input type="text" placeholder="添加位置" readonly="readonly">
-            </div>
-        </div>
         <div class="share-news-item text-area">
             <div class="left-label pull-left">内容</div>
             <div class="right-input pull-left">
                 <textarea placeholder="在此输入分享内容"></textarea>
             </div>
         </div>
-        <div class="save-btn text-center" @click="submitData">提交</div>
+        <div class="share-news-item">
+            <div class="left-label pull-left">视频</div>
+            <div class="right-input pull-left">
+                <input type="text" placeholder="输入视频地址">
+            </div>
+        </div>
+        <div class="select-pic text-center">
+            <l-imageUpload :limit="4" :action="'http://api.bozhiyue.com/my/uploadimg'" :onSuccess="uploadPhotosSuccess"
+                           :onRemove="removePhotos"/>
+        </div>
+        <div class="save-btn text-center" @click="submitData">分享</div>
     </div>
 </template>
 
 <script>
     export default {
-        name: 'share-news'
+        name: 'share-news',
+        methods: {
+            submitData() {
+            
+            }
+        }
     }
 </script>
 
@@ -63,7 +72,6 @@
             }
             &.text-area {
                 height: inherit;
-                padding: 0 0 40px 0;
                 textarea {
                     width: 590px;
                     height: 400px;
@@ -75,6 +83,11 @@
                     border-radius: 10px;
                 }
             }
+        }
+        .select-pic {
+            margin-bottom: 0;
+            background-color: #33333a;
+            padding: 30px 0 140px 30px;
         }
         .save-btn {
             font-size: 34px;
