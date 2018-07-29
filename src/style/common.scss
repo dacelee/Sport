@@ -87,8 +87,11 @@ ul {
     .create {
         position: absolute;
         right: 20px;
-        top: 0px;
+        top: 0;
         font-size: 24px;
+        &.hasIcon {
+            margin-right: 40px;
+        }
     }
     .icons {
         width: 30px;

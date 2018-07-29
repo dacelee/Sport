@@ -2,7 +2,8 @@
     <div class="personalCenter">
         <div class="personalCenter-head-info">
             <div class="left-head-photo pull-left">
-                <img :src="headPhoto" alt="">
+                <img :src="headPhoto" alt="" v-if="headPhoto">
+                <l-icon :name="headIcons" v-if="!headPhoto"/>
             </div>
             <div class="right-user-info pull-left">
                 <div class="user-name">{{ userName }}</div>
@@ -55,12 +56,14 @@
 
 <script>
     import users from '../../api/users.js'
+    
     export default {
         name: 'personal-center',
         data() {
             return {
                 route: 'personalCenter',
-                headPhoto: '/static/img/personal/default.jpg',
+                headPhoto: '', // 有头像用这个，把用户的头像路径存储到此字段即可
+                headIcons: 'morentouxiangnv', // 没头像调用对应的Icons即可,男用 morentouxiangnan  女用 morentouxiangnv
                 userName: '',
                 idNum: 0,
                 description: '',
@@ -129,18 +132,20 @@
                     }
                 ],
                 helpList: [
-                {
-                    id: 'userGuide',
-                    name: '新手入门'
-                },
-                {
-                    id: 'feedbackList',
-                    name: '问题反馈'
-                }
+                    {
+                        id: 'userGuide',
+                        name: '新手入门',
+                        icons: 'xinshourumen'
+                    },
+                    {
+                        id: 'feedbackList',
+                        name: '问题反馈',
+                        icons: 'wentifankui'
+                    }
                 ]
             }
-        },activated () {
-           this.loadMyInfo();
+        }, activated() {
+            this.loadMyInfo()
         },
         methods: {
             toDetailsPage(route) {
@@ -149,24 +154,24 @@
             editEvent() {
                 this.$router.push('/personalSetting')
             },
-            loadMyInfo(){
-                var _this=  this;
-                users.getCacheMyInfo(this,function(data){
-                    _this.headPhoto = data.logo;
-                    _this.userName = data.nikename;
-                    _this.idNum = data.inviter;
-                    _this.description = data.personality;
-                    _this.basicList[0].value= data.memberlevel;
-                    _this.basicList[1].value= data.activity+"+";
-                    _this.basicList[2].value= data.contributionvalue;
-                    _this.candyNum =  data.cointotal.toFixed(4);
+            loadMyInfo() {
+                var _this = this
+                users.getCacheMyInfo(this, function (data) {
+                    _this.headPhoto = data.logo
+                    _this.userName = data.nikename
+                    _this.idNum = data.inviter
+                    _this.description = data.personality
+                    _this.basicList[ 0 ].value = data.memberlevel
+                    _this.basicList[ 1 ].value = data.activity + '+'
+                    _this.basicList[ 2 ].value = data.contributionvalue
+                    _this.candyNum = data.cointotal.toFixed(4)
                     _this.session.getMemberID(function (memberid) {
                         _this.axios.post(_this.session.myActivityAdd, {'memberid': memberid}, function (json) {
-                            _this.basicList[1].value += json.data.activityadd;
+                            _this.basicList[ 1 ].value += json.data.activityadd
                         })
-                    });
-                },true);
-
+                    })
+                }, true)
+                
             }
         }
     }
@@ -174,7 +179,7 @@
 
 <style lang="scss">
     .personalCenter {
-        padding-bottom:120px;
+        padding-bottom: 120px;
         overflow: hidden;
         background-color: #25252B;
         .personalCenter-head-info {
@@ -186,6 +191,13 @@
                 width: 160px;
                 height: 160px;
                 img {
+                    width: 160px;
+                    height: 160px;
+                    -webkit-border-radius: 100%;
+                    -moz-border-radius: 100%;
+                    border-radius: 100%;
+                }
+                .icons {
                     width: 160px;
                     height: 160px;
                     -webkit-border-radius: 100%;

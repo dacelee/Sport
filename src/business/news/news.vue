@@ -8,7 +8,7 @@
                         <div class="news-left-img pull-left">
                             <img :src="item.imgPath" alt="">
                         </div>
-                        <div class="news-right-container pull-left" >
+                        <div class="news-right-container pull-left">
                             <div class="title">{{ item.name }}</div>
                             <div class="description">{{ item.description }}</div>
                         </div>
@@ -44,7 +44,22 @@
                 type: '1'
             }
         },
+        watch: {
+            type: function (nVal) {
+                if (nVal === '3') {
+                    this.$emit('changeRightTitle', '我来分享')
+                    this.$emit('changeRightIcon', 'woxiangfenxiang')
+                }
+                else {
+                    this.$emit('changeRightTitle', '')
+                    this.$emit('changeRightIcon', '')
+                }
+            }
+        },
         methods: {
+            editEvent() {
+                this.$router.push('shareNews')
+            },
             changeRoute(route) {
                 this.type = route
                 this.page = 1
@@ -65,26 +80,27 @@
                                 description: item.intro
                             })
                         })
-                        if(_this.page<json.pageCount){
+                        if (_this.page < json.pageCount) {
                             _this.page++
                         }
                     }, function (json) {
                         _this.$Message.error(json.msg)
-                    },resolve)
+                    }, resolve)
             },
             toDetails(item) {
                 this.$router.push({name: 'newsDetails', params: {id: item.id}})
             },
             handleReachBottom() {
-                var _this = this;
-                return new Promise(function(resolve){
-                    _this.loadData(resolve);
-                });
+                var _this = this
+                return new Promise(function (resolve) {
+                    _this.loadData(resolve)
+                })
             }
         },
         activated() {
-            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true)-5;
-            this.page =1;
+            this.type = '1'
+            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true) - 5
+            this.page = 1
             this.loadData()
         }
     }
