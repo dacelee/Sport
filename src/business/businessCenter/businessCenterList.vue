@@ -153,6 +153,7 @@
             background-color: #ffffff;
             padding: 25px 25px 25px;
             color: #333333;
+            display: inline-block;
             .left-goods-img {
                 width: 210px;
                 height: 210px;
@@ -163,10 +164,13 @@
             }
             .right-goods-info {
                 margin-left: 20px;
+                width: calc(100% - 230px);
                 .goods-name {
                     font-size: 32px;
                     line-height: 32px;
-                    margin-bottom: 68px;
+                    margin-bottom: 30px;
+                    height: 96px;
+                    overflow: hidden;
                 }
                 .goods-price {
                     color: #ff0000;
