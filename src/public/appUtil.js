@@ -35,6 +35,7 @@ function AppUtil() {
 };
 var appUtil = new AppUtil();
 export default {
+    listener:{},
     toastRemind: function (verifyQueue, errors) {
         return appUtil.toastRemind(verifyQueue, errors);
     },
@@ -72,6 +73,15 @@ export default {
                 callback(ret);
             }
         });
+    },
+    apiCloudEvent(name,ret,err){
+        var listener =  eval("this.listener."+name);
+        if(listener){
+            listener(ret,err);
+        }
+    },
+    addApiCloudEventListener(name,listener){
+        eval("this.listener."+name+"=listener");
     },
     //getHeaderHeight:function(){
     //    if(session.isAPPRuntime()){

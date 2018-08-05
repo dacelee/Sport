@@ -2,11 +2,11 @@
     <div class="user-guide">
         <div class="content">
             <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
-                <div class="list-item" v-for="item in list">
-                    <div class="news-right-container2 pull-left" @click="toDetails(item)">
+                <div class="list-item" v-for="item in list"  @click="toDetails(item)">
+                    <div class="news-right-container2 pull-left">
                         <div class="title">{{ item.name }}</div>
                         <div class="description">{{ item.description }}</div>
-                        <div class="time">{{ item.time }}</div>
+                        <!--<div class="time">{{ item.time }}</div>-->
                     </div>
                 </div>
             </Scroll>
@@ -57,7 +57,7 @@
                 });
             },
             toDetails(item) {
-                this.$router.push({name: 'articleDetails', params: {id: item.id}})
+                this.$router.push({name: 'guide', params: {id: item.id}})
             },
             handleReachBottom () {
                 return new Promise(function (resolve) {
@@ -76,8 +76,8 @@
         .content {
             .list-item{
                 padding: 10px 30px;
-                height: 188px;
-                line-height: 88px;
+                height: 228px;
+                line-height: 68px;
                 background-color: #333339;
                 color: #999999;
                 font-size: 30px;

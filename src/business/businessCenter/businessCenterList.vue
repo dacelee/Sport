@@ -1,5 +1,8 @@
 <template>
     <div class="business-center-list">
+        <div class="home-head">
+            <l-banner2 :action="'/msg/shopsflash'"/>
+        </div>
         <div class="head-menu">
             <div class="head-menu-item text-center" v-for="item in menuList" @click="businessProduct(item.id)">
                 <img :src="item.logo"/>
@@ -36,69 +39,44 @@
         name: 'business-center-list',
         data() {
             return {
-                page: 1,
                 route: 'businessCenter',
                 menuList: [
-                    {
-                        id: 1,
-                        icons: 'paoxie',
-                        name: '跑鞋'
-                    },
-                    {
-                        icons: 'fuzhuang',
-                        name: '服装'
-                    },
-                    {
-                        icons: 'maozi',
-                        name: '帽子'
-                    },
-                    {
-                        icons: 'qicai',
-                        name: '器材'
-                    }
+//                    {
+//                        id: 1,
+//                        icons: 'paoxie',
+//                        name: '跑鞋'
+//                    },
+//                    {
+//                        icons: 'fuzhuang',
+//                        name: '服装'
+//                    },
+//                    {
+//                        icons: 'maozi',
+//                        name: '帽子'
+//                    },
+//                    {
+//                        icons: 'qicai',
+//                        name: '器材'
+//                    }
                 ],
                 list: [
-                    {
-                        imgPath: '',
-                        name: '雷霆战靴-王者归来',
-                        price: '5231.00',
-                        equal: '500'
-                    },
 //                    {
 //                        imgPath: '',
 //                        name: '雷霆战靴-王者归来',
 //                        price: '5231.00',
 //                        equal: '500'
 //                    },
-//                    {
-//                        imgPath: '',
-//                        name: '雷霆战靴-王者归来',
-//                        price: '5231.00',
-//                        equal: '500'
-//                    },
-//                    {
-//                        imgPath: '',
-//                        name: '雷霆战靴-王者归来',
-//                        price: '5231.00',
-//                        equal: '500'
-//                    },
-//                    {
-//                        imgPath: '',
-//                        name: '雷霆战靴-王者归来',
-//                        price: '5231.00',
-//                        equal: '500'
-//                    },
-                
                 ],
                 recommendList: [
-                    {
-                        imgPath: '',
-                        name: '我也不知道是么子孩子',
-                        price: '760.00'
-                    }
+//                    {
+//                        imgPath: '',
+//                        name: '我也不知道是么子孩子',
+//                        price: '760.00'
+//                    }
                 ]
             }
-        }, mounted() {
+        }, activated() {
+            this.page = 1;
             goods.loadCateList(this)
             //热门
             goods.loadGoods(this, 'list', 0, 2, 'addtime', 'desc', null, 5)

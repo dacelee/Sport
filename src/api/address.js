@@ -32,10 +32,44 @@ export default {
         });
     },
     addAddress:function(context,fromData,id){
-
+        var _this = this;
+        if(id){
+            fromData.id=id;
+            axios.post(_this.edit, fromData, function (json) {
+                context.$Message.info(json.msg);
+                context.$router.go(-1);
+            }, function (json) {
+                context.$Message.error(json.msg);
+            });
+        }else{
+            session.getMemberID(function(memberid) {
+                fromData.memberid = memberid;
+                axios.post(_this.add, fromData, function (json) {
+                    context.$Message.info(json.msg);
+                    context.$router.go(-1);
+                }, function (json) {
+                    context.$Message.error(json.msg);
+                });
+            });
+        }
     },
     loadDetail:function(context,id){
-
+        var _this = this;
+        axios.post(_this.detail, {id: id}, function (json) {
+            var data = json.data;
+            context.formData={
+                    name: data.name,
+                    proid: data.proid,
+                    cityid:  data.cityid,
+                    areaid:  data.areaid,
+                    address: data.address,
+                    mobile: data.mobile,
+                    isdefault:data.isdefault
+            };
+            context.loadArea();
+        }, function (json) {
+            context.$Message.error(json.msg);
+        });
     },
     setDefault:function(context,id){
         var _this = this;
@@ -58,7 +92,36 @@ export default {
         });
     },
     useAddress:function(context,id){
-
+        var _this = this;
+        if(id){
+            axios.post(_this.detail, {id: id}, function (json) {
+                var data = json.data;
+                context.delivery={
+                    linkman: data.name,
+                    address: data.address,
+                    mobile: data.mobile,
+                };
+            }, function (json) {
+                context.$Message.error(json.msg);
+            });
+        }else{
+            session.getMemberID(function(memberid){
+                axios.post(_this.defaultAddress, {memberid: memberid}, function (json) {
+                    if(json.dataList.length==0){
+                        return;
+                    }
+                    var data = json.dataList[0];
+                    context.delivery = {
+                        linkman: data.name,
+                        address: data.address,
+                        mobile: data.mobile,
+                    };
+                    context.deliveryid = data.id;
+                });
+            }, function (json) {
+                context.$Message.error(json.msg);
+            });
+        }
 
     },
 }

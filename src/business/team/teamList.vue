@@ -10,11 +10,13 @@
     let _this
     import myTeam from './myTeam'
     import nearbyTeam from './nearbyTeam'
+    import nearbyUser from './nearbyUser'
     export default {
         name: 'team-list',
         components: {
             myTeam,
-            nearbyTeam
+            nearbyTeam,
+            nearbyUser
         },
         data() {
             return {
@@ -28,6 +30,10 @@
                     {
                         id: 'nearbyTeam',
                         name: '附近队伍'
+                    },
+                    {
+                        id: 'nearbyUser',
+                        name: '附近的人'
                     }
                 ]
             }

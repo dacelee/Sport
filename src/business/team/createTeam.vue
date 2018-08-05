@@ -15,6 +15,8 @@
                                      :onSuccess="uploadHeadSuccess"
                                      :uploadImgs="logo"
                                      :imgWidth="'auto'"
+                                     :imageClipStart="imageClipStart"
+                                     :imageClipEnd="imageClipEnd"
                     />
                     <l-icon name="bianji" class="editIcon"/>
                 </div>
@@ -44,10 +46,10 @@
             return {
                 formData:this.initData(),
                 logo:[],
-                teamid:0,
                 teamIcon: '', // 队伍图标
                 locationData: null,//定位数据
 //                province:[],
+                imageClip:false,
                 selectorJSON: null
             }
         }, verify: {
@@ -57,9 +59,11 @@
         }, mounted() {
             this.loadCity()
         }, activated() {
+            if(!this.imageClip){
+                this.initData();
+            }
             var teamid = this.$route.query.teamid;
-            if(teamid>0&&this.teamid!=teamid){
-                this.teamid=teamid;
+            if(teamid>0&&!this.imageClip){
                 this.loadTeamDetail(teamid);
             }else{
                 if (this.session.isAPPRuntime() && this.formData.address == '') {
@@ -68,6 +72,7 @@
             }
         }, methods: {
             initData(){
+                this.logo = [];
                 return {
                     memberid: 0,
                     name: '',
@@ -80,6 +85,12 @@
                     x: '',
                     y: ''
                 }
+            },
+            imageClipStart(){
+                this.imageClip = true;
+            },
+            imageClipEnd(){
+                this.imageClip = false;
             },
             loadCity() {
                 var _this = this
@@ -113,7 +124,6 @@
                             _this.location()//定位
                         }
                     }
-
                 }, function (json) {
                     _this.$Message.error(json.msg)
                 })
@@ -122,7 +132,7 @@
                 var _this = this
                 this.amap.getLocation(this,function (ret) {
                     if (!ret.status) {
-                        _this.$Message.error('定位失败,请开启GPS')
+                        _this.$Message.error('定位失败')
                         return
                     }
                     _this.formData.x = ret.lon

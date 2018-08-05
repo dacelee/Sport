@@ -11,7 +11,7 @@
                     </div>
                     <div class="trading-info">{{ '最近30日成交:'+item.tradingNum }}</div>
                 </div>
-                <div class="right-business-btn pull-right text-center clear" @click="clear(item.id)" v-if="item.lessCount>0">取消</div>
+                <div class="right-business-btn pull-right text-center clear" @click="clear(item.id)" v-if="item.lessCount>0&&item.status!=0">取消</div>
             </div>
             <div class="order-list-item" v-for="item in list" @click="showDetails(item)"  v-if="status>3">
                 <div class="photo">
@@ -22,7 +22,7 @@
                     <div class="user-name">&nbsp;</div>
                     <div class="time">{{ item.time }}</div>
                 </div>
-                <div class="status">
+                <div class="status" >
                     {{ item.status }}
                 </div>
             </div>

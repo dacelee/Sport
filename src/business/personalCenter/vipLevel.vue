@@ -16,7 +16,8 @@
             </div>
             <div class="privilege">
                 <div class="require">{{ item.require }}</div>
-                <div class="label">交易手续费{{ item.label }}%</div>
+                <div class="label" v-if="item.code==0">禁止交易</div>
+                <div class="label" v-if="item.code>0">交易手续费{{ item.label }}%</div>
             </div>
         </div>
     </div>

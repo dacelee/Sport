@@ -24,9 +24,20 @@
         </div>
         <div class="user-menu-list">
             <ul>
-                <li class="user-menu-list-item personal" :class="{'mt10':index === 0}"
-                    v-for="(item,index) in personalMenuList" @click="goToPage(item.router)">
-                    <div class="left-label" >{{ item.name }}</div>
+                <li class="user-menu-list-item personal mt10"
+                     @click="goToPage('clubTeams')">
+                    <div class="left-label" >
+                        成员列表</div>
+                    <l-icon name="fanhui" class="link-icons" />
+                </li>
+                <li class="user-menu-list-item personal"
+                   @click="goToPage('nearbyUser')" v-if="mycreate">
+                    <div class="left-label" >附近的人</div>
+                    <l-icon name="fanhui" class="link-icons" />
+                </li>
+                <li class="user-menu-list-item personal"
+                    @click="goToPage('activityList')">
+                    <div class="left-label" >活动</div>
                     <l-icon name="fanhui" class="link-icons" />
                 </li>
             </ul>
@@ -37,7 +48,7 @@
                 <!--<img src="/static/img/news/2.jpg" />-->
                 <div class="word" v-html="intor"></div>
             </div>
-            <div class="save-btn text-center" v-if="auth_license!=''">申请加入</div>
+            <div class="save-btn text-center" v-if="auth_license!=''&&!mycreate&&!jioned" @click="joinClub">申请加入</div>
             <!--<div class='text-center word1'>俱乐部创建人没认证，底部按钮显示申请认证</div>-->
             <div class="save-btn text-center" v-if="auth_license==''&&mycreate" @click="clubCertification">申请实体认证</div>
             <!--<div class='text-center word2'>已加入，已认证，底部无按钮 并且无发布活</div>-->
@@ -54,33 +65,23 @@
                 headPhoto: '',
                 clubName: '',
                 idNum: '',
-                createTime: '2018.4.12',
-                InfoValue1: [ '岳麓区', 89, 56 ],
+                createTime: '0',
+                InfoValue1: [ '', 0, 0 ],
                 InfoValue2: [ '地区', '人数', '总活跃度' ],
                 intor:"",
+                jioned:false,
                 auth_license:"",
                 mycreate:false,
-                personalMenuList: [
-                    {
-                        id: 'basicInfo',
-                        name: '成员列表',
-                        icons: 'clubTeams',
-                        router: 'clubTeams'
-                    },
-                    {
-                        id: 'verified',
-                        name: '活动',
-                        icons: 'huodong',
-                        router: 'activityList'
-                    }
-                ]
-
             }
         },
         methods: {
             goToPage(router) {
                 var clubid = this.$route.query.id;
-                this.$router.push({name:router,query:{id:clubid}})
+                if(router=="nearbyUser"){
+                    this.$router.push({name:"nearbyUser",query:{id:clubid,type:2}})
+                }else{
+                    this.$router.push({name:router,query:{id:clubid}})
+                }
             },
             editEvent() {
                 var clubid = this.$route.query.id;
@@ -93,6 +94,10 @@
             clubCertification(){
                 var clubid = this.$route.query.id;
                 this.$router.push({name:'clubCertification', query: {id: clubid}});
+            },
+            joinClub(){
+                var clubid = this.$route.query.id;
+                club.joinClubAction(this,clubid);
             }
         },
         beforeUpdate(){

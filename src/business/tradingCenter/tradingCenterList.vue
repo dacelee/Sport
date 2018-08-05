@@ -11,15 +11,15 @@
         <div class="trading-data-board">
             <div class="trading-data-item pull-left">
                 <div class="left-label pull-left">最低</div>
-                <div class="right-value pull-left">{{ low }}美元</div>
+                <div class="right-value pull-left"> $ {{ low }}</div>
             </div>
             <div class="trading-data-item pull-left">
                 <div class="left-label pull-left">最高</div>
-                <div class="right-value pull-left">{{ high }}美元</div>
+                <div class="right-value pull-left"> $ {{ high }}</div>
             </div>
             <div class="trading-data-item pull-left">
                 <div class="left-label pull-left">当前</div>
-                <div class="right-value pull-left">{{ current }}美元</div>
+                <div class="right-value pull-left"> $ {{ current }} </div>
             </div>
             <div class="trading-data-item pull-left">
                 <div class="left-label pull-left">成交</div>
@@ -82,8 +82,9 @@
         <div class="bottomBtnBuy" v-show="isShow">
             <div class="buyBox">
                 <div class="buying">正在{{marketBtn}}</div>
-                <div class="buyleft">当前糖果剩余额：{{myCoin}}</div>
-                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal" placeholder="请输入数量"></div>
+                <div class="buyleft">糖果余额：{{myCoin}}</div>
+                <div class="buyText"><label>单价</label><span>{{unitprice1}}</span></div>
+                <div class="buyText"><label>数量</label><span>{{cointotal}}</span></div>
                 <div class="buyText"><label>交易密码</label><input type="password" v-model="password" placeholder="输入交易密码">
                 </div>
                  <div class="pull-left" v-for="item in tabsListBuy" @click="userBuy(item.id)">{{item.name}}</div>
@@ -93,11 +94,14 @@
             <div class="buyBox">
                 <div class="buying">发布{{marketAction}}</div>
                 <div class="buyleft">当前价格：${{current}}</div>
-                <div class="buyText"><label>单价</label><input type="text" v-model="unitprice" :placeholder="placeholder"></div>
-                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2" placeholder="请输入交易数量"></div>
+                <div class="buyText"><label><div> 单价</div> <div> $ ({{priceInterval}}) </div></label><input type="text" v-model="unitprice" :placeholder="placeholder" @change="change"></div>
+                <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2" placeholder="请输入交易数量" @keyup="change"></div>
+                <div class="buyText"><label>总额 $</label><span>{{marketTotal}}</span></div>
                 <div class="buyText" v-if="sealType==2"><label>验证码</label>
                     <input class="formcode" type="text" v-model="smscode" placeholder="请输入验证码">
                     <div class="get_code" @click="getCode">{{codeSend}}</div></div>
+                <div class="buyText"><label>交易密码</label><input type="password" v-model="password2" placeholder="输入交易密码"></div>
+
             <div class="pull-left" v-for="item in tabsListBuy" @click="marketSell(item.id)">{{item.name}}</div>
             </div>
         </div>
@@ -123,24 +127,27 @@
                 smscode:'',
                 page: 1,
                 myCoin: 0,
-                scrollHeight: 500,
+                scrollHeight: 10,
                 high: 0,
                 low: 0,
                 current: 0,
+                priceInterval:'',
+                marketTotal:'',
                 volume: 0,
                 need: 0, // 需求数
                 percent: 0,
                 coinmysaleid: '',
                 cointotal: '',
                 cointotal2: '',
+                unitprice1:0,
                 unitprice: '',
                 password: '',
+                password2:'',
                 sealType: 1,
                 sealBtn:'买入',
                 tradecharge: 0,//手续费率
                 placeholder:'请勿超过平台2倍溢价',
                 codeSend:'获取验证码',
-                notGetCode:true,
                 filterList: [  // 搜索方式区分
                     {
                         id: 1,
@@ -229,6 +236,7 @@
                 if ( this.sealType == 2) {
                     this.marketAction = '卖单'
                     this.placeholder='贡献值越高，手续费越低哟';
+
                 }else {
                     this.marketAction = '买单'
                     this.placeholder='请勿超过平台2倍溢价';
@@ -262,8 +270,12 @@
                         tooltip: {
                             trigger: 'axis',
                             formatter(item) {
-                                return item[ 0 ].marker + item[ 0 ].seriesName + ': $' + item[ 0 ].value + '<br/>' +
-                                    item[ 1 ].marker + item[ 1 ].seriesName + ' :' + item[ 1 ].value
+                                if(item.length>1){
+                                    return item[ 0 ].marker + item[ 0 ].seriesName + ': $' + item[ 0 ].value + '<br/>' +
+                                            item[ 1 ].marker + item[ 1 ].seriesName + ' :' + item[ 1 ].value
+                                }else {
+                                    return item[ 0 ].marker + item[ 0 ].seriesName + ': $' + item[ 0 ].value
+                                }
                             }
                         },
                         legend: {
@@ -272,6 +284,7 @@
                             x: 'left',
                             top: 10,
                             left: 10,
+                            selected:{'价格':true,'交易量':false},
                             textStyle: {
                                 color: '#999999'
                             }
@@ -322,21 +335,21 @@
             market(item) {
                 this.isShow = true
                 this.marketItem = item;
+                this.unitprice1 = item.unitPrice
                 this.cointotal = item.lessCount
             },
             myAction() {
                 this.isShowSell = true
             },
             getCode(){
-                if(!this.notGetCode){
+                var _this=this;
+                if(_this.codeSend!="获取验证码"){
                     return;
                 }
-                var _this=this;
                 const TIME_COUNT = 60;
                 var count = TIME_COUNT;
-                this.notGetCode = false;
                 var user  = this.session.getLoginUser()
-                this.axios.post(this.session.sendsmscode, {'mobile':user.mobile},function(data){
+                this.axios.post(this.session.sendsmscode, {'memberid':user.id},function(data){
 //                        console.log(data);
                     _this.$Message.info(data.msg);
                 },function(data){
@@ -349,10 +362,10 @@
                         _this.codeSend = count+"s";
 //                        console.log(_this.codeSend);
                     } else {
-                        this.notGetCode = true;
-                        clearInterval(_this.timer);
-                        this.timer = null;
                         _this.codeSend = "获取验证码";
+                        clearInterval(_this.timer);
+                        _this.timer = null;
+
                     }
                 }, 1000);
             },
@@ -378,7 +391,7 @@
                     var unitprice = this.marketItem.unitPrice
                     var handlingfee = 0
                     if (this.marketItem.type == 1) {
-                        handlingfee = (cointotal * unitprice * this.tradecharge).toFixed(1)
+                        handlingfee = (cointotal * unitprice * this.tradecharge)
                     }
                     coin.saleCoinAction(this, this.marketItem.id, cointotal, unitprice, this.password,
                         this.marketItem.type, handlingfee)
@@ -389,14 +402,14 @@
             },
             marketSell(id) {
                 if (id == 'ok') {
-                    var cointotal = parseFloat(this.cointotal2);
+                    var cointotal = parseInt(this.cointotal2);
                     if (isNaN(cointotal)||cointotal == '' || cointotal <= 0) {
                         this.$Message.error('交易数量必须填写')
                         return
                     }
 
                     if (cointotal > this.myCoin&&this.sealType == 2) {
-                        this.$Message.error('交易数量必须小于' + this.myCoin)
+                        this.$Message.error('糖果数量不足' + cointotal+",无法提交卖单")
                         return
                     }
 
@@ -410,6 +423,10 @@
                         this.$Message.error('请勿超过平台2倍溢价')
                         return
                     }
+                    if (unitprice < currentprice / 2) {
+                        this.$Message.error('请勿低于平台1/2价格')
+                        return
+                    }
                     var handlingfee = 0
                     if (this.sealType == 2) {
                         var smscode = this.smscode
@@ -417,10 +434,23 @@
                             this.$Message.error('请输入验证码')
                             return
                         }
-                        handlingfee = (cointotal * unitprice * this.tradecharge)
+                        handlingfee = (cointotal * unitprice * this.tradecharge);
+                        if ((cointotal+handlingfee) > this.myCoin) {
+                            this.$Message.error('糖果数量不足,需要手续费:' + handlingfee+",无法提交卖单")
+                            return
+                        }
                     }
-                    coin.saleAddAction(this, cointotal, unitprice, this.sealType, handlingfee,smscode)
+                    if (this.password2 == '') {
+                        this.$Message.error('交易密码必须填写')
+                        return
+                    }
+                    coin.saleAddAction(this, cointotal, unitprice, this.sealType, handlingfee,smscode,this.password2)
                 }else {
+                    this.unitprice = "";
+                    this.cointotal2 = "";
+                    this.password2 = "";
+                    this.smscode ='';
+                    this.marketTotal = '';
                     this.isShowSell = false
                 }
             }, init() {
@@ -461,6 +491,39 @@
             },
             clear(id){
                 coin.mySaleCancelAction(this,id);
+            },
+            change(){
+                var currentprice = this.current
+                var unitprice = this.unitprice
+                if (isNaN(unitprice)||unitprice <= 0) {
+                    this.$Message.error('交易单价必须大于0')
+                    return
+                }
+                if (unitprice > currentprice * 2) {
+                    this.$Message.error('请勿超过平台2倍溢价')
+                    return
+                }
+                if (unitprice < currentprice / 2) {
+                    this.$Message.error('价格请勿低于'+ currentprice / 2)
+                    return
+                }
+                if(isNaN(parseInt(this.cointotal2))){
+                    return;
+                }
+                this.cointotal2 = parseInt(this.cointotal2);
+                if (this.cointotal2 > this.myCoin&&this.sealType == 2) {
+                    this.$Message.error('账户剩余糖果:' + this.myCoin+",不能发布此数量卖单")
+                    return
+                }
+                this.marketTotal = parseFloat(this.cointotal2)*100*parseFloat(this.unitprice)/100;
+                if (this.sealType == 2) {
+                    var handlingfee = (this.cointotal2 * this.unitprice * this.tradecharge)
+                    this.marketTotal+="(手续费:"+handlingfee+")";
+                    if ((this.cointotal2+handlingfee) > this.myCoin) {
+                        this.$Message.error('糖果数量不足,需要手续费:' + handlingfee)
+                        return
+                    }
+                }
             }
         },
         activated() {
@@ -680,6 +743,7 @@
             overflow: hidden;
             width: 100%;
             text-align: center;
+            z-index:9;
             div {
                 font-size: 34px;
                 line-height: 34px;
@@ -688,7 +752,6 @@
                 color: #000;
                 width: 100%;
             }
-            z-index: 9;
             .pull-left {
                 background-color: #F8C513;
             }
@@ -740,19 +803,30 @@
 
             .buyText {
                 margin-bottom: 40px;
+                float: left;
+                width: 100%;
                 label {
-                    margin-right: 20px;
+                    width: 30%;
+                    height: 80px;
+                    overflow: hidden;
+                    float: left;
+                    text-align: right;
+                    line-height:80px;
+                    div{height: 40px;  line-height:40px;}
                 }
                 input {
+                    margin-left: 2%;
                     background: #333339;
                     height: 80px;
                     border-radius: 10px;
                     width: 60%;
                     padding: 0 10px;
+                    float: left;
                     color: #ffffff;
                 }
+                span{ width: 60%;display: inline-block;text-align: left;}
                 .formcode{width: 30%}
-                .get_code{width: 30%;display: inline-block;}
+                .get_code{width: 30%;display: inline-block;line-height: 80px;}
                 &:nth-last-child(1) {
                     padding: 15px 0 0 0;
                 }

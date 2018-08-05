@@ -41,7 +41,7 @@
         data() {
             return {
                 route: 'club',
-                scrollHeight:0,
+                scrollHeight:20,
                 filterName: '',
                 x:0,
                 y:0,
@@ -90,16 +90,15 @@
                 this.loadData();
             },
             editEvent() {
-                _this.$router.push('createClub')
+                this.$router.push('createClub')
             },
             toDetails(item) {
-                let _this = this
-                _this.$router.push({name: 'clubDetails', query: {id: item.id}})
+                this.$router.push({name: 'clubDetails', query: {id: item.id}})
             },
             loadData(){
                 let _this = this
                 if(this.x==0||this.y==0){
-                    this.$Message.error("定位失败,请开启GPS");
+                    this.$Message.error("定位失败");
                     return;
                 }
                 _this.page = 1;

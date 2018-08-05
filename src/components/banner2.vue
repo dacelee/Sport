@@ -16,6 +16,12 @@
             swiper,
             swiperSlide
         },
+        props: {
+            action:{
+                type:String,
+                default:"/msg/flash"
+            },
+        },
         data() {
             return {
                 swiperOption: {
@@ -54,7 +60,7 @@
 //                _this.list = [ 'static/img/home/head.png', 'static/img/home/head2.png', 'static/img/home/head.png' ]
 //                _this.swiperOption.loopedSlides =  _this.list.length;
 //                this.swiper.init();
-                this.axios.post("/msg/flash", {'topN': 3}, function (json) {
+                this.axios.post(this.action, {'topN': 3}, function (json) {
                     var flash = json.dataList;
                     _this.list = [];
                     $(flash).each(function (index, item) {

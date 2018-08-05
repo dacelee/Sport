@@ -152,6 +152,7 @@
         },mounted() {
             _this = this;
             this.init = true;
+            this.session.rmCache("nearByUserTeamId");
             this.$nextTick(function () {
                 this.getMyTeam();
                 var headerHeight = $("header").outerHeight();
@@ -168,6 +169,9 @@
             this.init = false;
         },
         methods: {
+//            nearByUser(){
+//                this.$router.push({name:'nearbyUser',query:{id:this.myTeamInfo.teamid,type:1}});
+//            },
             handleReachBottom() {
                 var _this = this
                 return new Promise(function (resolve) {
@@ -188,8 +192,10 @@
                             description: team.intro,
                             logo: team.logo
                         };
+                        _this.session.appCache("nearByUserTeamId",team.teamid);
                         _this.loadTeamMember(team.teamid);
                     }, function (json) {
+                        _this.session.rmCache("nearByUserTeamId");
                         _this.$emit('changeData', 0,true);
                         _this.teamMembers = []
                         _this.myTeamInfo = null;
@@ -342,6 +348,10 @@
                     color: #ffd554;
                 }
             }
+            .nearByUser{padding: 20px 0px;background-color: #33333A;margin: 20px 0px;padding-left: 20px}
+            .link-icons{right: 0.4rem;
+                -webkit-transform: rotate(180deg);
+                transform: rotate(180deg);float: right;margin-right: 30px;margin-top: 10px}
             .personal-list {
                 margin: 30px auto;
                 .personal-list-item {

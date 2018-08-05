@@ -40,6 +40,7 @@
             })
         },
         activated(){
+            this.page = 1;
             coin.loadCoinlog(this);
         },
         methods: {

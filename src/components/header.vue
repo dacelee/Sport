@@ -29,16 +29,16 @@
         },
         methods: {
             native: function () {
-                if (this.meta.back === 'leftBtnEvent') {
-                    this.$emit('leftBtnEvent')
-                }
-                else if (this.meta.back === '-1') {
-                    this.$router.go(-1)
-                }
-                else {
-                    this.$router.push(this.meta.back)
-                }
-                
+                var _this = this;
+                setTimeout(function(){
+                    if (_this.meta.back === 'leftBtnEvent') {
+                        _this.$emit('leftBtnEvent')
+                    }else if (_this.meta.back === '-1') {
+                        _this.$router.go(-1)
+                    }else {
+                        _this.$router.push(_this.meta.back)
+                    }
+                },300);//防止键盘出现造成页面异常
             },
             myEvent() {
                 this.$emit('rightBtnEvent')//触发父组件事件

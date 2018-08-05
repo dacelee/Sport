@@ -3,8 +3,9 @@
         <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
             <div class="team-list-item" v-for="item in list">
                 <img :src="item.imgPath" alt="">
-                <div class="name">{{ item.userName }}</div>
-                <div class="personalAmount">下线{{ item.amount }}人</div>
+                <div class="name"><div>{{ item.userName }}</div><div>活跃度:{{ item.activity }}</div><div>团队活跃度:{{ item.teamactivity }}</div></div>
+
+                <div class="personalAmount">团队人数<div>{{ item.amount }}</div></div>
             </div>
             <div class="total-amount text-right">合计：{{ total }}人</div>
         </Scroll>
@@ -79,13 +80,18 @@
                 -moz-border-radius: 100%;
                 border-radius: 100%;
                 float: left;
+                margin-top: 15px;
             }
             .name {
                 margin-left: 20px;
                 float: left;
+                line-height: 45px;
             }
             .personalAmount {
                 float: right;
+                line-height: 45px;
+                text-align: center;
+                padding-top: 20px;
             }
         }
         .total-amount {

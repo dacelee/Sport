@@ -45,20 +45,16 @@
         , methods: {
             login() {
                 var _this = this;
-                if(this.session.isAPPRuntime()){
-                    var ipAddress = api.require('ipAddress');
-                    ipAddress.getIp(
-                            {isNetIp: true},
-                            function (ret, err) {
-                                //                                alert(JSON.stringify(ret) + "   " + JSON.stringify(err));
-                                if (ret.status) {
-                                    _this.ip = ret.ip;
-                                }
-                            });
-                    this.deviceId = api.deviceId;
-                }else{
-                    this.$Message.error("ip 无法获取")
-                }
+                var ipAddress = api.require('ipAddress');
+                ipAddress.getIp(
+                        {isNetIp: true},
+                        function (ret, err) {
+                            //                                alert(JSON.stringify(ret) + "   " + JSON.stringify(err));
+                            if (ret.status) {
+                                _this.ip = ret.ip;
+                            }
+                        });
+                this.deviceId = api.deviceId;
                 if (!this.$verify.check()) {
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors)
                     this.$Message.error(errMsg)
@@ -117,16 +113,16 @@
                     color: #ffffff;
                 }
                 input::-webkit-input-placeholder {
-                    color: #999999;
+                    color: #bbb;
                 }
                 input:-moz-placeholder {
-                    color: #999999;
+                    color: #bbb;
                 }
                 input::-moz-placeholder {
-                    color: #999999;
+                    color: #bbb;
                 }
                 input:-ms-input-placeholder {
-                    color: #999999;
+                    color: #bbb;
                 }
                 .icons {
                     width: 32px;

@@ -80,6 +80,11 @@
                 ]
             }
         },
+        watch: {
+            goodsId:function (imgs, oldVal) {
+                this.changeNum();
+            }
+        },
         methods: {
             businessOrder() {
 //                this.$router.push('orderCenter')
@@ -128,15 +133,16 @@
                 this.totalCoin = 0;
                 var _this = this;
                 var list = this.list;
+                var cartids = this.goodsId.toString();
                 $(list).each(function(index,item){
-                    _this.totalPrice +=item.rmb*item.num;
-                    _this.totalCoin += parseFloat((item.hlb*item.num).toFixed(2));
+                   if(cartids.indexOf(item.id)!=-1){
+                       _this.totalPrice +=parseFloat(item.rmb*item.num);
+                       _this.totalCoin += parseFloat(item.hlb*item.num);
+                   }
                 });
-                if(this.goodsId.length==0) {
-                    $(list).each(function (index, item) {
-                        _this.goodsId.push(item.id);
-                    });
-                }
+                _this.totalPrice = this.totalPrice.toFixed(1);
+                _this.totalCoin =  this.totalCoin.toFixed(2)
+
             },
             updateNum(){
                 var list = this.list;
@@ -152,7 +158,7 @@
             initData(){
                 this.delModel = false;
                 this.all= false;
-//                this.goodsId=[];
+                this.goodsId=[];
                 this.totalPrice=0;
                 this.totalCoin=0;
             }
@@ -162,12 +168,9 @@
             goods.loadCartGoods(this);
         },
         mounted() {
-            this.$nextTick(function () {
-                var headerHeight = $("header").outerHeight();
-                var height = $(window).height()-headerHeight+40;
-                $(".businessSettlement").height(height);
-            })
-
+            var headerHeight = $("header").outerHeight(true);
+            var height = $(window).height()-headerHeight-$(".bottomBtn").outerHeight(true);
+            $(".ivu-checkbox-group").height(height);
         }
     }
 </script>
@@ -175,6 +178,7 @@
 <style lang="scss">
 .businessSettlement {
 background-color: #f5f5f5;
+.ivu-checkbox-group{overflow-y: scroll;}
 .SettlementList{margin:0 0 20px 0;background:#fff;overflow:hidden;padding:20px;padding-left:0;
   display: flex;
           justify-content:center;
@@ -203,9 +207,6 @@ white-space: nowrap;}
 .word{color:#333;font-size:28px;line-height:50px; padding: 20px 20px 20px 20px;}
 .bottomBtn{
     background-color:#404148;
-            position: fixed;
-            bottom: 0;
-            left: 0;
             overflow:hidden;
             width:100%;
             text-align:center;

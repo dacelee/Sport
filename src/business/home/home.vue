@@ -9,7 +9,7 @@
                     <l-icon name="tongzhi-"/>
                 </div>
                 <div class="right-container" @click="showNoticeDetails">
-                    {{ news.title }}
+                    {{ news.title||'&nbsp;' }}
                 </div>
             </div>
             <div class="short-menu">
@@ -37,19 +37,19 @@
             </div>
             <div class="reward-info text-center">今日奖励糖果:{{ rewardNum }}</div>
             <div class="user-basic-info">
-                <div class="text-center user-basic-info-list">
-                    <div class="basic-info-value isVip">{{ vipLevel }}</div>
+                <div class="text-center user-basic-info-list" @click="linkTo('vipLevel')">
+                    <div class="basic-info-value isVip" >{{ vipLevel }}</div>
                     <div class="basic-info-label">会员等级</div>
                 </div>
-                <div class="text-center user-basic-info-list">
+                <div class="text-center user-basic-info-list" @click="linkTo('activityRecords')">
                     <div class="basic-info-value">{{ activity }}</div>
                     <div class="basic-info-label">活跃度</div>
                 </div>
-                <div class="text-center user-basic-info-list">
+                <div class="text-center user-basic-info-list" @click="linkTo('candyRecords')">
                     <div class="basic-info-value">{{ totalReward }}</div>
                     <div class="basic-info-label">总糖果</div>
                 </div>
-                <div class="text-center user-basic-info-list">
+                <div class="text-center user-basic-info-list" @click="linkTo('contributionRecords')">
                     <div class="basic-info-value">{{ contribution }}</div>
                     <div class="basic-info-label">贡献值</div>
                 </div>
@@ -58,11 +58,7 @@
         <div class="alert-news-container">
             <div class="container">
                 <div class="news-list">
-                    <div class="news-list-item">消息内容一</div>
-                    <div class="news-list-item">消息内容二</div>
-                    <div class="news-list-item">消息内容三</div>
-                    <div class="news-list-item">消息内容四</div>
-                    <div class="news-list-item">消息内容五</div>
+                    <div class="news-list-item" v-for="item in homeNews" @click="homeNewsDetail(item.id)">{{item.title}}</div>
                 </div>
                 <div class="lines"></div>
                 <l-icon name="guanbi" @click.native="hideTips"/>
@@ -72,10 +68,8 @@
     </div>
 </template>
 <script type="text/javascript">
-    let _this
-    
     import users from '../../api/users.js'
-    
+    import citys from '../../api/citys.js'
     export default {
         name: 'home',
         data() {
@@ -85,6 +79,7 @@
                 news: '',
                 route: 'home',
                 shortMenuList: [],
+                homeNews:[],
                 Men: false,
                 isRunning: false,
                 stepNum: 0,
@@ -101,52 +96,81 @@
             }
         },
         mounted() {
-            _this = this
+            var  _this = this
             _this.getShortMenuList()
-            this.loadNews()
             // 以下是显示广告的
-            this.showTips()
-            _this.pedometer.setBackAction(function (stepNum) {
-//                console.info("home:"+stepNum);
+            _this.loadNews();
+            this.appUtil.addApiCloudEventListener("resume",function(ret, err){
+                if(_this.status == 'activated'){
+                    _this.showTips();
+                }
+            });
+            this.appUtil.addApiCloudEventListener("pedometer",function(stepNum, err){
+//                console.info("home:"+_this.status);
                 _this.backAction(stepNum)
-            })
+            });
         },
         activated() {
             if (!this.session.isLogin()) {
                 this.$router.push('login');
                 return;
             }
+
             this.status = 'activated'
             var _this = this
-//            _this.loadData();
+            _this.loadData();
             users.getCacheMyInfo(this, function (user) {
                 _this.Men = user.sex == '男' ? true : false
             })
-//            _this.pedometer.setBackAction(function (stepNum) {
-////                console.info("home:"+stepNum);
-//                _this.backAction(stepNum);
-//            })
+            setTimeout(function(){
+                _this.showTips();
+            },2000);
         },
         deactivated() {
             this.status = 'deactivated'
-//            this.pedometer.setBackAction(null);
         },
         methods: {
             showTips() {
-                setTimeout(function () {
-                    $('.alert-news-container').fadeIn()
-                    $('.container').stop(true, true).animate({top: 240})
-                }, 500)
+                var homeNewShow = this.session.appCache("homeNewShow");
+                if(homeNewShow){
+                    return;
+                }
+                var _this =this;
+                citys.bulidJSONCity(function (json) {
+                    if (json.code == 1) {
+                        _this.amap.getLocation(_this,function (ret) {
+                            if (!ret.status) {
+                                _this.$Message.error("定位失败");
+                                return;
+                            }
+//                            console.log(JSON.stringify(ret));
+                            var dbData = citys.locationToDBData(_this, ret);
+                            if (dbData != null) {
+                                _this.axios.post("/msg/indextanchuang", {'cityid': dbData.cityid, page: 1, pageSize: 5}, function (json) {
+                                    _this.homeNews = json.dataList;
+                                    setTimeout(function () {
+                                        $('.alert-news-container').fadeIn()
+                                        $('.container').stop(true, true).animate({top: 240})
+                                        _this.session.appCache("homeNewShow",true);
+                                    }, 500)
+                                })
+                            }
+                        },true)
+                    } else {
+                        _this.$Message.error("加载城市数据失败");
+                    }
+                });
+
             },
             hideTips() {
                 $('.alert-news-container').fadeOut()
                 $('.container').stop(true, true).animate({top: 0})
             },
             showNoticeDetails() {
-                _this.$router.push({name: 'articleDetails', params: {id: _this.news.id}})
+                this.$router.push({name: 'articleDetails', params: {id: this.news.id}})
             },
             getShortMenuList() {
-                _this.shortMenuList = [
+                this.shortMenuList = [
                     {
                         router: 'teamList',
                         name: '组队',
@@ -175,16 +199,16 @@
             toShortMenu(router) {
                 this.$router.push(router)
             },
-            
             loadData() {
                 //登录检测
+                var   _this = this;
                 if (this.session.isLogin()) {
                     this.session.getMemberID(function (memberid) {
                         _this.axios.post(_this.session.indexinfo, {'memberid': memberid}, function (json) {
                             var data = json.data
                             _this.vipLevel = data.memberLevel
                             _this.activity = data.activity
-                            _this.totalReward = parseFloat(data.cointotal).toFixed(2)
+                            _this.totalReward = parseFloat(data.cointotal).toFixed(4)
                             _this.contribution = parseInt(data.contributionvalue)
                             
                         })
@@ -192,37 +216,27 @@
                             var data = json.data
                             _this.stepHeat = data.distance
                         })
-                        var activity = 0
                         _this.axios.post(_this.session.myTask, {'memberid': memberid}, function (json) {
                             if (json.dataList.length > 0) {
                                 _this.taskSteps = json.dataList[ 0 ].steps
                             }
-                            $(json.dataList).each(function (index, item) {
-                                activity += item.activity
-                            })
-                            _this.axios.post(_this.session.myActivityAdd, {'memberid': memberid}, function (json) {
-                                activity += json.data.activityadd
-                                _this.activity = activity
-                                _this.axios.post(_this.session.getCoinUnit, null, function (json) {
-                                    _this.getCoinUnit = json.data.getcoinunit
-                                    _this.stepNum = _this.pedometer.getSteps()
-                                    if (isNaN(_this.stepNum)) {
-                                        _this.stepNum = 0
-                                    }
-                                    if (isNaN(_this.activity)) {
-                                        _this.activity = 0
-                                    }
-                                    var steps = _this.stepNum < _this.taskSteps ? _this.stepNum : _this.taskSteps
-                                    _this.rewardNum = (steps * _this.getCoinUnit * _this.activity)
-                                    _this.stepHeat = (steps * 0.03175).toFixed(2)
-                                    _this.eCharts()
-                                }, function (json) {
-                                    _this.$Message.error(json.msg)
-                                })
+                            _this.axios.post(_this.session.getCoinUnit, null, function (json) {
+                                _this.getCoinUnit = json.data.getcoinunit
+                                _this.stepNum = _this.pedometer.getSteps();
+                                if(isNaN(_this.stepNum)){
+                                    _this.stepNum = 0;
+                                }
+                                if(isNaN(_this.activity)){
+                                    _this.activity = 0;
+                                }
+                                var steps = _this.stepNum<_this.taskSteps?_this.stepNum:_this.taskSteps;
+                                _this.rewardNum = (steps * _this.getCoinUnit * _this.activity).toFixed(4);
+                                _this.stepHeat = (steps*0.03175).toFixed(2);
+                                _this.eCharts();
+
                             }, function (json) {
                                 _this.$Message.error(json.msg)
                             })
-                            
                         }, function (json) {
                             _this.$Message.error(json.msg)
                         })
@@ -235,7 +249,7 @@
                 }
                 this.stepNum = stepNum
                 var steps = this.stepNum < this.taskSteps ? this.stepNum : this.taskSteps
-                this.rewardNum = (steps * this.getCoinUnit * this.activity)
+                this.rewardNum = (steps * this.getCoinUnit * this.activity).toFixed(4)
                 this.stepHeat = (steps * 0.03175).toFixed(2)
                 this.isRunning = true
                 clearTimeout(this.timer)
@@ -306,18 +320,27 @@
 //                    console.log(params);
 //                });
             },
-            loadNews() {
-                var _this = this
-                this.axios.post('/msg/notice', {'page': 1, pageSize: 1}, function (json) {
-                    var news = json.dataList
-                    $(news).each(function (index, item) {
-                        _this.news = item
+            loadNews(){
+                var _this = this;
+                this.session.getMemberID(function (memberid) {
+                    _this.axios.post("/notice/list", {memberid:memberid,'page': 1,pageSize:1}, function (json) {
+                        var news = json.dataList;
+                        $(news).each(function (index, item) {
+                            _this.news = item
+                        })
                     })
                 })
             },
             noticeList() {
                 this.$router.push({name: 'articleList', query: {type: 1}})
+            },
+            homeNewsDetail(id){
+                this.$router.push({name: 'guide', params: {id:id}})
+            },
+            linkTo(route){
+                this.$router.push(route);
             }
+
         }
     }
 

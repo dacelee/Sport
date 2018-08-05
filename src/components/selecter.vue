@@ -98,7 +98,7 @@
             border-radius: 8px;
             position: absolute;
             width: 100%;
-            z-index: 2;
+            z-index: 99;
             .select-list-item {
                 font-size: 30px;
                 line-height: 30px;
