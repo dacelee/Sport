@@ -5,7 +5,10 @@
         </div>
         <div class="container">
             <div class="news-item title">
-                {{ title }}&emsp;{{ time }}
+                {{ title }}
+            </div>
+            <div class="news-item time">
+                {{ time }}
             </div>
             <div class="news-item" v-html="shareContainer">
             </div>
@@ -16,7 +19,7 @@
             </div>
             <div class="right-code">
                 <qrcode-vue :value="shareLink" :size="size" level="H" className="code"></qrcode-vue>
-                <img :src="header" class="header" >
+                <img :src="header" class="header">
             </div>
         </div>
         <div class="shareBtn" @click="share('weixin')" v-if="shareBtnShow">分享</div>
@@ -32,23 +35,24 @@
 </template>
 <script>
     import users from '../../api/users.js'
-    import QrcodeVue from 'qrcode.vue';
+    import QrcodeVue from 'qrcode.vue'
+    
     export default {
         name: 'articleShare',
         components: {
             QrcodeVue
         },
         data() {
-            return{
+            return {
                 size: 85,
-                title:'',
-                time:'',
-                imgPath:'',
-                shareLink:'',
-                header:'',
-                show:false,
-                shareBtnShow:true,
-                shareContainer:'',
+                title: '',
+                time: '',
+                imgPath: '',
+                shareLink: '',
+                header: '',
+                show: false,
+                shareBtnShow: true,
+                shareContainer: '',
                 shareList: [
                     {
                         icon: 'weixin',
@@ -70,92 +74,98 @@
             }
         },
         methods: {
-            shareLoad(){
-                var _this = this;
-                var articleid = this.$route.query.id;
+            shareLoad() {
+                var _this = this
+                var articleid = this.$route.query.id
                 this.axios.post(this.session.articleDetail, {'id': articleid}, function (json) {
                     var data = json.data
-                    _this.title = data.title;
-                    _this.time = _this.appUtil.dateFormat(data.addtime, 'yyyy/MM/dd hh:mm');
-                    _this.shareContainer = data.intro;
-                });
-                users.shareAction(this,function(json,memberid){
-                    users.getCacheMyInfo(_this,function(myInfo){
-                        _this.imgPath = json.article_sharetopimg;
-                        _this.header = myInfo.logo;
-                        _this.shareLink = json.reg_shareurl+"&onlineid="+ myInfo.inviter;
-
-                    },true)
-                });
+                    _this.title = data.title
+                    _this.time = _this.appUtil.dateFormat(data.addtime, 'yyyy/MM/dd hh:mm')
+                    _this.shareContainer = data.intro
+                })
+                users.shareAction(this, function (json, memberid) {
+                    users.getCacheMyInfo(_this, function (myInfo) {
+                        _this.imgPath = json.article_sharetopimg
+                        _this.header = myInfo.logo
+                        _this.shareLink = json.reg_shareurl + '&onlineid=' + myInfo.inviter
+                        
+                    }, true)
+                })
             },
-            share(type){
-                users.shareImg(this,0,$('header').outerHeight(true),api.winWidth,$('#shareNew').height(),type)
+            share(type) {
+                users.shareImg(this, 0, $('header').outerHeight(true), api.winWidth, $('#shareNew').height(), type)
             }
         },
         mounted() {
-            $(".code").width(87)
-            $(".code").height(87)
+            $('.code').width(87)
+            $('.code').height(87)
         },
         activated() {
-            this.shareLoad();
+            this.shareLoad()
         }
     }
 </script>
 <style lang="scss">
-    .share-new{
+    .share-new {
         width: 100%;
         .track-share-container {
-        .track-share {
-            position: fixed;
-            display: flex;
-            flex-wrap: nowrap;
-            bottom: 0;
-            left: 0;
-            width: 750px;
-            z-index: 3;
-            background-color: #33333a;
-            justify-content: space-between;
-            padding: 40px 80px;
-        .track-share-item {
-            width: 100px;
-        .icons {
-            width: 100px;
-            height: 100px;
+            .track-share {
+                position: fixed;
+                display: flex;
+                flex-wrap: nowrap;
+                bottom: 0;
+                left: 0;
+                width: 750px;
+                z-index: 3;
+                background-color: #33333a;
+                justify-content: space-between;
+                padding: 40px 80px;
+                .track-share-item {
+                    width: 100px;
+                    .icons {
+                        width: 100px;
+                        height: 100px;
+                    }
+                    .share-label {
+                        color: #ffd554;
+                        margin-top: 20px;
+                        font-size: 30px;
+                        line-height: 30px;
+                    }
+                }
+            }
         }
-        .share-label {
-            color: #ffd554;
-            margin-top: 20px;
-            font-size: 30px;
-            line-height: 30px;
-        }
-        }
-        }
-        }
-
-        .top{
+        
+        .top {
             width: 100%;
         }
-        .top img{
+        .top img {
             width: 100%;
         }
-        .container{
+        .container {
             margin-top: 10px;
         }
-        .news-item{
-            padding: 20px 20px 20px;
+        .news-item {
+            padding: 80px 20px 80px;
             font-size: 30px;
             line-height: 40px;
+            &.title {
+                font-size: 40px;
+                line-height: 40px;
+                padding: 5px 20px;
+            }
+            &.time {
+                font-size: 24px;
+                line-height: 34px;
+                padding: 5px 20px;
+            }
         }
-        .news-item.title{
-            font-size: 40px;
-            line-height: 50px;
-        }
-        .share-container{
-           height: 300px;
+        .share-container {
+            height: 300px;
             width: 100%;
             position: relative;
         }
-        .share-container .left-words{
+        .share-container .left-words {
             position: absolute;
             line-height: 50px;
             font-size: 35px;
@@ -163,14 +173,25 @@
             bottom: 30px;
             left: 30px;
         }
-        .share-container .right-code{
-           position: absolute;
+        .share-container .right-code {
+            position: absolute;
             bottom: 30px;
             right: 30px;
         }
-        .share-container .right-code .code canvas{display: block;}
-        .share-container .right-code .header {width: 40px;height:40px;position: absolute;left: 50%;top: 50%;margin-top: -20px;margin-left: -20px;display: block;}
-        .shareBtn{
+        .share-container .right-code .code canvas {
+            display: block;
+        }
+        .share-container .right-code .header {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -20px;
+            margin-left: -20px;
+            display: block;
+        }
+        .shareBtn {
             text-align: center;
             line-height: 34px;
             padding: 33px 0;
@@ -179,6 +200,7 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 750px;}
+            width: 750px;
+        }
     }
 </style>
