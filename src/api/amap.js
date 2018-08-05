@@ -2,11 +2,24 @@ export default {
     aMap: null,
     map:null,
     timer:0,
-    minDisAccuracy:100, //最小距离
-    maxDisAccuracy:500, //最大移动距离
-    timerDis:10, //定位频率
+    minDisAccuracy:5, //最小采集距离
+    maxDisAccuracy:100, //最大采集距离
+    timerDis:10, //定位误差阈值
     mileage:0,
+    location:null,
     startLocation(context, db){
+
+    },
+    locationTask(context, db){
+
+    },
+    stopLocation(){
+
+    },
+    getLocation(context,callback,getAddress){
+
+    },
+    getAddress(lnglat,callback){
 
     },
     distance(lon1,lat1,lon2,lat2){
@@ -44,28 +57,9 @@ export default {
         return colors;
     },
     getTodayMileage(context,memberid){
-        var _this = this;
-        var todayMileage = context.session.appCache("todayMileage");
-        var now = new Date().getTime();
-        if(todayMileage){
-            if(todayMileage.time+300>now){
-                return todayMileage.mileage;
-            }
-        }
-        var locusData = context.db.loadLocus(context, memberid);
-        //console.log(JSON.stringify(locusData));
-        var totalDis = 0;
-        for (var i = 0; i < locusData.length - 1; i++) {
-            var l1 = locusData[i];
-            var l2 = locusData[i + 1];
-            var dis = _this.distance(l1.lng, l1.lat, l2.lng, l2.lat);
-            if(dis<_this.maxDisAccuracy){
-                totalDis += dis;
-            }
-        }
-        var mileage = (totalDis/1000).toFixed(2);
-        context.session.appCache("todayMileage",{'time':now,'mileage':mileage});
-        return mileage;
+
+        return 0;
+
     },
     open(context){
         var _this = this;
@@ -74,19 +68,7 @@ export default {
         })
     },
     showMap(context,ret){
-         var map = new AMap.Map('container', {
-            zoom:15,//级别
-            center: [ret.lon, ret.lat],//中心点坐标
-        });
-        var _this = this;
-        context.session.getMemberID(function(memberid) {
-            context.totalStep = context.db.loadTodaySteps(memberid, context);
-            var locusData = context.db.loadLocus(context, memberid);
-            if(!locusData){
-                return;
-            }
-            _this.graspRoad(locusData,map);
-        })
+
     },
     hide(context){
         //if (this.aMap == null) {
@@ -97,6 +79,11 @@ export default {
         //});
         //
         //this.aMap.hide();
-    }
+    },
+    graspRoad(locusData,map){
 
+    },
+    driving(){
+
+    }
 }

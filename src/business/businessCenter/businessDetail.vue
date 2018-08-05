@@ -1,14 +1,13 @@
 <template>
     <div class="businessDetail">
-       <div class="detailPic"><img :src="logo"></div>
+       <div class="detailPic"><img :src="logo" v-if="logo!=''"></div>
        <div class="detailTitle">{{title}}</div>
        <div class="goods-price">￥{{price}}</div>
        <div class="goods-te">
            <div class="pull-left">等值糖果：{{coin}}</div>
            <div class="pull-right">今日币价：{{coinPrice}} 美元</div>
        </div>
-       <div class="word">
-           {{word}}
+       <div class="word" v-html="word">
        </div>
         <div class="businessCart" v-show="carShow">
             <div class="hideCart" @click="hideCart"></div>
@@ -28,12 +27,11 @@
                         <div class="pull-right"><Radio label="1"><l-icon :name="payType!=1?'weigouxuan':'gouxuan'" /></Radio></div>
                     </div>
                     <div class="payStylelist">
-                        <div class="pull-left">糖果购买</div>
-
+                        <div class="pull-left">糖果兑换</div>
                         <div class="pull-right"><Radio label="2"><l-icon :name="payType!=2?'weigouxuan':'gouxuan'" /></Radio></div>
                     </div>
                     <div class="payStylelist">
-                        <div class="pull-left">人名币＋糖果</div>
+                        <div class="pull-left">人民币＋糖果</div>
                         <div class="pull-right"><Radio label="3"><l-icon :name="payType!=3?'weigouxuan':'gouxuan'" /></Radio></div>
                     </div>
                 </RadioGroup>
@@ -60,7 +58,7 @@
         name: 'businessDetail',
         data() {
             return {
-                logo: 'static/img/goods/44.gif',
+                logo: '',
                 title:'',
                 price:0,
                 coin:0,
@@ -73,6 +71,21 @@
                 type:0,
                 coinPay:""
             }
+        },
+        deactivated(){
+            this.logo='',
+            this.title='',
+            this.price=0,
+            this.coin=0,
+            this.coinPrice=0,
+            this.word="",
+            this.cartCoin=0,
+            this.carShow=false,
+            this.payType=1,
+            this.rmbPay="",
+            this.type=0,
+            this.coinPay=""
+            $(".view-container")[0].scrollTop = 0;
         },
         activated () {
             var id = this.$route.params.id;
@@ -113,7 +126,7 @@
                 if(this.rmbPay>this.price){
                     this.rmbPay = this.price;
                 }
-                    this.coinPay = ((this.price-this.rmbPay)/this.price*this.coin).toFixed(2);
+                this.coinPay = ((this.price - this.rmbPay) / this.price * this.coin).toFixed(2);
 
             }
      },
@@ -138,7 +151,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;}
-        .word{color:#333;font-size:28px;line-height:50px; padding: 20px 20px 20px 20px;min-height: 50vh}
+        .word{color:#333;font-size:28px;line-height:50px; padding: 20px 20px 20px 20px;min-height: 50vh;
+         img{max-width: 100%;}
+        }
         .bottomBtn{
             position: fixed;
             bottom: 0;

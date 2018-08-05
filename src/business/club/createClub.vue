@@ -108,7 +108,7 @@
                 var _this = this;
                 this.amap.getLocation(this,function (ret) {
                     if (!ret.status) {
-                        _this.$Message.error("定位失败,请开启GPS");
+                        _this.$Message.error("定位失败");
                         return;
                     }
                     _this.formData.x = ret.lon;

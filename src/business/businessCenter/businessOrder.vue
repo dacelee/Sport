@@ -59,6 +59,7 @@
 <script>
 import goods from '../../api/goods.js'
 import address from '../../api/address.js'
+import pay from '../../api/pay.js'
 export default {
     name: 'businessOrder',
     data() {
@@ -111,8 +112,16 @@ export default {
             this.$router.replace('orderCenter')
         },
         alipay(orderno){
-            this.$Message.info("支付宝支付");
-            this.$router.replace('orderCenter')
+            var body = "购买";
+            $(this.list).each(function(index,item){
+                body+=item.name+"|";
+            });
+            var _this = this;
+            pay.aliPay(this,orderno,"趣步商品支付",body,this.totalPrice,function(ret){
+                if(ret.code!='9000'){
+                    _this.$router.replace('orderCenter')
+                }
+            });
         },
         changeNum(){
             this.totalPrice = 0;
@@ -120,9 +129,11 @@ export default {
             var _this = this;
             var list = this.list;
             $(list).each(function(index,item){
-                _this.totalPrice +=item.rmb*item.num;
-                _this.totalCoin += parseFloat((item.hlb*item.num).toFixed(2));
+                _this.totalPrice +=parseFloat(item.rmb*item.num);
+                _this.totalCoin += parseFloat(item.hlb*item.num);
             });
+            _this.totalPrice = _this.totalPrice.toFixed(2)
+            _this.totalCoin = _this.totalCoin.toFixed(2)
         }
     },
     activated(){

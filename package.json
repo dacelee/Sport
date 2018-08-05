@@ -14,7 +14,7 @@
     "echarts": "^4.1.0",
     "exif-js": "^2.3.0",
     "html2canvas": "^1.0.0-alpha.12",
-    "iview": "^2.14.3",
+    "iview": "^3.0.0",
     "jquery": "^3.3.1",
     "qrcode.vue": "^1.6.0",
     "vue": "^2.5.2",

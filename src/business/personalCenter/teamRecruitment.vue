@@ -1,41 +1,33 @@
 <template>
     <div class="team-recruitment">
             <div class="link">
-                推广链接：{{ shareLink }} <div class="copy" @click="copy">复制</div>
+                推广链接：<div class="address">{{ shareLink }}</div> <div class="copy" @click="copy">复制</div>
             </div>
         <div id="report">
             <div class="team-recruitment-ad">
-                 <img :src="adImgUrl" alt="" >
-            </div>
-            <div class="team-recruitment-container">
-                <div class="recruitment-container" v-html="content"></div>
+                <img :src="adImgUrl" alt="" >
                 <div class="code-info">
-                    <div class="left-words">
-                       {{content2}}
-                    </div>
                     <div class="right-img">
                         <qrcode-vue :value="shareLink" :size="size" level="H" className="code"></qrcode-vue>
+                        <img :src="header" class="header" >
                     </div>
                 </div>
-            </div>
-            <div class="other-info">
                 <div class="other-info-item">
-                    我的推广码：{{ shareCode }}
+                    我的邀请码：{{ shareCode }}
                 </div>
-                <!--<div class="other-info-item text-right text-yellow" @click="saveImg">-->
-                    <!--保存图片-->
-                <!--</div>-->
             </div>
         </div>
-        <div class="track-share-container">
+        <div class="shareBtn" @click="share('weixin')" v-if="shareBtnShow">分享</div>
+        <div class="track-share-container"  v-if="show">
             <div class="track-share">
                 <div v-for="item in shareList" class="track-share-item text-center" @click="share(item.icon)">
                     <l-icon :name="item.icon"/>
                     <div class="share-label">{{ item.name }}</div>
-                    <img :src="codeUrl" alt="">
+                    <img :src="codeUrl" alt="" >
                 </div>
             </div>
         </div>
+        <img :src="codeUrl" alt="">
     </div>
 </template>
 
@@ -50,13 +42,14 @@
         data() {
             return {
                 size: 85,
-                adImgUrl: '/static/img/personal/default.jpg',
+                show:false,
+                adImgUrl: '',
                 adUrl: '',
-                content: '',
-                content2:'',
                 codeUrl: '',
+                header:'',
                 shareLink: '',
                 shareCode: '',
+                shareBtnShow:true,
                 shareList: [
                     {
                         icon: 'weixin',
@@ -92,63 +85,23 @@
                 });
             },
             share(){
-                var _this = this;
-//                $("img").each(function(){
-//                    $(this).attr("crossOrigin",'Anonymous');
-//                })
-                var screenClip = api.require('screenClip');
-                screenClip.open({
-                    cutFrame: {x: 0, y: $('header').outerHeight(true)+$(".link").outerHeight(true), w: api.winWidth, h: $('#report').height()},
-                    save: {album: false, imgPath: "fs://sport", "imgName": "sport.png"}
-                },function(ret, err) {
-//                    if (ret.status) {
-////                        alert(JSON.stringify(ret));
-//                    } else {
-////                        alert(JSON.stringify(err));
-//                    }
-                });
-                setTimeout(function(){
-                    screenClip.save( {album: false, imgPath: "fs://sport", "imgName": "sport.png"},function(ret, err) {
-                        if (ret.status) {
-                            var sharedModule = api.require('shareAction');
-                            sharedModule.share({
-                                path:"fs://sport/sport.png",
-                                type: 'image'
-                            });
-//                            alert(JSON.stringify(ret));
-                        } else {
-//                            alert(JSON.stringify(err));
-                        }
-                    });
-                },600);
 
-//                html2canvas($('.team-recruitment-container').get(0),
-//                        {useCORS:true,
-//                            width:window.screen.availWidth,
-//                            heigth:window.screen.availHeight,
-//                            x:0,
-//                            y:window.pageYOffset,
-//                            scale:1,
-//                          })
-//                        .then(function (canvas) {
-//                            var imgUrl = canvas.toDataURL("image/png", 0.7);
-//                            _this.codeUrl = imgUrl;
-//                        });
+                users.shareImg(this,0,$('header').outerHeight(true)+$(".link").outerHeight(true),api.winWidth,$('#report').height())
+
             }
         },
         mounted() {
             $(".code").width(87)
             $(".code").height(87)
-//            this.size = $(".code").width()-2;
         },
         activated() {
             var _this = this;
+            this.shareBtnShow = true;
             users.shareAction(this,function(json,memberid){
-                users.getCacheMyInfo(this,function(myInfo) {
-                    _this.adImgUrl = json.teamrecruit_sharebanner;
-                    _this.content = json.teamrecruit_sharecotent1;
-                    _this.content2 = json.teamrecruit_sharecotent2;
-                    _this.shareLink = json.reg_shareurl + "?onlineid=" + myInfo.inviter+"&articleid=-1";
+                users.getCacheMyInfo(_this,function(myInfo) {
+                    _this.header = myInfo.logo;
+                    _this.adImgUrl = json.teamrecruit_sharebgimg;
+                    _this.shareLink = json.reg_shareurl + "?onlineid=" + myInfo.inviter;
                     _this.shareCode = myInfo.inviter;
 //                var sharedModule = api.require('shareAction');
 //                sharedModule.share({
@@ -163,50 +116,22 @@
 
 <style lang="scss">
     .team-recruitment {
-    .link{padding: 10px 40px;}
+    .link{padding: 0px 40px;margin-bottom: 20px;line-height:60px;height: 60px;margin-top:20px;
+        .address{width: 400px;display: inline-grid;height: 60px;overflow: hidden; white-space:nowrap;}
+    }
     .copy{color:#f8c513;display: inline-block;}
-        .text-yellow {
-            color: #f8c513;
-        }
         .team-recruitment-ad {
+            position: relative;
             width: 100%;
             img {
-                width: 100%;
-                height: 300px;
+                width: 100%;display: block;
             }
-        }
-        .team-recruitment-container {
-            width: 100%;
-            .recruitment-container {
-                padding: 30px 30px 30px;
-                border-bottom: 2px solid #d7dce6;
+            .other-info-item{position: absolute;left: 30px;bottom: 50px;}
+            .code-info{position: absolute;bottom: 20px;right: 50px;
+            .right-img{position: relative;}
             }
-            .code-info {
-                padding: 40px 30px;
-                display: flex;
-                justify-content: space-between;
-                .left-words {
-                    width: 400px;
-                    font-size: 24px;
-                    line-height: 40px;
-                    padding: 50px 0;
-                }
-                .right-img {
-                    .code {
-                        display: block;
-                        text-align: center;
-                        vertical-align: middle;
-                        border:2px solid #FFF;
-                        padding-top: 2px;
-                    }
-                }
-            }
-        }
-        .other-info {
-            width: 690px;
-            margin: 30px auto;
-            font-size: 30px;
-            line-height: 40px;
+
+            .header{width: 40px;height:40px;position: absolute;left: 50%;top: 50%;margin-top: -20px;margin-left: -20px;}
         }
         .track-share-container {
             .track-share {
@@ -235,5 +160,15 @@
                 }
             }
         }
+        .shareBtn{
+            text-align: center;
+            line-height: 34px;
+            padding: 33px 0;
+            background-color: #F8C513;
+            color: #000;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 750px;}
     }
 </style>

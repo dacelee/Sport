@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="imageClipcontent">
         <vueCropper
                 ref="cropper"
                 :img="option.img"
@@ -82,24 +82,28 @@
         mounted() {
             _this = this;
             var height = $(window).height() - document.querySelector('header').offsetHeight - document.querySelector('.clip_btn_save').offsetHeight;
-            $(".view-container .content").height(height);
+            $(".imageClipcontent").height(height);
         }
     }
 </script>
 <style lang="scss">
-   .view-container .content {
-        margin: auto;
-        width: 100%;
-        margin-bottom: 100px;
-    }
-.clip_btn_save{  font-size: 34px;
-    line-height: 34px;
-    padding: 33px 0;
-    background-color: #F8C513;
-    color: #000;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    text-align: center;
-    width: 750px;}
+  .imageClipcontent {
+      margin: auto;
+      width: 100%;
+      margin-bottom: 100px;
+
+      .clip_btn_save {
+          font-size: 34px;
+          line-height: 34px;
+          padding: 33px 0;
+          background-color: #F8C513;
+          color: #000;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          text-align: center;
+          width: 750px;
+      }
+
+  }
 </style>

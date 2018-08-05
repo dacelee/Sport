@@ -4,64 +4,50 @@
             <div class="news-details-title">{{ newsDetails.title }}</div>
             <div class="news-details-info">
                 <div class="news-author pull-left" v-if="newsDetails.author!=''">作者:{{ newsDetails.author }}</div>
-                <div class="news-time ">发布时间:{{ newsDetails.dateTime }}</div>
+                <div class="news-time pull-left">发布时间:{{ newsDetails.dateTime }}</div>
             </div>
             <div class="news-details-content" v-html="newsDetails.content"></div>
-        </div>
-        <div class="news-short-menu" v-if="newsDetails.isupdate!=1&&(newsDetails.type==1||newsDetails.type==2)">
-            <div class="news-short-menu-item text-center" @click="joinin">
-                <l-icon name="fenxiang"/>
-                同意加入
-            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import team from '../../api/team.js'
     export default {
         name: 'news-details',
         data() {
 
             return {
-                newsDetails: {}
+                newsDetails: {
+//                    title: '运动后恶心想吐怎么办 运动后恶心想吐的原因',
+//                    author: 'Louis',
+//                    dateTime: '2018/06/06 21:25',
+//                    content: '跑步是一种锻炼身体的好习惯，很多年轻人都有早上跑步的习惯，但是有时候跑步会岔气，这是为什么呢？跑步时，我们应该选择合适的时间和方式，不应该盲目去跑。'
+                }
             }
         },
         methods: {
             loadData(){
-                var  _this = this;
+                var _this = this;
                 var param = this.$route.params;
-                this.axios.post("/notice/detail", {"id":param.id}, function (json) {
+                this.axios.post("/msg/detail", {"id":param.id}, function (json) {
                     var data = json.data;
-                    var content = data.content;
-                    if(data.type==1||data.type==2){
-                        var where = data.type==1?data.teamname:data.clubname;
-                        content = data.sendnikename+"邀请您加入"+where;
-                    }
                     _this.newsDetails= {
                         title: data.title,
                         author: '',
                         dateTime: _this.appUtil.dateFormat(data.addtime,"yyyy/MM/dd hh:mm"),
-                        content: content,
-                        isupdate:data.isupdate,
-                        cludid:data.clubid,
-                        teamid:data.teamid,
-                        type:data.type
+                        content: data.content
                     }
+                    _this.$emit('changeTitle', data.title.substr(0,15));
                 },function(json){
 
                 });
-            },
-            joinin(){
-                var param = this.$route.params;
-                team.dotypeAction(this,param.id);
             }
         },
         activated(){
+
             this.loadData();
         },
         mounted() {
-
         }
     }
 </script>
@@ -83,12 +69,11 @@
     .news-details-title {
         font-size: 42px;
         line-height: 50px;
-        text-align: center;
     }
-    .news-time{text-align: center;}
     .news-details-info {
         margin: 20px 0 40px 0;
         color: #666666;
+        display: inline-block;
     .news-author {
         margin-right: 30px;
     }
@@ -98,7 +83,7 @@
         line-height: 40px;
         color: #333333;
         padding-bottom: 60px;
-        img{max-width: 100%}
+    img{max-width: 100%}
     }
     }
     .news-reward-info {
@@ -173,7 +158,7 @@
         bottom: 0;
         left: 0;
     .news-short-menu-item {
-       flex: 1;
+        width: 250px;
         line-height: 80px;
         font-size: 32px;
         border-right: 1px solid #999999;

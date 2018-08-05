@@ -84,10 +84,13 @@
             initStatus() {
                 window.apiready = function () {
                     $api.setStorage('appRuntime', true);
+                    $api.rmStorage("homeNewShow")
                     This.initHeader();
                     This.exitApp();
                     if(This.session.isLogin()){
-                        This.session.openSession(This);
+                        setTimeout(function(){
+                            This.session.openSession(This);
+                        },500)
                     }else{
 //                        alert("未登入");
                     }
@@ -96,6 +99,19 @@
                     }, function(ret, err){
                         This.$Message.error('网络断开');
                     });
+
+                    api.addEventListener({
+                        name:'resume'
+                    }, function(ret, err){
+                        This.appUtil.apiCloudEvent("resume",ret, err);
+                    });
+                    api.addEventListener({
+                        name:'pause'
+                    }, function(ret, err){
+                        $api.rmStorage("homeNewShow")
+                    });
+
+
 //                    var systemType = api.systemType;
 //                    if(systemType=="android") {
 //                        api.addEventListener({
@@ -152,6 +168,7 @@
                     } else if (ci == 1) {
                         time2 = new Date().getTime()
                         if (time2 - time1 < 3000) {
+                            $api.rmStorage("homeNewShow")
                             api.toLauncher();
 //                            $api.rmStorage('appRuntime');
 //                            api.closeWidget({

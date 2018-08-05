@@ -15,11 +15,11 @@
          <div class="pull-right"><l-icon name="weigouxuan"/></div>
        </div>
        <div class="payStylelist">
-         <div class="pull-left">糖果购买</div>
+         <div class="pull-left">糖果兑换</div>
          <div class="pull-right"><l-icon name="weigouxuan"/></div>
        </div>
        <div class="payStylelist">
-         <div class="pull-left">人名币＋糖果</div>
+         <div class="pull-left">人民币＋糖果</div>
          <div class="pull-right"><l-icon name="gouxuan"/></div>
        </div>
       <div class="inputText"><input type="" name="" placeholder='输入人民币'> +

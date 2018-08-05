@@ -5,12 +5,16 @@
             <div class="healthy-container">
                 <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight">
                     <div class="healthy-list-item" v-for="item in list" @click="toDetails(item)">
-                        <div class="news-left-img pull-left">
-                            <img :src="item.imgPath" alt="">
-                        </div>
-                        <div class="news-right-container pull-left">
-                            <div class="title">{{ item.name }}</div>
-                            <div class="description">{{ item.description }}</div>
+
+                        <div :class="type==1||type==4?'activity':'share'">
+                            <div class="news-left-img pull-left">
+                                <img :src="item.imgPath" alt="">
+                                <div class="bg"></div>
+                            </div>
+                            <div class="news-right-container pull-left">
+                                <div class="title">{{ item.name }}</div>
+                                <div class="description" v-if="type==3">{{ item.description }}</div>
+                            </div>
                         </div>
                     </div>
                 </Scroll>
@@ -37,7 +41,7 @@
                         name: '行业快讯'
                     }
                 ],
-                scrollHeight: 300,
+                scrollHeight: 900,
                 page: 1,
                 list: [],
                 currentRoute: 'healthy',
@@ -63,6 +67,7 @@
             changeRoute(route) {
                 this.type = route
                 this.page = 1
+                this.list= [];
                 this.loadData()
             },
             loadData(resolve) {
@@ -97,29 +102,52 @@
                 })
             }
         },
-        activated() {
-            this.type = '1'
-            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true) - 5
+        mounted() {
             this.page = 1
-            this.loadData()
+            this.loadData();
+            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true) - 5
+            $(".healthy-container").height( this.scrollHeight);
+        },
+        activated() {
+            var _this = this;
+           if(this.type==3){
+               setTimeout(function(){
+                   _this.$emit('changeRightTitle', '我来分享')
+                   _this.$emit('changeRightIcon', 'woxiangfenxiang')
+               },10)
+           }
         }
     }
 </script>
-
 <style lang="scss">
     .news-container {
         padding-bottom: 0 !important;
     }
-    
     .healthy-container {
         padding-bottom: 0 !important;
         .healthy-list-item {
-            height: 180px;
             border-bottom: 2px solid #999999;
             margin: 0 auto;
-            padding: 10px 20px;
             overflow: hidden;
             background-color: #ffffff;
+            .activity{
+                 height: 300px;
+                 position:relative;
+                text-align:center;
+                .news-left-img {
+                    width: 100%;
+                    height:100%;
+                    img {
+                        width: 100%;
+                        height: auto;
+                    }
+                    .bg{width: 100%;height:100%;background-color: rgba(0,0,0,0.5);position: absolute;top:0px;left: 0px;}
+                }
+                .news-right-container  {position: absolute;left: 10px;bottom: 20px;width: 100%;z-index:10;
+                 .title {width: 95%;color:#FFF;margin: 0px auto;}
+                }
+            }
+            .share{ height: 180px; padding: 10px 20px;}
             .news-left-img {
                 width: 160px;
                 height: 160px;
@@ -128,12 +156,13 @@
                     width: 160px;
                     height: 160px;
                 }
+
             }
             .news-right-container {
                 width: 510px;
                 height: 160px;
                 .title {
-                    font-size: 40px;
+                    font-size: 35px;
                     line-height: 40px;
                     height: 40px;
                     overflow: hidden;

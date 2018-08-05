@@ -70,7 +70,7 @@
                             if(isNaN(_this.stepNum )){
                                 _this.stepNum = 0;
                             }
-                            _this.sugarNum = (_this.stepNum* _this.getCoinUnit* _this.activity).toFixed(2);
+                            _this.sugarNum = (_this.stepNum* _this.getCoinUnit* _this.activity).toFixed(4);
                         },function(json){
                             _this.$Message.error(json.msg)
                         });

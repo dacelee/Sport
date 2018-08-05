@@ -27,22 +27,26 @@ Vue.prototype.pedometer = pedometer
 Vue.prototype.amap = amap
 Vue.config.productionTip = false
 Vue.use(component)
-import {Message,Icon,Progress,Scroll,Spin,Radio,
-    RadioGroup,Checkbox,CheckboxGroup,InputNumber} from 'iview';
+import iView from 'iview';
+//import {Message,Icon,Progress,Scroll,Spin,Radio,
+//    RadioGroup,Checkbox,CheckboxGroup,InputNumber} from 'iview';
+import 'iview/dist/styles/iview.css';
 import './style/iview_theme.less'
-Message.config({
-    top: 'auto'
+
+Vue.use(iView, {
+    transfer: true,
+    size: 'large'
 });
-Vue.prototype.$Message = Message
-Vue.component("Icon",Icon)
-Vue.component("Progress",Progress)
-Vue.component("Scroll",Scroll)
-Vue.component("RadioGroup",RadioGroup)
-Vue.component("Radio",Radio)
-Vue.component("CheckboxGroup",CheckboxGroup)
-Vue.component("Checkbox",Checkbox)
-Vue.component("Spin",Spin)
-Vue.component("InputNumber",InputNumber)
+//Vue.prototype.$Message = Message
+//Vue.component("Icon",Icon)
+//Vue.component("Progress",Progress)
+//Vue.component("Scroll",Scroll)
+//Vue.component("RadioGroup",RadioGroup)
+//Vue.component("Radio",Radio)
+//Vue.component("CheckboxGroup",CheckboxGroup)
+//Vue.component("Checkbox",Checkbox)
+//Vue.component("Spin",Spin)
+//Vue.component("InputNumber",InputNumber)
 
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
@@ -66,6 +70,9 @@ new Vue({
     components: {index},
     template: '<index/>',
     mounted() {
+        this.$Message.config({
+            top: 'auto'
+        });
         return;
         //if (this.$router.history.current.name) {
         //    // 初始化时判断是否存在路由信息,如果不存在路由信息,则跳转至首页

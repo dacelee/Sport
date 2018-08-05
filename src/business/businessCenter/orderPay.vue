@@ -47,8 +47,8 @@
                合计
             </div>
             <div class="pull-right">
-              <p>人民币：￥{{totalPrice}}</p>
-              <p>糖果：&nbsp;{{totalCoin}}</p>
+              <p><label>人民币：</label>￥{{totalPrice}}</p>
+              <p><label>糖果：</label>{{totalCoin}}</p>
             </div>
             </div>
             <div class="pull-right rightBox"  @click="pay">支付</div>
@@ -59,6 +59,7 @@
 <script>
 import goods from '../../api/goods.js'
 import address from '../../api/address.js'
+import pay from '../../api/pay.js'
 export default {
     name: 'orderDetailPay',
     data() {
@@ -89,18 +90,12 @@ export default {
             this.$Message.info("微信支付");
         },
         alipay(){
-            this.$Message.info("支付宝支付");
-        },
-        changeNum(){
-            this.totalPrice = 0;
-            this.totalCoin = 0;
-            var _this = this;
-            var list = this.list;
-            $(list).each(function(index,item){
-                _this.totalPrice +=item.rmb*item.num;
-                _this.totalCoin += parseFloat((item.hlb*item.num).toFixed(2));
+            var body = "购买";
+            $(this.goodsList).each(function(index,item){
+                body+=item.name+"|";
             });
-        }
+            pay.aliPay(this,this.orderno,"趣步商品支付",body,this.totalPrice);
+        },
     },
     activated(){
         var orderId =  this.$route.query.id;
@@ -198,7 +193,9 @@ white-space: nowrap;}
             .leftBox{align-items:Center;
              padding:20px;color:#fff;width:70%;
              .pull-left{color:#F8C513!important}
-              .pull-right{font-size:24px;color:#F8C513;float:right;}
+              .pull-right{font-size:24px;color:#F8C513;float:right;text-align:left;
+                  label{display: inline-block;width: 130px;text-align: right;}
+              }
             }
             .rightBox{background-color: #F8C513;padding:30px;color: #000;width:30%;}
         }

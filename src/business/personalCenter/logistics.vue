@@ -10,9 +10,7 @@
         </div>
     </div>
 </template>
-
 <script>
-    let _this
     export default {
         name: 'logistics',
         data() {
@@ -51,8 +49,12 @@
                 ]
             }
         },
+        activated () {
+            var orderId = this.$route.params.id
+            goods.loadLogistics(this,orderId);
+        },
         mounted() {
-            _this = this
+            var _this = this
             _this.$nextTick(function () {
                 let height = $('.view-container').height()
                 $(_this.$el).css('min-height', height)

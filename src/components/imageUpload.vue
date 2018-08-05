@@ -51,6 +51,10 @@
                 type: Number,
                 default: 200
             },
+            noClip:{
+                type:Boolean,
+                default:false,
+            },
             imageClipStart:{
                 type: Function,
                 default () {//截图开始
@@ -97,6 +101,7 @@
                 var _this= this;
                 if(imgs.length==0){
                     _this.uploadList = [];
+                    return;
                 }
                 $(imgs).each(function(index,url){
                     if(url&&url!=null&&url!=""){
@@ -180,11 +185,21 @@
                 var  context = "listener_"+Date.now() + _this.tempIndex++;
                 _this.listener(context);
                 _this.imageClipStart();
-                _this.$router.push({
-                    name: 'imageClip',
-                    params:{"base64": base64Data},
-                    query: {"context": context,"width":clipW,"height":clipH}
-                });
+                if(!_this.noClip){
+                    _this.$router.push({
+                        name: 'imageClip',
+                        params:{"base64": base64Data},
+                        query: {"context": context,"width":clipW,"height":clipH}
+                    });
+                }else{
+                    api.sendEvent({
+                        name: 'clip_success_'+context,
+                        extra: {
+                            base64: base64Data
+                        }
+                    });
+                }
+
             },
             listener(context){
                 var _this = this;

@@ -28,18 +28,19 @@
                             <l-icon name="shangchuantupian"/>
                         </div>
                         <div class="select-upload-label text-center">上传图片 0/1</div>
-                        <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess"/>
+                        <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess" :noClip="true"/>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="footer-operation" v-if="clear||payment||appeal||receivables">
+        <div class="footer-operation" v-if="clear||payment||appeal||receivables||confirm">
             <div class="btn-area pull-right">
-                <div class="btn btn-confirm" @click="clearOrder" v-if="clear">取消</div>
+                <div class="btn btn-confirm"  v-if="clear">打款时间：{{timer}}</div>
                 <div class="btn btn-confirm" @click="payOrder" v-if="payment">确认支付</div>
-                <div class="btn" @click="appealOrder" v-if="appeal">申诉</div>
+                <div class="btn" v-if="confirm">等待卖家确认，倒计时:{{timer}}</div>
+                <div class="btn" v-if="appeal" @click="appealOrder">申诉</div>
                 <div class="btn btn-confirm" @click="paySuccess" v-if="receivables">发送糖果</div>
             </div>
         </div>
@@ -56,7 +57,9 @@
                 payment:false,
                 appeal:false,
                 receivables:false,
+                confirm:false,
                 status:0,
+                timer:'',
                 tradescreenshot:'',
                 list: [
                     {
