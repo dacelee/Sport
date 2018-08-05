@@ -45,17 +45,14 @@ export default {
         }
         return true;
     },
+    getLoginUser(){
+        return  $api.getStorage('loginUser');
+    },
     openSession(context){
-        if (this.isAPPRuntime()) {
-            context.pedometer.start(context, context.db);
-            context.amap.startLocation(context, context.db);
-        }
+
     },
     closeSession(context){
-        if (this.isAPPRuntime()) {
-            context.pedometer.stop();
-            context.amap.stopLocation();
-        }
+
     },
     loginSuccess:function(user,context){
         this.appCache('loginUser',user);

@@ -29,33 +29,35 @@
         methods: {
             loadData(resolve){
                 var _this = this;
-                var action = ['','/msg/notice'];
+                var action = ['','/notice/list'];
                 var title = ['','消息列表'];
                 var type = this.$route.query.type;
                 this.$emit('changeTitle',title[type]);
-                this.axios.post(action[type], {"page":_this.page,"pageSize":10}, function (json) {
-                    if(_this.page==1){
-                        _this.list = [];
-                    }
-                    _this.page++;
-                    if(resolve){
-                        resolve();
-                    }
-                    _this.pageCount = json.pageCount;
-                    $(json.dataList).each(function(index,item){
-                        _this.list.push( {
-                            id: item.id,
-                            name: item.title,
-                            imgPath:item.logo,
-                            description: item.intro,
-                            time:_this.appUtil.dateFormat(item.addtime,"yyyy/MM/dd hh:mm")
+                this.session.getMemberID(function(memberid) {
+                    _this.axios.post(action[type], {memberid:memberid,"page": _this.page, "pageSize": 10}, function (json) {
+                        if (_this.page == 1) {
+                            _this.list = [];
+                        }
+                        _this.page++;
+                        if (resolve) {
+                            resolve();
+                        }
+                        _this.pageCount = json.pageCount;
+                        $(json.dataList).each(function (index, item) {
+                            _this.list.push({
+                                id: item.id,
+                                name: item.title,
+                                imgPath: item.logo,
+                                description: item.intro,
+                                time: _this.appUtil.dateFormat(item.addtime, "yyyy/MM/dd hh:mm")
+                            });
                         });
+                    }, function (json) {
+                        if (resolve) {
+                            resolve();
+                        }
+                        _this.$Message.error(json.msg);
                     });
-                },function(json){
-                    if(resolve){
-                        resolve();
-                    }
-                    _this.$Message.error(json.msg);
                 });
             },
             toDetails(item) {

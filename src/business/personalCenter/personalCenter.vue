@@ -28,6 +28,7 @@
                     v-for="(item,index) in personalMenuList" @click="toDetailsPage(item.id)">
                     <l-icon :name="item.icons" class="left-icons"/>
                     <div class="left-label">{{ item.name }}</div>
+                    <div class="right-label">{{ item.note }}</div>
                     <l-icon name="fanhui" class="link-icons"/>
                 </li>
                 <li class="user-menu-list-item trading" :class="{'mt10':index === 0}"
@@ -89,17 +90,20 @@
                     {
                         id: 'basicInformation',
                         name: '基本资料',
-                        icons: 'jibenziliao'
+                        icons: 'jibenziliao',
+                        note:'',
                     },
                     {
                         id: 'verifiedForm',
                         name: '实名认证',
-                        icons: 'shimingrenzheng'
+                        icons: 'shimingrenzheng',
+                        note:'',
                     },
                     {
                         id: 'identityInformation',
                         name: '身份信息',
-                        icons: 'shenfenxinxi'
+                        icons: 'shenfenxinxi',
+                        note:'',
                     }
                 ],
                 tradingMenuList: [
@@ -154,24 +158,19 @@
             editEvent() {
                 this.$router.push('/personalSetting')
             },
-            loadMyInfo() {
-                var _this = this
-                users.getCacheMyInfo(this, function (data) {
-                    _this.headPhoto = data.logo
-                    _this.userName = data.nikename
-                    _this.idNum = data.inviter
-                    _this.description = data.personality
-                    _this.basicList[ 0 ].value = data.memberlevel
-                    _this.basicList[ 1 ].value = data.activity + '+'
-                    _this.basicList[ 2 ].value = data.contributionvalue
-                    _this.candyNum = data.cointotal.toFixed(4)
-                    _this.session.getMemberID(function (memberid) {
-                        _this.axios.post(_this.session.myActivityAdd, {'memberid': memberid}, function (json) {
-                            _this.basicList[ 1 ].value += json.data.activityadd
-                        })
-                    })
-                }, true)
-                
+            loadMyInfo(){
+                var _this=  this;
+                users.getCacheMyInfo(this,function(data){
+                    _this.headPhoto = data.logo;
+                    _this.userName = data.nikename;
+                    _this.idNum = data.inviter;
+                    _this.description = data.personality;
+                    _this.basicList[0].value= data.memberlevel;
+                    _this.basicList[1].value= data.activity+"+"+data.activityadd;
+                    _this.personalMenuList[1].note = data.isrealauth==1?"已认证":"";
+                    _this.basicList[2].value= data.contributionvalue;
+                    _this.candyNum =  data.cointotal.toFixed(4);
+                },true);
             }
         }
     }
@@ -278,6 +277,7 @@
                     margin-left: 80px;
                     position: absolute;
                 }
+                .right-label{position: absolute;right: 80px;color: #ffd554;}
                 &.mt10 {
                     margin-top: 20px;
                 }

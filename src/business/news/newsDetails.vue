@@ -5,7 +5,7 @@
                 <div class="news-details-title">{{ newsDetails.title }}</div>
                 <div class="news-details-info">
                     <div class="news-author pull-left" v-if="newsDetails.author!=''">作者:{{ newsDetails.author }}</div>
-                    <div class="news-time pull-left">发布时间:{{ newsDetails.dateTime }}</div>
+                    <div class="news-time ">发布时间:{{ newsDetails.dateTime }}</div>
                 </div>
                 <div  class="news-details-content"  v-if="acticleType==3">
                     <div v-for="item in newsDetails.photos">
@@ -96,9 +96,9 @@
 //                    content: '跑步是一种锻炼身体的好习惯，很多年轻人都有早上跑步的习惯，但是有时候跑步会岔气，这是为什么呢？跑步时，我们应该选择合适的时间和方式，不应该盲目去跑。'
                 },
                 rewardInfo: {
-                    complain: 5,
-                    admiration: 866,
-                    reward: 22
+                    complain: 0,
+                    admiration: 0,
+                    reward: 0
                 },
                 evaluation: [
 //                    {
@@ -217,20 +217,7 @@
             },
             share(){
                 var articleid = this.$route.params.id;
-                var _this = this;
-                users.shareAction(this,function(json,memberid){
-                    users.getCacheMyInfo(this,function(myInfo){
-                        var article_shareurl = json.article_shareurl;
-                        var url = article_shareurl+"?articleid="+articleid+"&onlineid="+myInfo.inviter;
-                        var sharedModule = api.require('shareAction');
-                        sharedModule.share({
-                            path:url,
-                            text:_this.newsDetails.title,
-                            type:'url'
-                        },articleid);
-                    },true)
-                });
-
+                this.$router.push({name: 'articleShare', query: {id: articleid}})
             },
             handleReachBottom () {
                 var _this = this;
@@ -271,11 +258,12 @@
     .news-details-title {
         font-size: 42px;
         line-height: 50px;
+        text-align: center;
     }
+    .news-time{text-align: center;}
     .news-details-info {
         margin: 20px 0 40px 0;
         color: #666666;
-        display: inline-block;
     .news-author {
         margin-right: 30px;
     }

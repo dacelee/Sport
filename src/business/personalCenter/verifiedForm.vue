@@ -1,52 +1,53 @@
 <template>
     <div class="verified-form">
-        <div class="tip"> 温馨提示：请填写真实信息</div>
-        <div class="verified-form-item">
-            <div class="label">姓名</div>
-            <div class="value"><input placeholder="请填写" v-verify="formData.truename" v-model="formData.truename"></div>
-        </div>
-        <div class="verified-form-item">
-            <div class="label">身份证</div>
-            <div class="value"><input placeholder="请填写"  v-verify="formData.idcard" v-model="formData.idcard"></div>
-        </div>
-        <!--<div class="verified-form-item">-->
-            <!--<div class="label">手机号</div>-->
-            <!--<div class="value"><input placeholder="请填写"  v-verify="formData.truename" v-model="formData.truename"></div>-->
-        <!--</div>-->
-        <div class="verified-form-item split">
-            <div class="label">银行名称</div>
-            <div class="value"><input placeholder="请填写"  v-verify="formData.bankname" v-model="formData.bankname"></div>
-        </div>
-        <div class="verified-form-item">
-            <div class="label">银行卡</div>
-            <div class="value"><input placeholder="请填写"  v-verify="formData.bankaccount" v-model="formData.bankaccount"></div>
-        </div>
-        <div class="verified-form-item split">
-            <div class="label">支付宝</div>
-            <div class="value"><input placeholder="请填写"  v-verify="formData.alipay" v-model="formData.alipay"></div>
-        </div>
-        <div class="verified-form-item split">
-            <div class="label">请上传人脸照片</div>
-            <div class="upload-box  text-center" v-if="formData.isrealauth==1">
-                <img :src="formData.idcardimg"  >
+        <div class="content">
+            <div class="tip"> 温馨提示：请填写真实信息</div>
+            <div class="verified-form-item">
+                <div class="label">姓名</div>
+                <div class="value"><input placeholder="请填写" v-verify="formData.truename" v-model="formData.truename" :readonly="formData.isrealauth!=0"></div>
             </div>
-            <div class="upload-box  text-center"  v-if="formData.isrealauth==0">
-                <div class="upload-pic ">
-                    <l-icon name="shangchuantupian"/>
+            <div class="verified-form-item">
+                <div class="label">身份证</div>
+                <div class="value"><input placeholder="请填写"  v-verify="formData.idcard" v-model="formData.idcard" :readonly="formData.isrealauth!=0"></div>
+            </div>
+            <!--<div class="verified-form-item">-->
+                <!--<div class="label">手机号</div>-->
+                <!--<div class="value"><input placeholder="请填写"  v-verify="formData.truename" v-model="formData.truename"></div>-->
+            <!--</div>-->
+            <div class="verified-form-item split">
+                <div class="label">银行名称</div>
+                <div class="value"><input placeholder="请填写"  v-verify="formData.bankname" v-model="formData.bankname" readonly @click="getBank"></div>
+            </div>
+            <div class="verified-form-item">
+                <div class="label">银行卡</div>
+                <div class="value"><input placeholder="请填写"  v-verify="formData.bankaccount" v-model="formData.bankaccount" :readonly="formData.isrealauth!=0"></div>
+            </div>
+            <div class="verified-form-item split">
+                <div class="label">支付宝</div>
+                <div class="value"><input placeholder="请填写"  v-verify="formData.alipay" v-model="formData.alipay" :readonly="formData.isrealauth!=0"></div>
+            </div>
+            <div class="verified-form-item split">
+                <div class="label">请上传人脸照片</div>
+                <div class="upload-box  text-center" v-if="formData.isrealauth==1&&formData.idcardimg!=''">
+                    <img :src="formData.idcardimg"  >
                 </div>
-                <div class="select-upload-label text-center">人脸照片</div>
-                <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess"
-                               :imageClipStart="imageClipStart"
-                               :imageClipEnd="imageClipEnd"  :width="360" :height="400"
-                               :sourceType="'camera'"
-                />
+                <div class="upload-box  text-center"  v-if="formData.isrealauth==0">
+                    <div class="upload-pic ">
+                        <l-icon name="shangchuantupian"/>
+                    </div>
+                    <div class="select-upload-label text-center">人脸照片</div>
+                    <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess"
+                                   :imageClipStart="imageClipStart"
+                                   :imageClipEnd="imageClipEnd"  :width="360" :height="400"
+                                   :sourceType="'camera'"
+                    />
+                </div>
             </div>
         </div>
-
         <div class="btn" @click="faceRecognition" v-if="formData.isrealauth==0">提交验证</div>
+        <l-selectOption :list="selectBank.list" :selected="selectBank.current" @change="changeBank" v-if="selectBank.showSelect"/>
     </div>
 </template>
-
 <script>
     import users from '../../api/users.js'
     export default {
@@ -54,15 +55,21 @@
         data() {
             return {
                 imageClip:false,
+                selectBank:{
+                    list:[],
+                    current:{},
+                    showSelect:false
+                },
                 memberid:0,
+                bankList:[],
                 formData:{
                     truename:"",
                     idcard:"",
                     alipay:"",
                     bankname:"",
                     bankaccount:"",
-                    idcardimg:"static/img/personal/default.jpg",
-                    isrealauth:-1
+                    idcardimg:"",
+                    isrealauth:0
                 },
             }
         },
@@ -86,7 +93,7 @@
                         return;
                     }
                     if(this.formData.idcardimg==""){
-                        this.$Message.error("请上传身份证正面照片");
+                        this.$Message.error("请上传本人面部照片");
                         return;
                     }
                     users.verifiedAction(this, this.formData);
@@ -117,7 +124,17 @@
                     idcardimg:"",
                     isrealauth:1
                 }
+            },
+            changeBank(data){
+                this.selectBank.showSelect=false;
+                this.formData.bankname = data.name;
+            },
+            getBank(){
+                if(this.formData.isrealauth==0){
+                    this.selectBank.showSelect=true;
+                }
             }
+
         },
         activated(){
             var _this = this;
@@ -131,6 +148,15 @@
                 });
             }
         },
+        deactivated(){
+            this.selectBank.showSelect=false;
+        },
+        mounted() {
+            var headerHeight = $("header").outerHeight(true);
+            var height = $(window).height()-headerHeight-$(".verified-form .btn").outerHeight(true);
+
+            $(".verified-form .content").height(height);
+        }
     }
 
 </script>
@@ -159,8 +185,6 @@
             color: #25252B;
             text-align: center;
             padding: 30px 0;
-            position: fixed;
-            bottom: 0;
             width: 100%;
             font-size: 34px;
             line-height: 34px;

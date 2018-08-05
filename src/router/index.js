@@ -61,9 +61,11 @@ import teamList from '@/business/team/teamList.vue'
 import createTeam from '@/business/team/createTeam.vue'
 import newsList from '@/business/news/news.vue'
 import shareNews from '@/business/news/shareNews.vue'
+import articleShare from '@/business/news/articleShare.vue'
 import newsDetails from '@/business/news/newsDetails.vue'
 import articleList from '@/business/news/articleList.vue'
 import articleDetails from '@/business/news/articleDetails.vue'
+import guide from '@/business/news/guide.vue'
 import login from '@/business/login/login.vue'
 import register from '@/business/register/register.vue'
 import forgetPassword from '@/business/register/forgetPassword.vue'
@@ -72,6 +74,8 @@ import activity from '@/business/activity/activity.vue'
 import task from '@/business/task/task.vue'
 import imageClip from '@/vue-cropper/imageClip.vue'
 import videoRecorder from '@/business/personalCenter/face/videoRecorder.vue'
+import nearbyUser from '@/business/team/nearbyUser.vue'
+import stepsShare from '@/business/home/stepsShare.vue'
 
 Vue.use(Router)
 
@@ -184,11 +188,29 @@ export default new Router({
             }
         },
         {
+            path: '/articleShare',
+            name: 'articleShare',
+            component: articleShare,
+            meta: {
+                title: '分享',
+                back: '-1'
+            }
+        },
+        {
             path: '/articleList',
             name: 'articleList',
             component: articleList,
             meta: {
                 title: '消息',
+                back: '-1'
+            }
+        },
+        {
+            path: '/article/articleDetails/:id',
+            name: 'articleDetails',
+            component: articleDetails,
+            meta: {
+                title: '详情',
                 back: '-1'
             }
         },
@@ -709,6 +731,15 @@ export default new Router({
             }
         },
         {
+            path: '/guide',
+            name: 'guide',
+            component: guide,
+            meta: {
+                title: '新手指引',
+                back: '-1'
+            }
+        },
+        {
             path: '/teamManage',
             name: 'teamManage',
             component: teamManage,
@@ -741,6 +772,24 @@ export default new Router({
             component: task,
             meta: {
                 title: '任务',
+                back: '-1'
+            }
+        },
+        {
+            path: '/nearbyUser',
+            name: 'nearbyUser',
+            component: nearbyUser,
+            meta: {
+                title: '附近的人',
+                back: '-1'
+            }
+        },
+        {
+            path: '/stepsShare',
+            name: 'stepsShare',
+            component: stepsShare,
+            meta: {
+                title: '分享',
                 back: '-1'
             }
         },

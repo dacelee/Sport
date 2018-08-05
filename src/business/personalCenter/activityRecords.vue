@@ -26,33 +26,33 @@
             return {
                 page:1,
                 scrollHeight:0,
-                activityNum: '150.1321315124',
+                activityNum: '0',
                 list: [
-                    {
-                        name: '兑换初级任务',
-                        time: '2018-06-23 12:22',
-                        num: '10'
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10'
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10'
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10'
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10'
-                    }
+//                    {
+//                        name: '兑换初级任务',
+//                        time: '2018-06-23 12:22',
+//                        num: '10'
+//                    },
+//                    {
+//                        name: '活跃奖励',
+//                        time: '2018-06-22 12:22',
+//                        num: '10'
+//                    },
+//                    {
+//                        name: '活跃奖励',
+//                        time: '2018-06-22 12:22',
+//                        num: '10'
+//                    },
+//                    {
+//                        name: '活跃奖励',
+//                        time: '2018-06-22 12:22',
+//                        num: '10'
+//                    },
+//                    {
+//                        name: '活跃奖励',
+//                        time: '2018-06-22 12:22',
+//                        num: '10'
+//                    }
                 ]
             }
         },mounted(){
@@ -60,7 +60,7 @@
             this.scrollHeight = $(window).height()-headerHeight-$(".current-activity").height()-80;
             var _this = this;
             users.getCacheMyInfo(this, function (myInfo) {
-                _this.activityNum = myInfo.activity;
+                _this.activityNum = myInfo.activity+"+"+myInfo.activityadd;
             })
         },
         activated(){

@@ -49,6 +49,7 @@
                 orderId: '',
                 status:'0',
                 orderno:'',
+
                 addressList: [
 //                    {
 //                        label: '收货人',
@@ -97,8 +98,9 @@
 //                        num: 1
 //                    }
                 ],
-                totalNum: 2,
-                totalPrice: '512+40活力币'
+                totalNum: 0,
+                totalPrice: '',
+                totalCoin:'',
             }
         },
         methods: {
@@ -129,7 +131,7 @@
         mounted() {
             this.$nextTick(function () {
                 var headerHeight = $("header").outerHeight(true);
-                var height = $(window).height()-headerHeight+20;
+                var height = $(window).height()-headerHeight;
                 $(".order-details").css({"min-height":height});
             })
         }

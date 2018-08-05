@@ -81,6 +81,7 @@
                 this.$router.push({name: 'businessDetail', params: {id: data.id}})
             },
             changeRoute(res) {
+                $(".ivu-scroll-container")[0].scrollTop = 0;
                 this.status = res
                 this.page = 1;
                 switch (res){
@@ -126,6 +127,7 @@
             this.$nextTick(function () {
                 var headerHeight = $("header").outerHeight();;
                 this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
+
             })
         }
     }

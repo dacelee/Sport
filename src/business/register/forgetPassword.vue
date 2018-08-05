@@ -42,7 +42,6 @@
                     smscode: ""
                 },
                 timer:0,
-                show:true,
             }
         } ,verify: {
             userInfo: {
@@ -81,22 +80,19 @@
             },getCode(){
                 const TIME_COUNT = 60;
                 var count = TIME_COUNT;
-                this.show = false;
                 this.timer = setInterval(function(){
                     if (count > 0 && count <= TIME_COUNT) {
                         count--;
                         _this.codeSend = count+"s";
                         console.log(_this.codeSend);
                     } else {
-                        this.show = true;
                         clearInterval(_this.timer);
-                        this.timer = null;
                         _this.codeSend = "获取验证码";
                     }
                 }, 1000);
             },
             getSmsCode(){
-                if(!this.show){
+                if(this.codeSend != "获取验证码"){
                     return;
                 }
                 if(!this.$verify.check("mobile")){
@@ -150,16 +146,16 @@
      }
     }
     input::-webkit-input-placeholder {
-        color: #999999;
+        color: #bbb;
     }
     input:-moz-placeholder {
-        color: #999999;
+        color: #bbb;
     }
     input::-moz-placeholder {
-        color: #999999;
+        color: #bbb;
     }
     input:-ms-input-placeholder {
-        color: #999999;
+        color: #bbb;
     }
     .btn-validate-code {
         width: 188px;

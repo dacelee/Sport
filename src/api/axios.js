@@ -1,10 +1,11 @@
 var root = 'http://39.108.2.130'
+//var root = 'http://192.168.1.107:8091'
 // 引用axios
 var axios = require('axios')
 var qs = require('qs')
 import {LoadingBar} from 'iview';
 import 'iview/dist/styles/iview.css'
-axios.defaults.timeout =  120000;
+axios.defaults.timeout =  10000;
 // 自定义判断元素类型JS
 function toType (obj) {
     return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
@@ -37,6 +38,10 @@ function filterNull (o) {
  */
 
 function apiAxios (method, url, params, success, failure,resolve,loading) {
+    //var connectionType = api.connectionType;
+    //if(connectionType=="none"){//无网络
+    //    return;
+    //}
     if (params) {
         params = filterNull(params);
     }
@@ -58,7 +63,7 @@ function apiAxios (method, url, params, success, failure,resolve,loading) {
             if(resolve){
                 setTimeout(() => {
                     resolve();
-                }, 1000);
+                }, 300);
             }
             if(loadingProcess) {
                 LoadingBar.finish();
@@ -71,8 +76,12 @@ function apiAxios (method, url, params, success, failure,resolve,loading) {
                 if (failure){
                     failure(res.data);
                 } else {
-                    //console.error(res);
-                    Vue.$Message.error(res.data.msg);
+                    console.error(res);
+                    api.toast({
+                        msg: res.data.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
                     //window.alert('error: ' + JSON.stringify(res))
                 }
             }
@@ -82,9 +91,14 @@ function apiAxios (method, url, params, success, failure,resolve,loading) {
             if(loadingProcess) {
                 LoadingBar.error();
             }
-            let res = err.response
+            //let res = err.response
             if (err) {
                 console.error(err);
+                api.toast({
+                    msg: "请求出错:"+err,
+                    duration: 2000,
+                    location: 'bottom'
+                });
                 //window.alert('api error, HTTP CODE: ' + res.status)
             }
         })
@@ -93,10 +107,10 @@ function apiAxios (method, url, params, success, failure,resolve,loading) {
 // 返回在vue模板中的调用接口
 export default {
     host:root,
-    get: function (url, params, success, failure,resolve) {
-        return apiAxios('GET', url, params, success, failure,resolve)
+    get: function (url, params, success, failure,resolve,loading) {
+        return apiAxios('GET', url, params, success, failure,resolve,loading)
     },
-    post: function (url, params, success, failure,resolve) {
-        return apiAxios('POST', url, params, success, failure,resolve)
+    post: function (url, params, success, failure,resolve,loading) {
+        return apiAxios('POST', url, params, success, failure,resolve,loading)
     }
 }

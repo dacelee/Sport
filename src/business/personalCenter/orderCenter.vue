@@ -1,7 +1,7 @@
 <template>
     <div class="order-center">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
+        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
             <div class="order-list-item" v-for="order in list">
                 <div class="order-goods-info" >
                     <div class="order-goods-details" v-for="good in order.goods"  @click="showDetails(order.id)">
@@ -64,34 +64,37 @@
                     }
                 ],
                 list: [
-                    {
-                        id: 1,
-                        imgPath: '/static/img/goods/1.jpg',
-                        name: '夏季鸳鸯4音速驭帅运动鞋',
-                        unitPrice: '100',
-                        extendData: 50,
-                        amount: 1,
-                        totalPrice: '100',
-                        status: '待收货'
-                    },
-                    {
-                        id: 2,
-                        imgPath: '/static/img/goods/1.jpg',
-                        name: '夏季鸳鸯4音速驭帅运动鞋',
-                        unitPrice: '100',
-                        extendData: 50,
-                        amount: 2,
-                        totalPrice: '100',
-                        status: '待收货'
-                    }
+//                    {
+//                        id: 1,
+//                        imgPath: '/static/img/goods/1.jpg',
+//                        name: '夏季鸳鸯4音速驭帅运动鞋',
+//                        unitPrice: '100',
+//                        extendData: 50,
+//                        amount: 1,
+//                        totalPrice: '100',
+//                        status: '待收货'
+//                    },
+//                    {
+//                        id: 2,
+//                        imgPath: '/static/img/goods/1.jpg',
+//                        name: '夏季鸳鸯4音速驭帅运动鞋',
+//                        unitPrice: '100',
+//                        extendData: 50,
+//                        amount: 2,
+//                        totalPrice: '100',
+//                        status: '待收货'
+//                    }
                 ]
             }
         },
         methods: {
             changeRoute(res) {
-                this.status = res
-                this.page=1;
-                goods.loadOrderList(this,this.status);
+                if(this.status!=res){
+                    this.status = res
+                    this.page=1;
+                    this.list=[];
+                    goods.loadOrderList(this,this.status);
+                }
             },
             showDetails(id) {
                 this.$router.push({name: 'orderDetails', params: {id: id}})
@@ -110,13 +113,14 @@
             }
         },
         activated () {
-            goods.loadOrderList(this,this.status);
+
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = $("header").outerHeight();
+                var headerHeight = $("header").outerHeight(true);
                 this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
             })
+            goods.loadOrderList(this,this.status);
         }
     }
 </script>

@@ -60,7 +60,6 @@
         },
         methods: {
             changeCountWay() {
-
                 var _this= this;
                 _this.session.getMemberID(function(memberid) {
                     _this.mileage = _this.amap.getTodayMileage(_this,memberid);
@@ -167,7 +166,7 @@
             this.changeCountWay();
         },
         activated() {
-            this.changeCountWay();
+//            this.changeCountWay();
         }
     }
 </script>

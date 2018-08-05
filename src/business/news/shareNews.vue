@@ -3,36 +3,87 @@
         <div class="share-news-item">
             <div class="left-label pull-left">标题</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="请输入">
+                <input type="text" placeholder="请输入"  v-model="formData.title" v-verify="formData.title">
             </div>
         </div>
         <div class="share-news-item text-area">
             <div class="left-label pull-left">内容</div>
             <div class="right-input pull-left">
-                <textarea placeholder="在此输入分享内容"></textarea>
+                <textarea placeholder="在此输入分享内容"  v-model="formData.content" v-verify="formData.content"></textarea>
             </div>
         </div>
         <div class="share-news-item">
             <div class="left-label pull-left">视频</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="输入视频地址">
+                <input type="text" placeholder="输入视频地址" v-model="formData.videourl">
             </div>
         </div>
         <div class="select-pic text-center">
-            <l-imageUpload :limit="4" :action="'http://api.bozhiyue.com/my/uploadimg'" :onSuccess="uploadPhotosSuccess"
-                           :onRemove="removePhotos"/>
+            <l-imageUpload :limit="4"  :onSuccess="uploadPhotosSuccess"
+                           :onRemove="removePhotos" :uploadImgs="uploadImgs" />
         </div>
         <div class="save-btn text-center" @click="submitData">分享</div>
     </div>
 </template>
 
 <script>
+    import club from '../../api/club.js'
     export default {
         name: 'share-news',
+        data(){
+            return {
+                init:false,
+                uploadImgs:[],
+                formData:{
+                    isshare:0,
+                    title:"",
+                    content:"",
+                    photos:"",
+                    videourl:""
+                }
+            }
+        },
+        verify: {
+            formData: {
+                title: [{minLength: 1, message: "标题必须填写"}],
+                content: [{minLength: 1, message: "简介必须填写"}]
+            }
+        },
         methods: {
             submitData() {
-            
+                if(!this.$verify.check()){
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
+                    this.$Message.error({content:errMsg});
+                }else {
+                    let _this = this;
+                    this.formData.clubid = 0;
+                    this.session.getMemberID(function (memberid) {
+                        _this.formData.adminid = memberid;
+                        club.addArticle(_this, _this.formData);
+                    });
+                }
+            },
+            uploadPhotosSuccess(res) {
+                this.formData.photos = res;
+            },
+            removePhotos(res){
+                this.formData.photos = res;
             }
+        },
+        activated() {
+            if(!this.init){
+                this.init = true;
+                this.uploadImgs=[];
+                this.formData={
+                    isshare:0,
+                    title:"",
+                    content:"",
+                    photos:"",
+                    videourl:""
+                }
+            }
+        },
+        deactivated(){
         }
     }
 </script>
