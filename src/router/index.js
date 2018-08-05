@@ -74,9 +74,9 @@ import activity from '@/business/activity/activity.vue'
 import task from '@/business/task/task.vue'
 import imageClip from '@/vue-cropper/imageClip.vue'
 import videoRecorder from '@/business/personalCenter/face/videoRecorder.vue'
+import toDayStep from '@/business/home/toDayStep.vue'
 import nearbyUser from '@/business/team/nearbyUser.vue'
 import stepsShare from '@/business/home/stepsShare.vue'
-
 Vue.use(Router)
 
 export default new Router({
@@ -138,6 +138,16 @@ export default new Router({
             meta: {
                 title: '今日步数',
                 back: '/',
+                rightIcon: 'fenxiang'
+            }
+        },
+        {
+            path: '/toDayStep',
+            name: 'toDayStep',
+            component: toDayStep,
+            meta: {
+                title: '今日步数',
+                back: '/stepDetails',
                 rightIcon: 'fenxiang'
             }
         },
