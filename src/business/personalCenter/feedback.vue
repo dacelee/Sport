@@ -13,7 +13,6 @@
             <div class="label">内容</div>
             <div class="input-container">
                 <textarea placeholder="在此输入内容" v-model="content" v-verify="content"/>
-
             </div>
         </div>
         <div class="btn" @click="submit">提交</div>
@@ -23,8 +22,9 @@
 </template>
 
 <script>
-    let _this;
+    let _this
     import users from '../../api/users.js'
+    
     export default {
         name: 'feedback',
         data() {
@@ -33,7 +33,7 @@
                     id: '',
                     name: '请选择问题类型'
                 },
-                content:'',
+                content: '',
                 showTypeList: false,
                 typeList: [
                     {
@@ -54,26 +54,36 @@
                     _this.showTypeList = false
                 }
             }
-        },verify: {
-            content: [{minLength: 1, message: "问题内容必须填写"}],
+        }, verify: {
+            content: [ {minLength: 1, message: '问题内容必须填写'} ],
         },
         methods: {
             submit() {
                 if (!this.$verify.check()) {
-                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors);
-                    this.$Message.error(errMsg);
-                } else {
-                    if (this.type.id == "") {
-                        this.$Message.error("请选择问题类型");
-                        return;
+                    var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors)
+                    this.$Message.error(errMsg)
+                }
+                else {
+                    if (this.type.id == '') {
+                        this.$Message.error('请选择问题类型')
+                        return
                     }
-                    var formData = {cate: this.type.id, "content": this.content};
-                    users.feedbackAdd(this, formData);
+                    var formData = {cate: this.type.id, 'content': this.content}
+                    users.feedbackAdd(this, formData)
                 }
             }
         },
         mounted() {
-            _this = this;
+            _this = this
+            let docHeight = $(document).height()
+            $(window).resize(function () {
+                if ($(document).height() < docHeight) {
+                    $('.btn').css('position', 'static')
+                }
+                else {
+                    $('.btn').css('position', 'absolute')
+                }
+            })
         }
     }
 </script>
@@ -110,7 +120,7 @@
                 margin-bottom: 32px;
             }
             textarea {
-                color:#FFF;
+                color: #FFF;
                 background-color: #25252B;
                 -webkit-border-radius: 8px;
                 -moz-border-radius: 8px;
@@ -120,21 +130,21 @@
                 font-size: 30px;
                 line-height: 30px;
                 width: 100%;
+                -webkit-user-modify: read-write-plaintext-only;
             }
-
         }
-    .btn {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        background-color: #F8C513;
-        color: #25252B;
-        font-size: 34px;
-        line-height: 34px;
-        padding: 35px 0;
-    }
+        .btn {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background-color: #F8C513;
+            color: #25252B;
+            font-size: 34px;
+            line-height: 34px;
+            padding: 35px 0;
+        }
         .feedback-type-container {
             height: 100%;
             width: 100%;
