@@ -50,7 +50,8 @@
 <style lang="scss">
     .team-recruitment {
         background: url("/static/img/personal/teamRecruitment.jpg") no-repeat;
-        background-size: 100% 100%;
+        background-size: contain;
+        background-color: #240a36;
         display: inline-block;
         width: 100%;
         .share-info {

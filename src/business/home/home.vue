@@ -368,7 +368,7 @@
                     margin-left: 374px;
                 }
                 .news-list {
-                    background-color: #ffffff;
+                    background-color: #17161a;
                     width: 550px;
                     margin-left: 100px;
                     -webkit-border-radius: 15px;
