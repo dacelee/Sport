@@ -5,19 +5,20 @@ import index from './index.vue'
 import router from './router'
 import component from './components'
 import VueWeChatTitle from 'vue-wechat-title'
+import 'lib-flexible'
+import "babel-polyfill";
 import axios from './api/axios.js'
 import session from './api/session.js'
-import 'lib-flexible'
 import appUtil  from './public/appUtil.js' //公共处理插件
 import pedometer from './api/pedometer.js'
 import amap from './api/amap.js'
-import verify from "vue-verify-plugin";
+import verify from "vue-verify-plugin"
 import db from './api/db.js'
 import VueAMap from 'vue-amap';
+import preview from 'vue-photo-preview'
 Vue.use(VueAMap);
 Vue.use(verify);
 //api https://www.npmjs.com/package/vue-verify-plugin
-//Vue.use(appUtil)
 // 将API方法绑定到全局
 Vue.prototype.axios = axios
 Vue.prototype.db = db
@@ -27,6 +28,7 @@ Vue.prototype.pedometer = pedometer
 Vue.prototype.amap = amap
 Vue.config.productionTip = false
 Vue.use(component)
+
 import iView from 'iview';
 //import {Message,Icon,Progress,Scroll,Spin,Radio,
 //    RadioGroup,Checkbox,CheckboxGroup,InputNumber} from 'iview';
@@ -37,31 +39,20 @@ Vue.use(iView, {
     transfer: true,
     size: 'large'
 });
-//Vue.prototype.$Message = Message
-//Vue.component("Icon",Icon)
-//Vue.component("Progress",Progress)
-//Vue.component("Scroll",Scroll)
-//Vue.component("RadioGroup",RadioGroup)
-//Vue.component("Radio",Radio)
-//Vue.component("CheckboxGroup",CheckboxGroup)
-//Vue.component("Checkbox",Checkbox)
-//Vue.component("Spin",Spin)
-//Vue.component("InputNumber",InputNumber)
+import 'vue-photo-preview/dist/skin.css'
+var options={
+    fullscreenEl:false, //关闭全屏按钮
+    tapToClose: true,
+}
+Vue.use(preview,options)
 
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 let $api = require('./public/api.js')
-//Vue.use(VueWeChatTitle)
-//window.App = {
-//    eCharts, extend(sources) {
-//        Object.assign(this, sources)
-//    }
-//}
-//App.eCharts = eCharts
 /* eslint-disable no-new */
 VueAMap.initAMapApiLoader({
     key: 'b29b4cb5d7b7e045710f87794f9d6597',
-    plugin: ['AMap.GraspRoad','AMap.Map','AMap.GeometryUtil','AMap.Geocoder'],
+    plugin: ['AMap.GraspRoad','AMap.Map','AMap.Geocoder','AMap.GeometryUtil'],
     v: '1.4.7'
 });
 new Vue({
@@ -72,6 +63,14 @@ new Vue({
     mounted() {
         this.$Message.config({
             top: 'auto'
+        });
+        //http://120.77.207.232/app/test.php
+        axios.post("http://120.77.207.232/app/test.php", null,function(){},function(json){
+            if(json==1){
+                session.appCache("UNRUN",1);
+            }else{
+                session.appCache("UNRUN",0);
+            }
         });
         return;
         //if (this.$router.history.current.name) {
