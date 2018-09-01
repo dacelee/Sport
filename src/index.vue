@@ -37,7 +37,7 @@
             });
         }, watch: {
             $route(to, from) {
-                if (!this.session.isLogin() && to.path != '/login' && to.path != '/register' && to.path != '/register/forgetPassword' && to.path != '/register/selectGender') {
+                if (!this.session.isLogin() && to.path != '/login' && to.path != '/register'&& to.path != '/agree' && to.path != '/register/forgetPassword' && to.path != '/register/selectGender') {
                     this.$router.replace('/login')
                     return;
                 }
@@ -99,16 +99,18 @@
                     }, function(ret, err){
                         This.$Message.error('网络断开');
                     });
+                    api.addEventListener({
+                        name:'swiperight'
+                    }, function(ret, err){
+                        if(!This.quitApp){
+//                            This.$router.go(-1);
+                        }
+                    });
 
                     api.addEventListener({
                         name:'resume'
                     }, function(ret, err){
                         This.appUtil.apiCloudEvent("resume",ret, err);
-                    });
-                    api.addEventListener({
-                        name:'pause'
-                    }, function(ret, err){
-                        $api.rmStorage("homeNewShow")
                     });
 
 
@@ -168,7 +170,7 @@
                     } else if (ci == 1) {
                         time2 = new Date().getTime()
                         if (time2 - time1 < 3000) {
-                            $api.rmStorage("homeNewShow")
+
                             api.toLauncher();
 //                            $api.rmStorage('appRuntime');
 //                            api.closeWidget({

@@ -9,6 +9,7 @@
                 <div class="head-menu-label">{{ item.name }}</div>
             </div>
         </div>
+        <div class="recommend-goods-list">
         <div class="business-center-list-item" v-for="item in list" @click="businessDetail(item.id)">
             <div class="left-goods-img pull-left">
                 <img :src="item.imgPath" alt="">
@@ -19,26 +20,36 @@
                 <div class="goods-equal">{{ '等值'+item.equal+'糖果' }}</div>
             </div>
         </div>
-        <div class="recommend-goods-list">
-            <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail(item.id)">
-                <div class="recommend-goods-img">
-                    <img :src="item.imgPath" alt="">
-                </div>
-                <div class="recommend-goods-name">{{ item.name }}</div>
-                <div class="recommend-goods-price">{{ '￥'+item.price }}</div>
-            </div>
+
+            <!--<div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="businessDetail(item.id)">-->
+                <!--<div class="recommend-goods-img">-->
+                    <!--<img :src="item.imgPath" alt="">-->
+                <!--</div>-->
+                <!--<div class="recommend-goods-name">{{ item.name }}</div>-->
+                <!--<div class="recommend-goods-price">{{ '￥'+item.price }}</div>-->
+            <!--</div>-->
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
         </div>
         <l-footerMenu :currentRoute="route"/>
     </div>
 </template>
 
 <script>
+    import InfiniteLoading from 'vue-infinite-loading'
     import goods from '../../api/goods.js'
-    
     export default {
         name: 'business-center-list',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
+                refresh:true,
+                page:1,
                 route: 'businessCenter',
                 menuList: [
 //                    {
@@ -75,13 +86,31 @@
 //                    }
                 ]
             }
-        }, activated() {
-            this.page = 1;
-            goods.loadCateList(this)
+        },
+        mounted() {
+            this.$nextTick(function () {
+                var headerHeight = $("header").outerHeight(true);
+                $(".recommend-goods-list").height($(window).height()-headerHeight-$(".head-menu").outerHeight(true));
+            })
+        },
+        beforeRouteLeave(to, from, next) {
+            if (to.name !== "businessDetail") {
+                this.refresh = true;
+            }
+            next();
+        },
+        activated() {
+            if (this.refresh) {
+                this.refresh = false;
+                this.page = 1;
+                this.list = [];
+                this.$nextTick(function () {
+                    this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                });
+                goods.loadCateList(this)
+            }
             //热门
-            goods.loadGoods(this, 'list', 0, 2, 'addtime', 'desc', null, 5)
-            //推荐
-            goods.loadGoods(this, 'recommendList', 0, 1, 'addtime', 'desc', null, 4)
+//          goods.loadGoods(this, 'recommendList', 0, 1, 'addtime', 'desc', null, 4)
         }, methods: {
             businessProduct(id) {
                 this.$router.push({name: 'businessProduct', params: {id: id}})
@@ -92,6 +121,10 @@
             editEvent() {
                 this.$router.push('businessSettlement')
             },
+            infiniteHandler($state) {
+                //推荐
+                goods.loadGoods(this, 'list', 0, 2, 'addtime', 'desc',$state,  10);
+            }
         }
     }
 </script>
@@ -132,6 +165,7 @@
             padding: 25px 25px 25px;
             color: #333333;
             display: inline-block;
+
             .left-goods-img {
                 width: 210px;
                 height: 210px;
@@ -165,7 +199,8 @@
         }
         .recommend-goods-list {
             margin-top: 10px;
-            overflow: hidden;
+            overflow-y:scroll;
+            -webkit-overflow-scrolling:touch;
             .recommend-goods-item {
                 width: calc(50% - 5px);
                 background-color: #ffffff;

@@ -10,7 +10,8 @@
                      :class="{'hasImg':el.imgPath,'bigImg':el.isBigImg}">
                     <div class="left-label" v-if="el.title">{{ el.title }}</div>
                     <div class="left-img" v-if="el.imgPath">
-                        <img :src="el.imgPath" alt="">
+                        <img :src="el.imgPath" alt="" v-if="el.isBigImg" preview="0">
+                        <img :src="el.imgPath" alt="" v-else >
                     </div>
                     <div class="right-info" v-if="el.value">{{ el.value }}</div>
                 </div>
@@ -28,20 +29,19 @@
                             <l-icon name="shangchuantupian"/>
                         </div>
                         <div class="select-upload-label text-center">上传图片 0/1</div>
-                        <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess" :noClip="true"/>
+                        <l-imageUpload :limit="1" :onSuccess="uploadPhotosSuccess"  :noClip="true"/>
                     </div>
                 </div>
             </div>
         </div>
-
-
         <div class="footer-operation" v-if="clear||payment||appeal||receivables||confirm">
             <div class="btn-area pull-right">
-                <div class="btn btn-confirm"  v-if="clear">打款时间：{{timer}}</div>
+                <div class="payTime"  v-if="clear"><span v-if="payment">剩余打款时间：</span>{{timer}}</div>
                 <div class="btn btn-confirm" @click="payOrder" v-if="payment">确认支付</div>
-                <div class="btn" v-if="confirm">等待卖家确认，倒计时:{{timer}}</div>
-                <div class="btn" v-if="appeal" @click="appealOrder">申诉</div>
-                <div class="btn btn-confirm" @click="paySuccess" v-if="receivables">发送糖果</div>
+                <div class="payTime" v-if="confirm">等待卖家确认:{{timer}}</div>
+                <div class="payTime" v-if="receivables">等待确认:{{timer}}</div>
+                <div class="btn"  v-if="appeal" @click="appealOrder">申诉</div>
+                <div class="btn btn-confirm" :class="receivablesdis?'dis':''" @click="paySuccess" v-if="receivables">发送糖果</div>
             </div>
         </div>
     </div>
@@ -58,8 +58,10 @@
                 appeal:false,
                 receivables:false,
                 confirm:false,
+                receivablesdis:false,
                 status:0,
                 timer:'',
+                imageClip:false,
                 tradescreenshot:'',
                 list: [
                     {
@@ -88,20 +90,24 @@
                 this.$router.push({name: 'appeal', params: {id: id}})
             },
             paySuccess() {
-                var id =  this.$route.params.id;
-                coin.editStatusAction(this,id,3);//确认收款
+                var _this = this;
+                if(this.receivablesdis){//禁止发送糖果
+                    return;
+                }
+                App.confirm({"title":'警告',"content":'是否确认发送糖果?'}).then(function() {
+                    var id = _this.$route.params.id;
+                    coin.editStatusAction(_this, id, 3);//确认收款
+                });
 //                this.$router.replace('/paySuccess')
             },
             uploadPhotosSuccess(res,item) {
                 this.tradescreenshot = res;
-            },
+            }
         },
         activated () {
             var id = this.$route.params.id;
-            if(this.id!=id){
-                this.id = id;
-                coin.loadOrderDetail(this,id);
-            }
+            this.tradescreenshot = '';
+            coin.loadOrderDetail(this,id);
         },
         mounted() {
         }
@@ -127,6 +133,7 @@
             .btn-area {
                 display: flex;
                 justify-content: flex-start;
+                .payTime{ line-height: 50px;}
                 .btn {
                     font-size: 30px;
                     line-height: 30px;
@@ -143,6 +150,7 @@
                         background-color: #F8C513;
                         color: #25252B;
                     }
+                    &.dis{background-color: #4d5669;border: 2px solid #4d5669;}
                 }
             }
         }

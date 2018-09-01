@@ -31,6 +31,11 @@
                     </div>
                 </div>
             </div>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+               <span slot="no-more">
+                    暂无更多数据
+               </span>
+            </infinite-loading>
         </div>
         <div class="add-address text-center" @click="addAddress">
             新增
@@ -40,8 +45,12 @@
 
 <script>
     import address from '../../api/address.js'
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'address-manage',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 list: [
@@ -52,12 +61,7 @@
 //                        address: '北京市朝阳区朝阳街道朝阳楼朝阳栋朝阳层朝阳号',
 //                        isDefault: true
 //                    },
-//                    {
-//                        id: '3213213',
-//                        userName: 'Louis',
-//                        phone: '133-3213-2131',
-//                        address: '北京市朝阳区朝阳街道朝阳楼朝阳栋朝阳层朝阳号'
-//                    }
+//
                 ]
             }
         },
@@ -73,14 +77,22 @@
             },
             setDefault(id){
                 address.setDefault(this,id);
+            },
+            infiniteHandler($state){
+                address.loadList(this,$state);
             }
         },
         activated () {
-            address.loadList(this);
+            this.page = 1;
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
         },
         mounted() {
             this.$nextTick(function () {
-
+                var height = $(window).height() - $('header').outerHeight(true)-$(".add-address").outerHeight(true)
+                $(".address-list").height(height);
             })
         }
     }
@@ -91,6 +103,7 @@
         width: 100%;
         position: relative;
         .address-list {
+            overflow-y: scroll;
             .address-list-item {
                 margin: 20px auto;
                 background-color: #333339;

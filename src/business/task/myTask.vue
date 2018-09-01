@@ -5,7 +5,7 @@
                 <div class="name">
                     <img :src="item.imgPath"  v-if="item.imgPath">{{ item.name }}
                 </div>
-                <div class="step-info">{{ item.targetStep + '步' }}</div>
+                <div class="step-info">{{ item.targetStep }}步 </div>
             </div>
             <div class="task-item-container">
                 <div class="task-container-item">活跃度：{{ item.activity }}</div>
@@ -75,7 +75,7 @@
                                 {
                                     id: item.id,
                                     name: item.name,
-                                    currentStep: "",
+                                    currentStep: '',
                                     targetStep: item.steps,
                                     activity: item.activity,
                                     hanselActivity: item.activityadd,
@@ -90,6 +90,9 @@
                             )
                             _this.db.addTask(item.id,item.name,item.steps,item.activity,item.begintime,item.endtime,0,memberid,_this);
                         })
+                        if(json.dataList.length==0){
+                            _this.db.clearTask();
+                        }
                         _this.list = data
                     }, function (json) {
                         _this.$Message.error(json.msg)

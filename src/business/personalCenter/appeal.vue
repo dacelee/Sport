@@ -38,7 +38,7 @@
             <div class="photo">
                 <l-icon name="shangchuantupian"/>
                 <div class="text">上传图片{{ photoNum }}/1</div>
-                <l-imageUpload   :limit="1"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
+                <l-imageUpload   :limit="1"   :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
             </div>
         </div>
         <div class="btn" @click="submit">提交</div>
@@ -51,11 +51,11 @@
         name: 'appeal',
         data() {
             return {
-                orderNo: '1123213231',
-                orderNum: '1',
-                unitPrice: '13213',
-                totalPrice: '1232131',
-                time: '2018/06/28 00:49:32',
+                orderNo: '',
+                orderNum: '',
+                unitPrice: '',
+                totalPrice: '',
+                time: '',
                 appealphoto: "",
                 appeal:"",
                 photoNum:0,

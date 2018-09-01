@@ -138,12 +138,12 @@
                     _this.formData.x = ret.lon
                     _this.formData.y = ret.lat
                     _this.locationData = ret
-                    var state = ret.state
-                    var city = ret.city
-                    var district = ret.district
-                    var street = ret.street
-                    var address = ret.address
-                    var thoroughfare = ret.thoroughfare
+//                    var state = ret.state
+//                    var city = ret.city
+//                    var district = ret.district
+//                    var street = ret.street
+//                    var address = ret.address
+//                    var thoroughfare = ret.thoroughfare
                     _this.formData.address = ret.address;
 //                    alert( street )
 //                    if (!thoroughfare) {
@@ -157,13 +157,14 @@
             },
             submitData() {
                 var ret = this.locationData
+                if (ret==null) {
+                    this.location();
+                    this.$Message.info('正在匹配城市数据,请稍后...')
+                    return
+                }
                 var state = ret.state
                 var city = ret.city
                 var district = ret.district
-                if (!state) {
-                    this.location()
-                    return
-                }
                 if( this.formData.logo==""){
                     this.$Message.error("请上传队标")
                     return;

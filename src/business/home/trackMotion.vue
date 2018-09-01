@@ -39,9 +39,11 @@
                 var height = $(window).height() - herderHeight -$(".step-num-info").outerHeight(true)-20;
                 $(".track-motion").height(height);
                 this.amap.open(this);
-                _this.session.getMemberID(function(memberid) {
-                    _this.mileage = _this.amap.getTodayMileage(_this,memberid);
-                });
+//                alert(_this.totalStep)
+                _this.mileage =  (_this.totalStep*0.3/1000).toFixed(2);
+//                _this.session.getMemberID(function(memberid) {
+//                    _this.mileage = _this.amap.getTodayMileage(_this,memberid);
+//                });
 
                 return;
 //                aMap.getLocation(function (ret, err) {

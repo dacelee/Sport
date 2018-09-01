@@ -21,7 +21,6 @@
                 <div v-if="isManage && teamMembers.length==1"  @click="delTeam(myTeamInfo.teamid)">解散队伍  <l-icon name="bianji" class="right-icons"/></div>
             </div>
             <div class="personal-list">
-                <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
                 <div class="personal-list-item" v-for="item in teamMembers">
                     <div class="personal-head-way pull-left">
                         <img :src="item.imgPath" alt="">
@@ -51,26 +50,34 @@
                          @click="delMember(item.teamid,item.id,2)">退出队伍
                     </div>
                 </div>
-              </Scroll>
+                <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                     <span slot="no-more">
+                          暂无更多数据
+                     </span>
+                </infinite-loading>
             </div>
-
         </div>
     </div>
 </template>
 
 <script>
-    let _this
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'my-team',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
-                init:false,
+                inited:false,
+                bottomStatus:'wait',
                 page:1,
                 scrollHeight:400,
                 myTeamInfo: null,
                 personalId: 0, // 个人信息ID，用来判断是不是当前用户，做退出按钮判断
                 isManage: false, // 用来判断是否拥有踢人权限
                 memberid:0,
+                teamid:0,
                 teamMembers: [
 //                    {
 //                        id: 0,
@@ -150,33 +157,29 @@
                 ]
             }
         },mounted() {
-            _this = this;
-            this.init = true;
+            this.inited = true;
             this.session.rmCache("nearByUserTeamId");
-            this.$nextTick(function () {
-                this.getMyTeam();
-                var headerHeight = $("header").outerHeight();
-                this.scrollHeight = $(window).height()-headerHeight-120;
-            })
+            this.getMyTeam();
         },
         activated() {
-            if(!this.init){
+            if(!this.inited){
+                this.inited = true;
                 this.page=1;
                 this.getMyTeam();
             }
         },
         deactivated(){
-            this.init = false;
+            this.inited = false;
         },
         methods: {
 //            nearByUser(){
 //                this.$router.push({name:'nearbyUser',query:{id:this.myTeamInfo.teamid,type:1}});
 //            },
-            handleReachBottom() {
-                var _this = this
-                return new Promise(function (resolve) {
-                    _this.loadTeamMember( _this.myTeamInfo.teamid, resolve);
-                })
+            infiniteHandler($state) {
+                if(this.teamid!=0){
+                    this.loadTeamMember(this.myTeamInfo.teamid,$state);
+                }
+
             },
             getMyTeam() {
                 var  _this = this;
@@ -184,6 +187,7 @@
                     _this.memberid = memberid;
                     _this.axios.post(_this.session.teamDetail, {'memberid': memberid}, function (json) {
                         var team = json.data
+
                         _this.myTeamInfo = {
                             teamid: team.teamid,
                             name: team.name,
@@ -192,8 +196,15 @@
                             description: team.intro,
                             logo: team.logo
                         };
-                        _this.session.appCache("nearByUserTeamId",team.teamid);
-                        _this.loadTeamMember(team.teamid);
+                        setTimeout(function(){
+                            var headerHeight = $("header").outerHeight(true);
+                            $(".personal-list").height($(window).height()-headerHeight-120);
+                            _this.session.appCache("nearByUserTeamId",team.teamid);
+                            _this.teamid = team.teamid;
+//                            _this.loadTeamMember(team.teamid);
+                            _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                        },200);
+//                        _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
                     }, function (json) {
                         _this.session.rmCache("nearByUserTeamId");
                         _this.$emit('changeData', 0,true);
@@ -201,49 +212,48 @@
                         _this.myTeamInfo = null;
                     })
                 })
-                
             },
-            loadTeamMember(teamid,resolve) {
+            loadTeamMember(teamid,$state) {
                 var _this = this;
                 _this.personalId = 0 ;
                 this.session.getMemberID(function (memberid) {
                     _this.axios.post(_this.session.teamMember, {'teamid': teamid, 'page': _this.page, 'pageSize': 10},
-                            function (json) {
-                                var teamList = json.dataList
-                                if (_this.page == 1) {
-                                    _this.teamMembers = []
-                                }
-                                $(teamList).each(function (index, item) {
-                                    _this.teamMembers.push(
-                                            {
-                                                teamid: teamid,
-                                                id: item.teammemberid,
-                                                imgPath: item.logo,
-                                                name: item.nikename,
-                                                sex: item.sex,
-                                                activity: item.activity,
-                                                steps: item.steps == null ? 0 : item.steps,
-                                                signature: item.personality,
-                                                status: item.level
-                                            }
-                                    )
-                                    if (item.level == 1) {
-                                        _this.personalId = item.teammemberid;
-                                        if (memberid == item.teammemberid) {
-                                            _this.isManage = true;
-                                        }else{
-                                            _this.isManage = false;
-                                        }
-                                    }
-                                })
-                                if (teamList.length > 0) {
-                                    _this.page++;
-                                }
-                                _this.$emit('changeData', teamid, _this.isManage);
-                            }, function (json) {
+                        function (json) {
+                            var teamList = json.dataList
+                            if (_this.page == 1) {
                                 _this.teamMembers = []
-                                _this.$Message.error(json.msg)
-                            }, resolve);
+                            }
+                            $(teamList).each(function (index, item) {
+                                var h = item.sex=="男"||item.sex==null?'./static/img/man.png':'./static/img/woman.png';
+                                item.logo = item.logo==null||item.logo=="null"?h: item.logo;
+                                _this.teamMembers.push(
+                                        {
+                                            teamid: teamid,
+                                            id: item.teammemberid,
+                                            imgPath: item.logo,
+                                            name: item.nikename,
+                                            sex: item.sex,
+                                            activity: item.activity,
+                                            steps: item.steps == null ? 0 : item.steps,
+                                            signature: item.personality,
+                                            status: item.level
+                                        }
+                                )
+                                if (item.level == 1) {
+                                    _this.personalId = item.teammemberid;
+                                    if (memberid == item.teammemberid) {
+                                        _this.isManage = true;
+                                    }else{
+                                        _this.isManage = false;
+                                    }
+                                }
+                            })
+                            _this.appUtil.loadFinish(_this,json.pageCount,$state);
+                            _this.$emit('changeData', teamid, _this.isManage);
+                        }, function (json) {
+                            _this.teamMembers = []
+                            _this.$Message.error(json.msg)
+                        });
                 });
             },
             /**
@@ -278,7 +288,10 @@
                         _this.$Message.info(json.msg)
                     })
                 });
-            }
+            },
+            bottomStatusChange(status){
+                this.bottomStatus=status;
+            },
         }
     }
 </script>

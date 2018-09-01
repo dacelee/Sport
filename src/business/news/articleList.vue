@@ -1,33 +1,38 @@
 <template>
     <div class="news-container2">
         <div class="healthy-container">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
-                <div class="healthy-list-item" v-for="item in list">
-                    <div class="news-right-container2 pull-left" @click="toDetails(item)">
-                        <div class="title">{{ item.name }}</div>
-                        <div class="description">{{ item.description }}</div>
-                        <div class="time">{{ item.time }}</div>
-                    </div>
+            <div class="healthy-list-item" v-for="item in list">
+                <div class="news-right-container2 pull-left" @click="toDetails(item)">
+                    <div class="title">{{ item.name }}</div>
+                    <div class="description">{{ item.description }}</div>
+                    <div class="time">{{ item.time }}</div>
                 </div>
-            </Scroll>
+            </div>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+             <span slot="no-more">
+                  暂无更多数据
+             </span>
+            </infinite-loading>
         </div>
     </div>
 </template>
 <script>
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'news',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
-                scrollHeight:300,
                 page:1,
-                pageCount:0,
                 list: [],
                 currentRoute: 'healthy',
                 type:"1"
             }
         },
         methods: {
-            loadData(resolve){
+            infiniteHandler($state) {
                 var _this = this;
                 var action = ['','/notice/list'];
                 var title = ['','消息列表'];
@@ -38,11 +43,6 @@
                         if (_this.page == 1) {
                             _this.list = [];
                         }
-                        _this.page++;
-                        if (resolve) {
-                            resolve();
-                        }
-                        _this.pageCount = json.pageCount;
                         $(json.dataList).each(function (index, item) {
                             _this.list.push({
                                 id: item.id,
@@ -52,28 +52,25 @@
                                 time: _this.appUtil.dateFormat(item.addtime, "yyyy/MM/dd hh:mm")
                             });
                         });
+                        _this.appUtil.loadFinish(_this,json.pageCount,$state);
                     }, function (json) {
-                        if (resolve) {
-                            resolve();
-                        }
                         _this.$Message.error(json.msg);
                     });
                 });
             },
             toDetails(item) {
                 this.$router.push({name: 'articleDetails', params: {id: item.id}})
-            },
-            handleReachBottom () {
-                var _this = this;
-                return new Promise(function(resolve){
-                    _this.loadData(resolve);
-                });
             }
         },
+        mounted(){
+            $('.healthy-container').height($(window).height()-$("header").outerHeight(true)) ;
+        },
         activated() {
-            this.scrollHeight = $(window).height()-$("header").outerHeight(true)-10;
             this.page = 1;
-            this.loadData();
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
         }
     }
 </script>

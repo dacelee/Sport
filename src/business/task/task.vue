@@ -3,19 +3,18 @@
         <l-shortMenu :list="list" :currentRoute="currentRoute" @change="changeRoute"/>
         <div class="task-activity">
             <div class="activity-item">当前活跃度:{{ activity }}</div>
-            <div class="activity-item">奖励糖果:{{ sugarNum }}</div>
-            <div class="activity-item">步数:{{ stepNum }}</div>
+            <div class="activity-item">总糖果:{{ sugarNum }}</div>
+            <div class="activity-item">总步数:{{ stepNum }}</div>
         </div>
         <component :is="currentRoute"/>
     </div>
 </template>
 
 <script>
-    let _this
     import allTask from './allTask.vue'
     import myTask from './myTask.vue'
     import historyTask from './historyTask.vue'
-    
+    import users from '../../api/users.js'
     export default {
         name: 'task-list',
         components: {
@@ -48,12 +47,16 @@
         },
         methods: {
             changeRoute(route) {
-                _this.currentRoute = route
+                this.currentRoute = route
             },
             loadTask(){
                 var _this = this;
                 this.session.getMemberID(function(memberid){
                     var activity = 0;
+                    users.getCacheMyInfo(this, function (myInfo) {
+                        _this.sugarNum = myInfo.cointotal;
+                        _this.stepNum =  myInfo.stepstotal;
+                    },true)
                     _this.axios.post(_this.session.myTask, {"memberid":memberid}, function (json) {
                         $(json.dataList).each(function(index,item){
                             activity+= item.activity
@@ -61,16 +64,16 @@
                         _this.axios.post(_this.session.myActivityAdd, {"memberid":memberid}, function (json) {
                             activity+=json.data.activityadd;
                             _this.activity =  activity;
-                        },function(json){
-                            _this.$Message.error(json.msg)
-                        });
-                        _this.axios.post(_this.session.getCoinUnit,null, function (json) {
-                            _this.getCoinUnit = json.data.getcoinunit;
-                            _this.stepNum = _this.session.appCache("steps");
-                            if(isNaN(_this.stepNum )){
-                                _this.stepNum = 0;
-                            }
-                            _this.sugarNum = (_this.stepNum* _this.getCoinUnit* _this.activity).toFixed(4);
+//                            _this.axios.post(_this.session.getCoinUnit,null, function (json) {
+//                                _this.getCoinUnit = json.data.getcoinunit;
+//                                _this.stepNum = _this.session.appCache("steps");
+////                                if(isNaN(_this.stepNum )){
+////                                    _this.stepNum = 0;
+////                                }
+////                                _this.sugarNum = (_this.stepNum* _this.getCoinUnit* _this.activity).toFixed(4);
+//                            },function(json){
+//                                _this.$Message.error(json.msg)
+//                            });
                         },function(json){
                             _this.$Message.error(json.msg)
                         });
@@ -83,7 +86,6 @@
 
         },
         mounted() {
-            _this = this;
 //            this.loadTask();
         },
         activated(){

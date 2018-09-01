@@ -4,7 +4,8 @@
             <div class="upload-box text-center" >
                 <l-icon name="shangchuantouxiang"/>
                 <l-imageUpload   :limit="1"
-                                 style="border-radius: 50%;" :onSuccess="uploadHeadSuccess"/>
+                                 style="border-radius: 50%;"
+                                 :onSuccess="uploadHeadSuccess" :uploadImgs="photo"/>
             </div>
             <div class="select-upload-label text-center">上传俱乐部头像</div>
         </div>
@@ -17,7 +18,7 @@
         <div class="club-item">
             <div class="left-label pull-left">地区</div>
             <div class="right-input pull-left">
-                <input type="text" placeholder="俱乐部位置" v-model="area" @click="selCity" readonly>
+                <input type="text" placeholder="俱乐部位置" v-model="area" @click="selCity" readonly="true">
             </div>
         </div>
         <div class="club-item text-area">
@@ -50,6 +51,7 @@
                     y: "",
                     logo: ""
                 },
+                photo:[],
                 area: "",
                 locationData: null,//定位数据
                 selectorJSON: null
@@ -59,31 +61,63 @@
                 name: [{minLength: 1, message: "俱乐部名称必须填写"}]
             }
         },
-        mounted() {
-
+        deactivated() {
+            var UIActionSelector = api.require('UIActionSelector');
+            UIActionSelector.hide();
         },activated(){
-            if (this.session.isAPPRuntime() && this.area == '') {
-                this.loadCity();
+            this.initData();
+            var clubid = this.$route.query.id;
+            if(clubid){
+                club.showDetailChange(this,clubid);
+            }else{
+                if (this.session.isAPPRuntime()) {
+                    this.loadCity();
+                }
             }
         },
         methods: {
             submitData(){
+                var clubid = this.$route.query.id;
                 var _this = this;
-                if (_this.formData.proid == "" || _this.formData.cityid == "" || _this.formData.areaid == "") {
-                    _this.$Message.error("请选择俱乐部位置");
+                if (_this.formData.logo == "" ) {
+                    _this.$Message.error("请上传俱乐部头像");
                     return;
+                }
+                if(!clubid){
+                    if ( _this.formData.proid == "" || _this.formData.cityid == "" || _this.formData.areaid == "") {
+                        _this.$Message.error("请选择俱乐部位置");
+                        return;
+                    }
                 }
                 if(!_this.$verify.check()){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
                     _this.$Message.error(errMsg);
                 }else {
-                    club.clubCreate(_this, _this.formData);
+
+                    club.clubCreate(_this, _this.formData,clubid);
                 }
             },
+            initData(){
+                this.formData={
+                    memberid: 0,
+                    name: "",
+                    intro: "",
+                    logo: ""
+                };
+                this.photo = [];
+            },
             selCity(){
+                var clubid = this.$route.query.id;
+                if(clubid){
+                    return;
+                }
                 var _this = this;
                 if (_this.selectorJSON == null) {
                     _this.$Message.info("正在加载城市数据...");
+                    return;
+                }
+                if(this.area==""){
+                    this.location();//定位
                     return;
                 }
                 citys.actionSelector(_this.selectorJSON, function (ret) {
@@ -120,6 +154,10 @@
 //                    var street = ret.street;
 //                    var address = ret.address;
 //                    var thoroughfare = ret.thoroughfare;
+                    if(state==null){
+                        _this.$Message.error("定位失败");
+                        return;
+                    }
                     _this.area = state + " " + city + " " + district;
                     //匹配城市ID
                     var dbData = citys.locationToDBData(_this, _this.locationData);

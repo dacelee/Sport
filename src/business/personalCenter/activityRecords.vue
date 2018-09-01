@@ -4,7 +4,7 @@
             <div class="num">{{ activityNum }}</div>
             <div class="label">活跃度</div>
         </div>
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
+        <div class="activity-records-content">
             <div class="records-list-item" v-for="item in list">
                 <div class="left-details">
                     <div class="name">{{ item.name }}</div>
@@ -14,64 +14,46 @@
                    {{ item.num }}
                 </div>
             </div>
-        </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
+        </div>
     </div>
 </template>
-
 <script>
     import users from '../../api/users.js'
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'activity-records',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 page:1,
-                scrollHeight:0,
                 activityNum: '0',
-                list: [
-//                    {
-//                        name: '兑换初级任务',
-//                        time: '2018-06-23 12:22',
-//                        num: '10'
-//                    },
-//                    {
-//                        name: '活跃奖励',
-//                        time: '2018-06-22 12:22',
-//                        num: '10'
-//                    },
-//                    {
-//                        name: '活跃奖励',
-//                        time: '2018-06-22 12:22',
-//                        num: '10'
-//                    },
-//                    {
-//                        name: '活跃奖励',
-//                        time: '2018-06-22 12:22',
-//                        num: '10'
-//                    },
-//                    {
-//                        name: '活跃奖励',
-//                        time: '2018-06-22 12:22',
-//                        num: '10'
-//                    }
-                ]
+                list: []
             }
         },mounted(){
-            var headerHeight = $("header").outerHeight();
-            this.scrollHeight = $(window).height()-headerHeight-$(".current-activity").height()-80;
+            var headerHeight = $("header").outerHeight(true);
+            $('.activity-records-content').height($(window).height()-headerHeight-$(".current-activity").outerHeight(true));
+        },
+        activated(){
+            this.page = 1;
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
             var _this = this;
             users.getCacheMyInfo(this, function (myInfo) {
                 _this.activityNum = myInfo.activity+"+"+myInfo.activityadd;
-            })
-        },
-        activated(){
-            users.loadActivityLog(this);
+            },true);
         },
         methods: {
-            handleReachBottom () {
-                var _this = this;
-                return new Promise(function(resolve){
-                    users.loadActivityLog(_this,resolve);
-                });
+            infiniteHandler($state) {
+                users.loadActivityLog(this,$state);
             }
         }
     }
@@ -81,6 +63,7 @@
     .activity-records {
         width: 690px;
         margin: 0 auto;
+        .activity-records-content{overflow-y:scroll;-webkit-overflow-scrolling:touch;}
         .current-activity {
             background-color: #333339;
             -webkit-border-radius: 8px;

@@ -1,7 +1,6 @@
 <template>
     <div class="activityList">
         <div class="activityList-container">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  >
             <div class="activityList-item" v-for="item in list"  @click="toDetails(item.id)">
                 <div class="left-img pull-left">
                     <img :src="item.imgPath" alt="">
@@ -17,19 +16,26 @@
                     <div class="del" v-if="item.my" @click="delItem(item.id)">删除</div>
                 </div>
             </div>
-                </Scroll>
+                <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+                </infinite-loading>
         </div>
     </div>
 </template>
 
 <script>
     import club from '../../api/club.js'
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'activityList',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 page:1,
-                scrollHeight:0,
                 filterName: '',
                 page:1,
                 list: [
@@ -42,16 +48,9 @@
             }
         },
         methods: {
-            reset() {
-                console.log(this.filterName)
-            },
             editEvent() {
                 var clubid = this.$route.query.id;
                 this.$router.push({name:'publishActivity', query: {id: clubid}});
-            },
-            loadData(){
-                var clubid = this.$route.query.id;
-                club.loadActivityList(this,clubid);
             },
             toDetails(id){
                 this.$router.push({name:'newsDetails', params: {id: id}});
@@ -60,23 +59,20 @@
                 var clubid = this.$route.query.id;
                 club.delrticleAction(this,id,clubid);
             },
-            handleReachBottom () {
-                var _this = this;
+            infiniteHandler ($state) {
                 var clubid = this.$route.query.id;
-                return new Promise(function(resolve){
-                    club.loadActivityList(_this,clubid,resolve);
-                });
+                club.loadActivityList(this,clubid,$state);
             }
         },
         activated(){
             this.page = 1;
-            this.loadData(this.page);
             var clubid = this.$route.query.id;
             club.checkClubMemberAction(this,clubid);
+            this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
         },
         mounted() {
             var headerHeight = $("header").outerHeight();
-            this.scrollHeight = $(window).height()-headerHeight;
+            $(".activityList-container").height($(window).height()-headerHeight);
         }
     }
 </script>

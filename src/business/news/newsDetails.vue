@@ -36,11 +36,11 @@
             </Scroll>
         </div>
         <div class="news-short-menu">
-            <div class="news-short-menu-item text-center" @click="evaluationFn">
+            <div class="news-short-menu-item text-center" @click="evaluationFn" v-if="!mycreate">
                 <l-icon name="bianji"/>
                 吐槽
             </div>
-            <div class="news-short-menu-item text-center" @click="rewardFn"  v-if="acticleType==3">
+            <div class="news-short-menu-item text-center" @click="rewardFn"  v-if="acticleType==3&&!mycreate">
                 <l-icon name="huodong"/>
                 打赏
             </div>
@@ -57,7 +57,7 @@
                     <input type="text" placeholder="最少打赏0.01" v-model="coin">
                 </div>
                 <div class="reward-num">
-                    <input type="text" placeholder="交易密码" v-model="password">
+                    <input type="password" placeholder="交易密码" v-model="password">
                 </div>
                 <div class="operation-btn">
                     <div class="btn btn-cancel text-center" @click="showPopup = false">取&emsp;消</div>
@@ -82,11 +82,12 @@
             return {
                 acticleType:0,
                 popupType: '',
-                scrollHeight:400,
+                scrollHeight:10,
                 showPopup: false,
                 myCoin: 0,
                 page:1,
                 comment: '',
+                mycreate:false,
                 coin: '',
                 password:'',
                 newsDetails: {
@@ -131,15 +132,22 @@
             evaluationFn() {
                 _this.popupType = 'evaluation'
                 _this.showPopup = true
+//                this.comment = "";
             },
             commentSubmit() {
                 var param = this.$route.params
+                if(this.comment==""){
+                    this.$Message.info("请输入吐槽内容");
+                    return;
+                }
+                var _this = this;
                 this.session.getMemberID(function (memberid) {
                     _this.axios.post('/article/articlecomment_add',
                         {'articleid': param.id, memberid: memberid, content: _this.comment, type: 1}, function (json) {
                             _this.$Message.info(json.msg)
                             _this.showPopup = false;
-                                _this.page = 1;
+                            _this.page = 1;
+                            _this.comment = "";
                             _this.loadComment()
                         }, function (json) {
                             _this.$Message.info(json.msg)
@@ -182,6 +190,11 @@
                         dateTime: _this.appUtil.dateFormat(data.addtime, 'yyyy/MM/dd hh:mm'),
                         content: data.content
                     }
+                    _this.session.getMemberID(function(memberid){
+                        if(data.adminid==memberid){
+                            _this.mycreate = true;
+                        }
+                    })
                     _this.rewardInfo = {
                         complain: data.commentTotal?data.commentTotal:0,
                         admiration: data.goods,
@@ -192,22 +205,42 @@
                     _this.$Message.error(json.msg);
                 });
             },
+            del(){
+                var id = this.$route.params.id
+                App.confirm({"title":'警告',"content":"确定删除分享吗?"}).then(function() {
+                    axios.post("/article/article_del", {id: id}, function (json) {
+                        context.$Message.info(json.msg);
+                        context.$router.go(-1);
+                    }, function (json) {
+                        context.$Message.error(json.msg);
+
+                    });
+                });
+            },
             loadComment(resolve) {
                 var param = this.$route.params;
                 this.axios.post('/article/commentlist', {'articleid': param.id, page: this.page, pageSize: 10},
                         function (json) {
                             var data = json.dataList
                             if (_this.page == 1) {
-                                _this.evaluation = []
+                                _this.evaluation = [];
                             }
                             $(data).each(function (index, item) {
+                                var h = item.sex=="男"||item.sex==null?'./static/img/man.png':'./static/img/woman.png';
+                                item.logo = (item.logo==null||item.logo=='null')?h: item.logo;
                                 _this.evaluation.push({
-                                    photoPath: item.logo ? _this.axios.host + item.logo : '',
+                                    photoPath: item.logo,
                                     userName: item.nikename,
                                     dateTime: _this.appUtil.dateFormat(item.addtime, 'yyyy/MM/dd hh:mm'),
                                     container: item.content
                                 })
                             })
+                            if (_this.page == 1) {
+                                setTimeout(function(){
+                                    _this.scrollHeight = $(".news-evaluation-item").outerHeight(true)*data.length+20;
+                                },500)
+
+                            }
                             if(data.length>0){
                                 _this.page++;
                             }
@@ -228,7 +261,9 @@
         },
         activated() {
             this.password = "";
+            this.comment = "";
             this.page=1;
+            this.scrollHeight = 0;
             this.loadData()
             this.loadComment();
         },

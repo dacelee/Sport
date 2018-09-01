@@ -94,6 +94,9 @@
             top: 50%;
             width: 550px;
             transform: translateX(-50%) translateY(-50%);
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+            -o-transform: translateX(-50%) translateY(-50%);
             box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
             .alert-title {
                 color: #000000;

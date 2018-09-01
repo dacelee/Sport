@@ -3,28 +3,34 @@
         <l-tabs :list="listTab" :current="type" @change="changeRoute"/>
         <div class="news-container">
             <div class="healthy-container">
-                <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight">
-                    <div class="healthy-list-item" v-for="item in list" @click="toDetails(item)">
-
-                        <div :class="type==1||type==4?'activity':'share'">
-                            <div class="news-left-img pull-left">
-                                <img :src="item.imgPath" alt="">
-                                <div class="bg"></div>
-                            </div>
-                            <div class="news-right-container pull-left">
-                                <div class="title">{{ item.name }}</div>
-                                <div class="description" v-if="type==3">{{ item.description }}</div>
-                            </div>
+                <div class="healthy-list-item" v-for="item in list" @click="toDetails(item)">
+                    <div :class="type==1||type==4?'activity':'share'">
+                        <div class="news-left-img pull-left">
+                            <img :src="item.imgPath" alt="">
+                            <div class="bg"></div>
+                        </div>
+                        <div class="news-right-container pull-left">
+                            <div class="title">{{ item.name }}</div>
+                            <div class="description" v-if="type==3">{{ item.description }}</div>
                         </div>
                     </div>
-                </Scroll>
+                </div>
+                <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                     <span slot="no-more">
+                          暂无更多数据
+                     </span>
+                </infinite-loading>
             </div>
         </div>
     </div>
 </template>
 <script>
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'news',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 listTab: [
@@ -53,8 +59,7 @@
                 if (nVal === '3') {
                     this.$emit('changeRightTitle', '我来分享')
                     this.$emit('changeRightIcon', 'woxiangfenxiang')
-                }
-                else {
+                }else {
                     this.$emit('changeRightTitle', '')
                     this.$emit('changeRightIcon', '')
                 }
@@ -68,10 +73,14 @@
                 this.type = route
                 this.page = 1
                 this.list= [];
-                this.loadData()
+                var _this = this;
+                setTimeout(function(){
+                    _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                },300);
+
             },
-            loadData(resolve) {
-                var _this = this
+            loadData($state) {
+                var _this = this;
                 this.axios.post(this.session.articleList, {'page': _this.page, 'pageSize': 10, 'type': this.type},
                     function (json) {
                         if (_this.page == 1) {
@@ -85,37 +94,51 @@
                                 description: item.intro
                             })
                         })
-                        if (_this.page < json.pageCount) {
-                            _this.page++
-                        }
+                        _this.appUtil.loadFinish(_this,json.pageCount,$state);
                     }, function (json) {
                         _this.$Message.error(json.msg)
-                    }, resolve)
+                    })
             },
             toDetails(item) {
                 this.$router.push({name: 'newsDetails', params: {id: item.id}})
             },
-            handleReachBottom() {
-                var _this = this
-                return new Promise(function (resolve) {
-                    _this.loadData(resolve)
-                })
+            infiniteHandler($state) {
+                this.loadData($state)
             }
         },
         mounted() {
             this.page = 1
-            this.loadData();
-            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true) - 5
-            $(".healthy-container").height( this.scrollHeight);
+            var height = $(window).height() - $('header').outerHeight(true) - $('.l-tabs').outerHeight(true)-5
+            $(".healthy-container").height(height);
+        },
+        beforeRouteLeave(to, from, next) {
+            // 进入详情
+            if (to.name === "newsDetails") {
+                // 获得滚动距离
+
+                let scrollTop = $('.healthy-container').scrollTop();
+                // 设置缓存
+                this.session.appCache("messageScrollTop", scrollTop);
+            } else {
+                // 如果去其他页移除缓存
+                this.session.rmCache("messageScrollTop");
+            }
+            next();
         },
         activated() {
             var _this = this;
-           if(this.type==3){
-               setTimeout(function(){
-                   _this.$emit('changeRightTitle', '我来分享')
-                   _this.$emit('changeRightIcon', 'woxiangfenxiang')
-               },10)
-           }
+            if (this.type == 3) {
+                setTimeout(function () {
+                    _this.$emit('changeRightTitle', '我来分享')
+                    _this.$emit('changeRightIcon', 'woxiangfenxiang')
+                }, 10)
+            }
+            let scrollTop = this.session.appCache("messageScrollTop");
+            // 判断来源
+            if (scrollTop != null) {
+                // 需要缓存的页面,滚动
+                $('.healthy-container').scrollTop(scrollTop);
+            }
         }
     }
 </script>
@@ -125,8 +148,9 @@
     }
     .healthy-container {
         padding-bottom: 0 !important;
+        overflow-y:scroll;
+        -webkit-overflow-scrolling:touch;
         .healthy-list-item {
-            border-bottom: 2px solid #999999;
             margin: 0 auto;
             overflow: hidden;
             background-color: #ffffff;
@@ -139,7 +163,7 @@
                     height:100%;
                     img {
                         width: 100%;
-                        height: auto;
+                        height: 100%;
                     }
                     .bg{width: 100%;height:100%;background-color: rgba(0,0,0,0.5);position: absolute;top:0px;left: 0px;}
                 }

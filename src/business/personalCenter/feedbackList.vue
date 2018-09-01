@@ -1,22 +1,33 @@
 <template>
     <div class="feedback-list">
-        <div class="feedback-list-item" v-for="item in list">
-            <div class="questions item-container">
-                <div class="time">{{ item.questions.time}}</div>
-                <div class="content">问：{{ item.questions.content }}</div>
+        <div class="feedback-list-content">
+            <div class="feedback-list-item" v-for="item in list">
+                <div class="questions item-container">
+                    <div class="time">{{ item.questions.time}}</div>
+                    <div class="content">问：{{ item.questions.content }}</div>
+                </div>
+                <div class="reply item-container" v-if="item.reply.content">
+                    <div class="time">{{ item.reply.time}}</div>
+                    <div class="content">答：{{ item.reply.content }}</div>
+                </div>
             </div>
-            <div class="reply item-container" v-if="item.reply.content">
-                <div class="time">{{ item.reply.time}}</div>
-                <div class="content">答：{{ item.reply.content }}</div>
-            </div>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+               <span slot="no-more">
+                    暂无更多数据
+               </span>
+            </infinite-loading>
         </div>
         <div class="btn" @click="$router.push('feedback')">提问</div>
     </div>
 </template>
 <script>
     import users from '../../api/users.js'
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'feedback-list',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 page:1,
@@ -35,13 +46,20 @@
             }
         },
         methods: {
-            loadData(page){
-
-                users.loadFeedback(this, page, 10);
+            infiniteHandler($state){
+                users.loadFeedback(this,$state);
             }
         },
+        mounted() {
+            var height = $(window).height() - $('header').outerHeight(true)
+            $(".feedback-list-content").height(height);
+        },
         activated() {
-            this.loadData(this.page);
+            this.page = 1;
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
         }
     }
 </script>
@@ -49,6 +67,7 @@
 <style lang="scss">
     .feedback-list {
         width: 100%;
+        .feedback-list-content{overflow-y: scroll;-webkit-overflow-scrolling:touch;}
         .feedback-list-item {
             width: 100%;
             padding: 0 30px;

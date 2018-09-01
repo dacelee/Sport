@@ -1,45 +1,44 @@
 <template>
     <div class="user-guide">
-        <div class="content">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
-                <div class="list-item" v-for="item in list"  @click="toDetails(item)">
-                    <div class="news-right-container2 pull-left">
-                        <div class="title">{{ item.name }}</div>
-                        <div class="description">{{ item.description }}</div>
-                        <!--<div class="time">{{ item.time }}</div>-->
-                    </div>
+        <div class="content" id="guideContent">
+            <div class="list-item" v-for="item in list"  @click="toDetails(item)">
+                <div class="news-right-container2 pull-left">
+                    <div class="title">{{ item.name }}</div>
+                    <div class="description">{{ item.description }}</div>
+                    <!--<div class="time">{{ item.time }}</div>-->
                 </div>
-            </Scroll>
+            </div>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+               <span slot="no-more">
+                    暂无更多数据
+               </span>
+            </infinite-loading>
         </div>
     </div>
 </template>
 
 <script>
-    let _this
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'user-guide',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
-                scrollHeight:300,
                 page:1,
                 pageCount:0,
                 list: [],
-                currentRoute: 'healthy',
-                type:"1"
+                ref:true,
             }
         },
         methods: {
-            loadData(resolve){
+            infiniteHandler($state){
                 var _this = this;
                 this.axios.post("/my/helplist", {"page":_this.page,"pageSize":10}, function (json) {
                     if(_this.page==1){
                         _this.list = [];
                     }
-                    _this.page++;
-                    if(resolve){
-                        resolve();
-                    }
-                    _this.pageCount = json.pageCount;
                     $(json.dataList).each(function(index,item){
                         _this.list.push( {
                             id: item.id,
@@ -49,31 +48,45 @@
                             time:_this.appUtil.dateFormat(item.addtime,"yyyy/MM/dd hh:mm")
                         });
                     });
+                    _this.appUtil.loadFinish(_this,json.pageCount,$state);
                 },function(json){
-                    if(resolve){
-                        resolve();
-                    }
                     _this.$Message.error(json.msg);
                 });
             },
             toDetails(item) {
                 this.$router.push({name: 'guide', params: {id: item.id}})
-            },
-            handleReachBottom () {
-                return new Promise(function (resolve) {
-                    loadData(resolve);
-                });
             }
         },
+        beforeRouteLeave(to, from, next) {
+            // 进入详情
+            if (to.name === "guide") {
+                // 获得滚动距离
+                let scrollTop = $("#guideContent").scrollTop();
+                // 设置缓存
+                this.session.appCache("messageScrollTop", scrollTop);
+            } else {
+                // 如果去其他页移除缓存
+                this.session.rmCache("messageScrollTop");
+            }
+            next();
+        },
+        mounted() {
+            $("#guideContent").height($(window).height()-$("header").outerHeight(true));
+        },
         activated() {
-            this.scrollHeight = $(window).height()-$("header").outerHeight(true)-10;
-            this.loadData();
+            let scrollTop = this.session.appCache("messageScrollTop");
+            // 判断来源
+            if (scrollTop != null) {
+                $("#guideContent").scrollTop(scrollTop);
+            }
         }
     }
 </script>
 <style lang="scss">
     .user-guide {
         .content {
+            overflow-y: scroll;
+            -webkit-overflow-scrolling:touch;
             .list-item{
                 padding: 10px 30px;
                 height: 228px;

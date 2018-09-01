@@ -73,7 +73,6 @@
     .news-details-info {
         margin: 20px 0 40px 0;
         color: #666666;
-        display: inline-block;
     .news-author {
         margin-right: 30px;
     }

@@ -5,7 +5,7 @@
        <div class="goods-price">￥{{price}}</div>
        <div class="goods-te">
            <div class="pull-left">等值糖果：{{coin}}</div>
-           <div class="pull-right">今日币价：{{coinPrice}} 美元</div>
+           <div class="pull-right">{{qty}}</div>
        </div>
        <div class="word" v-html="word">
        </div>
@@ -69,7 +69,8 @@
                 payType:1,
                 rmbPay:"",
                 type:0,
-                coinPay:""
+                coinPay:"",
+                qty:'',
             }
         },
         deactivated(){
@@ -85,6 +86,7 @@
             this.rmbPay="",
             this.type=0,
             this.coinPay=""
+            this.qty = '';
             $(".view-container")[0].scrollTop = 0;
         },
         activated () {
@@ -126,7 +128,9 @@
                 if(this.rmbPay>this.price){
                     this.rmbPay = this.price;
                 }
-                this.coinPay = ((this.price - this.rmbPay) / this.price * this.coin).toFixed(2);
+                var dollar = this.price*146/1000;
+                var payDollar =  this.rmbPay*146/1000;
+                this.coinPay = ((dollar - payDollar) / dollar * this.coin).toFixed(4);
 
             }
      },
@@ -142,6 +146,7 @@
         .detailTitle{font-size: 32px;
         padding: 20px 20px 20px 20px;
         color: #333;}
+        img{display: block}
         .goods-te{color:#666;font-size: 32px;overflow:hidden;
         padding:20px 20px 20px 20px;border-top:#ddd solid 15px;border-bottom:#ddd solid 15px;}
         .goods-price{ font-size: 34px;
@@ -151,7 +156,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;}
-        .word{color:#333;font-size:28px;line-height:50px; padding: 20px 20px 20px 20px;min-height: 50vh;
+        .word{color:#333;font-size:28px;line-height:50px; padding: 20px 20px 20px 20px;min-height: 50vh;padding-bottom: 60px;
          img{max-width: 100%;}
         }
         .bottomBtn{
@@ -222,5 +227,6 @@
             background-color: #F8C513;
             color: #000;width:100%;background-color: #404148; color: #fff;}
         }
+
         }
 </style>

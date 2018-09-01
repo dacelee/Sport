@@ -40,22 +40,21 @@
                 <l-select v-model="currentFilter" :list="filterList" @change="changeFilterWay"/>
             </div>
             <div class="filter filter-id" v-if="currentFilter.id === 1">
-                <input type="text" placeholder="搜索" @key.enter="search" v-model="filterName">
+                <input type="text" placeholder="搜索" @keyup.enter="search" v-model="filterName">
                 <div @click="search">
                 <l-icon name="sousuo" />
                 </div>
             </div>
             <div class="filter filter-price" v-if="currentFilter.id === 2">
-                <input type="text" placeholder="最低价" v-model="priceLow">
+                <input type="text" placeholder="最低价" v-model="priceLow"  @keyup.enter="search" >
                 <div>~</div>
-                <input type="text" placeholder="最高价" @key.enter="search" v-model="priceHigh">
+                <input type="text" placeholder="最高价" @keyup.enter="search" v-model="priceHigh">
                 <div @click="search">
                     <l-icon name="sousuo" />
                 </div>
             </div>
         </div>
         <div class="trading-center-list-business">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
                 <div class="trading-business-item" v-for="item in businessList">
                     <div class="left-img pull-left">
                         <img :src="item.imgPath" alt="">
@@ -73,7 +72,11 @@
                     </div>
                     <div class="right-business-btn pull-left text-center clear" v-if="item.clear" @click="clear(item.id)">取消</div>
                 </div>
-            </Scroll>
+                <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+                </infinite-loading>
         </div>
         <div class="bottomBtn">
             <div class="pull-left" @click="myAction()">{{sealBtn}}</div>
@@ -92,7 +95,7 @@
         </div>
         <div class="bottomBtnBuy" v-show="isShowSell">
             <div class="buyBox">
-                <div class="buying">发布{{marketAction}}</div>
+                <div class="buying">{{marketAction}}</div>
                 <div class="buyleft">当前价格：${{current}}</div>
                 <div class="buyText"><label><div> 单价</div> <div> $ ({{priceInterval}}) </div></label><input type="text" v-model="unitprice" :placeholder="placeholder" @change="change"></div>
                 <div class="buyText"><label>数量</label><input type="text" v-model="cointotal2" placeholder="请输入交易数量" @keyup="change"></div>
@@ -111,9 +114,12 @@
 <script>
     import coin from '../../api/coin.js'
     import users from '../../api/users.js'
-    
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'trading-center-list',
+        components: {
+            InfiniteLoading
+        },
         data() {
             return {
                 chartsEl:null,
@@ -121,8 +127,8 @@
                 filterName: null,
                 isShow: false,
                 isShowSell: false,
-                marketBtn: '购买',
-                marketAction: '买单',
+                marketBtn: '出售',
+                marketAction: '发布买单',
                 marketItem: null,
                 smscode:'',
                 page: 1,
@@ -144,7 +150,7 @@
                 password: '',
                 password2:'',
                 sealType: 1,
-                sealBtn:'买入',
+                sealBtn:'发布买单',
                 tradecharge: 0,//手续费率
                 placeholder:'请勿超过平台2倍溢价',
                 codeSend:'获取验证码',
@@ -192,11 +198,11 @@
                 tabsList: [
                     {
                         id: 1,
-                        name: '买'
+                        name: '买单列表'
                     },
                     {
                         id: 2,
-                        name: '卖'
+                        name: '卖单列表'
                     }
                 ],
                 tabsListBuy: [
@@ -220,7 +226,8 @@
                     this.filterName='';
                 }
                 this.page = 1;
-                coin.loadSales(this,this.filterName,this.priceLow,this.priceHigh);
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+//                coin.loadSales(this,this.filterName,this.priceLow,this.priceHigh);
             },
             changeTabs(res) {
                 this.type = res
@@ -228,29 +235,32 @@
                 this.sealType = res;
                 if (res == 2) {
                     this.marketBtn = '购买'
-                    this.sealBtn = "卖出"
+                    this.sealBtn = "发布卖单"
                 } else {
                     this.marketBtn = '出售'
-                    this.sealBtn = "买入"
+                    this.sealBtn = "发布买单"
                 }
                 if ( this.sealType == 2) {
-                    this.marketAction = '卖单'
+                    this.marketAction = '发布卖单'
                     this.placeholder='贡献值越高，手续费越低哟';
 
                 }else {
-                    this.marketAction = '买单'
+                    this.marketAction = '发布买单'
                     this.placeholder='请勿超过平台2倍溢价';
                 }
-                coin.loadSales(this,this.filterName,this.priceLow,this.priceHigh)
+                this.businessList = [];
+                var _this = this;
+                setTimeout(function(){
+                      _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+//                    coin.loadSales(_this,_this.filterName,_this.priceLow,_this.priceHigh)
+                },100);
+
             },
             changeFilterWay(res) {
-                console.log(res)
+//                console.log(res)
             },
-            handleReachBottom() {
-                var _this = this
-                return new Promise(function (resolve) {
-                    coin.loadSales(_this,_this.filterName,_this.priceLow,_this.priceHigh, resolve)
-                })
+            infiniteHandler($state) {
+                coin.loadSales(this,this.filterName,this.priceLow,this.priceHigh,$state);
             },
             setChartsData() {
                 var _this = this;
@@ -365,7 +375,6 @@
                         _this.codeSend = "获取验证码";
                         clearInterval(_this.timer);
                         _this.timer = null;
-
                     }
                 }, 1000);
             },
@@ -397,7 +406,8 @@
                         this.marketItem.type, handlingfee)
                 }
                 else {
-                    this.isShow = false
+                    this.isShow = false;
+                    this.password = '';
                 }
             },
             marketSell(id) {
@@ -434,7 +444,7 @@
                             this.$Message.error('请输入验证码')
                             return
                         }
-                        handlingfee = (cointotal * unitprice * this.tradecharge);
+                        handlingfee = (cointotal  * this.tradecharge);
                         if ((cointotal+handlingfee) > this.myCoin) {
                             this.$Message.error('糖果数量不足,需要手续费:' + handlingfee+",无法提交卖单")
                             return
@@ -446,22 +456,25 @@
                     }
                     coin.saleAddAction(this, cointotal, unitprice, this.sealType, handlingfee,smscode,this.password2)
                 }else {
-                    this.unitprice = "";
-                    this.cointotal2 = "";
-                    this.password2 = "";
-                    this.smscode ='';
-                    this.marketTotal = '';
-                    this.isShowSell = false
+                    this.initForm();
                 }
             }, init() {
                 var _this = this
                 this.page = 1
                 coin.loadBaseInfo(this)
-                coin.loadSales(this)
+//                coin.loadSales(this)
                 users.getCacheMyInfo(this, function (user) {
                     _this.myCoin = user.cointotal;
                     _this.tradecharge = user.tradecharge
                 }, true)
+            },
+            initForm(){
+                this.unitprice = "";
+                this.cointotal2 = "";
+                this.password2 = "";
+                this.smscode ='';
+                this.marketTotal = '';
+                this.isShowSell = false
             },
             chartUpdate(id){
                 this.chartsActive = id;
@@ -517,8 +530,8 @@
                 }
                 this.marketTotal = parseFloat(this.cointotal2)*100*parseFloat(this.unitprice)/100;
                 if (this.sealType == 2) {
-                    var handlingfee = (this.cointotal2 * this.unitprice * this.tradecharge)
-                    this.marketTotal+="(手续费:"+handlingfee+")";
+                    var handlingfee = (this.cointotal2  * this.tradecharge)
+                    this.marketTotal+=" (手续费:"+handlingfee+" 糖果)";
                     if ((this.cointotal2+handlingfee) > this.myCoin) {
                         this.$Message.error('糖果数量不足,需要手续费:' + handlingfee)
                         return
@@ -530,7 +543,6 @@
             this.chartsEl = this.$echarts.init(document.getElementById('trading-charts2'))
             this.setChartsData()
             this.init()
-            
         }
     }
 </script>
@@ -805,6 +817,7 @@
                 margin-bottom: 40px;
                 float: left;
                 width: 100%;
+                line-height:80px;
                 label {
                     width: 30%;
                     height: 80px;

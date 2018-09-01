@@ -1,7 +1,7 @@
 <template>
     <div class="order-center">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
+        <div class="loadMore">
             <div class="order-list-item" v-for="order in list">
                 <div class="order-goods-info" >
                     <div class="order-goods-details" v-for="good in order.goods"  @click="showDetails(order.id)">
@@ -26,25 +26,33 @@
                         <div class="status">{{ order.status_des }}</div>
                         <div class="btn-area">
                             <div class="btn" @click.stop="showLogistics(order.id)" v-if="order.status==3||order.status==5">查看物流</div>
-                            <div class="btn btn-confirm" v-if="order.status==3">确认收货</div>
+                            <div class="btn btn-confirm" v-if="order.status==3" @click="confirmOrder(order.id)">确认收货</div>
                             <div class="btn btn-confirm" v-if="order.status==1"  @click="pay(order.id)">立即支付</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
+        </div>
     </div>
 </template>
 
 <script>
     import goods from '../../api/goods.js'
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'order-center',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 status: '0',
                 page:1,
-                scrollHeight:0,
                 statusList: [
                     {
                         id: '0',
@@ -93,7 +101,9 @@
                     this.status = res
                     this.page=1;
                     this.list=[];
-                    goods.loadOrderList(this,this.status);
+                    this.$nextTick(function() {
+                        this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                    });
                 }
             },
             showDetails(id) {
@@ -105,22 +115,31 @@
             pay(id){
                 this.$router.push({name: 'orderPay', query: {id: id}})
             },
-            handleReachBottom () {
+            infiniteHandler ($state) {
                 var _this = this;
-                return new Promise(function(resolve) {
-                    goods.loadOrderList(_this,_this.status,resolve);
+                goods.loadOrderList(_this,_this.status,$state);
+            },
+            confirmOrder(id){
+                var _this = this;
+                App.confirm({"title":'警告',"content":"确定收货吗?"}).then(function(){
+                    goods.orderStatusAction(_this,id,"confirm",function(){
+                        _this.list=[];
+                        _this.page=1;
+                        setTimeout(function(){
+                            _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                        },300);
+
+                    });
                 });
             }
         },
-        activated () {
-
-        },
+        activated () {},
         mounted() {
             this.$nextTick(function () {
                 var headerHeight = $("header").outerHeight(true);
-                this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
+                 $('.loadMore').height($(window).height()-headerHeight-$(".l-tabs").height());
             })
-            goods.loadOrderList(this,this.status);
+//            goods.loadOrderList(this,this.status);
         }
     }
 </script>
@@ -132,6 +151,7 @@
     }
     
     .order-center {
+        .loadMore{overflow-y:scroll;-webkit-overflow-scrolling:touch;}
         .order-list-item:first-child{margin-top: 0px;}
         .order-list-item {
             width: 100%;

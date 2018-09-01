@@ -32,7 +32,7 @@
             <div class="total-num">共{{ totalNum }}件商品</div>
             <div class="total-price">合计：￥{{ totalPrice }} + {{totalCoin}} 糖果</div>
         </div>
-        <div class="footer-btn" v-if="status!=4">
+        <div class="footer-btn" v-if="status!=4&&status!=2">
             <div class="btn" @click="clearOrder" v-if="status==1"><div>取消订单</div></div>
             <div class="btn" @click="toLogistics" v-if="status==3||status==5"><div>查看物流</div></div>
             <div class="btn btn-confirm"><div v-if="status==3" @click="confirmOrder">确认收货</div><div v-if="status==1" @click="toPay">立即支付</div></div>
@@ -111,14 +111,14 @@
                 this.orderId = this.$route.params.id
                 var _this = this;
                 App.confirm({"title":'警告',"content":"确定取消订单吗?"}).then(function(){
-                    goods.orderStatusAction(_this,orderId,"cancel");
+                    goods.orderStatusAction(_this,_this.orderId,"cancel");
                 });
             },
             confirmOrder(){
                 this.orderId = this.$route.params.id
                 var _this = this;
                 App.confirm({"title":'警告',"content":"确定收货吗?"}).then(function(){
-                    goods.orderStatusAction(_this,orderId,"confirm");
+                    goods.orderStatusAction(_this,_this.orderId,"confirm");
                 });
             },toPay(){
                 this.$router.push({path:'/orderPay', query: {id: this.orderId}});

@@ -2,8 +2,8 @@
     <div class="businessProduct">
         <l-tabs :list="menuList" :current="status" @change="changeRoute"/>
         <div class="recommend-goods-list">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="0">
-                <div class="recommend-goods-item pull-left" v-for="item in recommendList" @click="showDetails(item)">
+                <div class="recommend-goods-item pull-left" v-for="item in recommendList"
+                     @click="showDetails(item)">
                     <div class="recommend-goods-img">
                         <img :src="item.imgPath" alt="">
                     </div>
@@ -11,17 +11,26 @@
                     <div class="recommend-goods-price">{{ '￥'+item.price }}</div>
                 </div>
                 <div style="clear: both"></div>
-            </Scroll>
+                <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                     <span slot="no-more">
+                          暂无更多数据
+                     </span>
+                </infinite-loading>
         </div>
     </div>
 </template>
 
 <script>
     import goods from '../../api/goods.js'
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'businessProduct',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
+                bottomStatus:'wait',
                 page:1,
                 catid:0,
                 attr:"0",
@@ -29,7 +38,7 @@
                 sorttype:"desc",
                 router: 'businessProduct',
                 status: 'all',
-                scrollHeight:0,
+                scrollHeight:"0px",
                 menuList: [
                     {
                         id: 'all',
@@ -81,7 +90,10 @@
                 this.$router.push({name: 'businessDetail', params: {id: data.id}})
             },
             changeRoute(res) {
-                $(".ivu-scroll-container")[0].scrollTop = 0;
+//                $(".ivu-scroll-container")[0].scrollTop = 0;
+                if(this.status==res){
+                    return;
+                }
                 this.status = res
                 this.page = 1;
                 switch (res){
@@ -91,7 +103,7 @@
                         this.sorttype="desc";
                         break;
                     case "new":
-                        this.attr="3";
+                        this.attr="0";
                         this.sort="addtime";
                         this.sorttype="desc";
                         break;
@@ -106,27 +118,57 @@
                         this.sorttype="desc";
                         break;
                 }
-                goods.loadGoods(this,"recommendList",this.catid,this.attr,this.sort,this.sorttype);
-            },
-            handleReachBottom () {
+                $(".recommend-goods-list").scrollTop(0);
+                this.recommendList = [];
                 var _this = this;
-                return new Promise(function(resolve) {
-                    goods.loadGoods(_this,"recommendList", _this.catid ,_this.attr,_this.sort,_this.sorttype,resolve);
-                });
+                setTimeout(function(){
+                    _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                },300);
+//                goods.loadGoods(this,"recommendList",this.catid,this.attr,this.sort,this.sorttype);
+            },
+            infiniteHandler ($state) {
+                var _this = this;
+                goods.loadGoods(_this,"recommendList", _this.catid ,_this.attr,_this.sort,_this.sorttype,$state);
             }
+        },
+        beforeRouteLeave(to, from, next) {
+            // 进入详情
+            if (to.name === "businessDetail") {
+                // 获得滚动距离
+                let scrollTop =   $(".recommend-goods-list").scrollTop();
+                // 设置缓存
+                this.session.appCache("messageScrollTop", scrollTop);
+            } else {
+                // 如果去其他页移除缓存
+                this.session.rmCache("messageScrollTop");
+            }
+            next();
         },activated () {
-            this.catid = this.$route.params.id;
-            this.status='all';
-            this.attr="0";
-            this.page=1;
-            this.sort="addtime";
-            this.sorttype="desc";
-            goods.loadGoods(this,"recommendList", this.catid ,this.attr,this.sort,this.sorttype);
+            if(this.catid!= this.$route.params.id){
+                this.catid = this.$route.params.id;
+                this.status='all';
+                this.attr="0";
+                this.page=1;
+                this.sort="addtime";
+                this.sorttype="desc";
+                this.recommendList = [];
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+
+
+//                goods.loadGoods(this,"recommendList", this.catid ,this.attr,this.sort,this.sorttype);
+            }else{
+                let scrollTop =this.session.appCache("messageScrollTop");
+                // 判断来源
+                if (scrollTop != null) {
+                    // 需要缓存的页面,滚动
+                    $(".recommend-goods-list").scrollTop(scrollTop);
+                }
+            }
         },
         mounted() {
             this.$nextTick(function () {
-                var headerHeight = $("header").outerHeight();;
-                this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
+                var headerHeight = $("header").outerHeight();
+                $(".recommend-goods-list").height($(window).height()-headerHeight-$(".l-tabs").height());
 
             })
         }
@@ -158,7 +200,8 @@
         }
         
         .recommend-goods-list {
-            overflow: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling:touch;
             .recommend-goods-item {
                 width: calc(50% - 5px);
                 background-color: #ffffff;

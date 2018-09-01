@@ -38,6 +38,7 @@ import logistics from '@/business/personalCenter/logistics.vue'
 import addressInfo from '@/business/personalCenter/addressInfo.vue'
 import addressOperation from '@/business/personalCenter/addressOperation.vue'
 import userGuide from '@/business/personalCenter/userGuide.vue'
+import myArticle from '@/business/personalCenter/myArticle.vue'
 import teamManage from '@/business/personalCenter/teamManage.vue'
 import teamRecruitment from '@/business/personalCenter/teamRecruitment.vue'
 import businessCenter from '@/business/businessCenter/businessCenterList.vue'
@@ -68,15 +69,14 @@ import articleDetails from '@/business/news/articleDetails.vue'
 import guide from '@/business/news/guide.vue'
 import login from '@/business/login/login.vue'
 import register from '@/business/register/register.vue'
+import agree from '@/business/register/agree.vue'
 import forgetPassword from '@/business/register/forgetPassword.vue'
 import selectGender from '@/business/register/selectGender.vue'
 import activity from '@/business/activity/activity.vue'
 import task from '@/business/task/task.vue'
-import imageClip from '@/vue-cropper/imageClip.vue'
 import videoRecorder from '@/business/personalCenter/face/videoRecorder.vue'
 import toDayStep from '@/business/home/toDayStep.vue'
 import nearbyUser from '@/business/team/nearbyUser.vue'
-import stepsShare from '@/business/home/stepsShare.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -96,6 +96,15 @@ export default new Router({
             component: register,
             meta: {
                 title: false
+            }
+        },
+        {
+            path: '/agree',
+            name: 'agree',
+            component: agree,
+            meta: {
+                title: '用户协议',
+                back:'-1'
             }
         },
         {
@@ -128,7 +137,7 @@ export default new Router({
             component: noticeDetails,
             meta: {
                 title: '消息详情',
-                back: '/'
+                back: '-1'
             }
         },
         {
@@ -137,7 +146,7 @@ export default new Router({
             component: stepDetails,
             meta: {
                 title: '今日步数',
-                back: '/',
+                back: '-1',
                 rightIcon: 'fenxiang'
             }
         },
@@ -147,8 +156,9 @@ export default new Router({
             component: toDayStep,
             meta: {
                 title: '今日步数',
-                back: '/stepDetails',
-                rightIcon: 'fenxiang'
+                back: '-1',
+                rightIcon: 'fenxiang',
+                rightTitle: '分享'
             }
         },
         {
@@ -157,7 +167,7 @@ export default new Router({
             component: teamList,
             meta: {
                 title: '组队',
-                back: '/',
+                back: '-1',
                 rightTitle: '创建'
             }
         },
@@ -167,7 +177,7 @@ export default new Router({
             component: createTeam,
             meta: {
                 title: '创建组队',
-                back: 'teamList'
+                back: '-1'
             }
         },
         {
@@ -212,15 +222,6 @@ export default new Router({
             component: articleList,
             meta: {
                 title: '消息',
-                back: '-1'
-            }
-        },
-        {
-            path: '/article/articleDetails/:id',
-            name: 'articleDetails',
-            component: articleDetails,
-            meta: {
-                title: '详情',
                 back: '-1'
             }
         },
@@ -330,15 +331,6 @@ export default new Router({
             meta: {
                 title: '俱乐部',
                 rightTitle: '创建',
-            }
-        },
-        {
-            path: '/imageClip',
-            name: 'imageClip',
-            component: imageClip,
-            meta: {
-                title: '裁剪图片',
-                back: '-1'
             }
         },
         {
@@ -731,6 +723,7 @@ export default new Router({
                 back: '-1'
             }
         },
+
         {
             path: '/userGuide',
             name: 'userGuide',
@@ -738,6 +731,17 @@ export default new Router({
             meta: {
                 title: '新手指引',
                 back: '-1'
+            }
+        },
+        {
+            path: '/myArticle',
+            name: 'myArticle',
+            component: myArticle,
+            meta: {
+                title: '我的文章',
+                back: '-1',
+                rightTitle:'我来分享',
+                rightIcon:'woxiangfenxiang'
             }
         },
         {
@@ -793,16 +797,7 @@ export default new Router({
                 title: '附近的人',
                 back: '-1'
             }
-        },
-        {
-            path: '/stepsShare',
-            name: 'stepsShare',
-            component: stepsShare,
-            meta: {
-                title: '分享',
-                back: '-1'
-            }
-        },
+        }
     ],
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {

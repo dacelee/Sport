@@ -58,7 +58,9 @@
         <div class="alert-news-container">
             <div class="container">
                 <div class="news-list">
-                    <div class="news-list-item" v-for="item in homeNews" @click="homeNewsDetail(item.id)">{{item.title}}</div>
+                    <div class="news-list-item" @click="homeNewsDetail(homePosterId)">
+                        <img :src="homePoster" width="100%"/>
+                    </div>
                 </div>
                 <div class="lines"></div>
                 <l-icon name="guanbi" @click.native="hideTips"/>
@@ -79,7 +81,8 @@
                 news: '',
                 route: 'home',
                 shortMenuList: [],
-                homeNews:[],
+                homePoster:'',
+                homePosterId:0,
                 Men: false,
                 isRunning: false,
                 stepNum: 0,
@@ -98,8 +101,6 @@
         mounted() {
             var  _this = this
             _this.getShortMenuList()
-            // 以下是显示广告的
-            _this.loadNews();
             this.appUtil.addApiCloudEventListener("resume",function(ret, err){
                 if(_this.status == 'activated'){
                     _this.showTips();
@@ -115,7 +116,8 @@
                 this.$router.push('login');
                 return;
             }
-
+            // 以下是显示广告的
+            this.loadNews();
             this.status = 'activated'
             var _this = this
             _this.loadData();
@@ -131,31 +133,34 @@
         },
         methods: {
             showTips() {
+                var _this =this;
                 var homeNewShow = this.session.appCache("homeNewShow");
                 if(homeNewShow){
                     return;
                 }
-                var _this =this;
                 citys.bulidJSONCity(function (json) {
                     if (json.code == 1) {
-                        _this.amap.getLocation(_this,function (ret) {
-                            if (!ret.status) {
-                                _this.$Message.error("定位失败");
-                                return;
-                            }
-//                            console.log(JSON.stringify(ret));
-                            var dbData = citys.locationToDBData(_this, ret);
-                            if (dbData != null) {
-                                _this.axios.post("/msg/indextanchuang", {'cityid': dbData.cityid, page: 1, pageSize: 5}, function (json) {
-                                    _this.homeNews = json.dataList;
-                                    setTimeout(function () {
-                                        $('.alert-news-container').fadeIn()
-                                        $('.container').stop(true, true).animate({top: 240})
-                                        _this.session.appCache("homeNewShow",true);
-                                    }, 500)
-                                })
-                            }
-                        },true)
+                        setTimeout(function(){
+                            _this.amap.getLocation(_this,function (ret) {
+                                if (!ret.status) {
+//                                    _this.$Message.error("定位失败");
+                                    return;
+                                }
+    //                            console.log(JSON.stringify(ret));
+                                var dbData = citys.locationToDBData(_this, ret);
+                                if (dbData != null) {
+                                    _this.axios.post("/msg/indextanchuang", {'cityid': dbData.cityid, page: 1, pageSize: 1}, function (json) {
+                                        if(json.dataList.length>0){
+                                            _this.homePosterId =json.dataList[0].id;
+                                            _this.homePoster = json.dataList[0].logo;
+                                            $('.alert-news-container').fadeIn()
+                                            $('.container').stop(true, true).animate({top: 120})
+                                            _this.session.appCache("homeNewShow",true);
+                                        }
+                                    })
+                                }
+                            },true)
+                        },1000)
                     } else {
                         _this.$Message.error("加载城市数据失败");
                     }
@@ -209,31 +214,29 @@
                             _this.vipLevel = data.memberLevel
                             _this.activity = data.activity
                             _this.totalReward = parseFloat(data.cointotal).toFixed(4)
-                            _this.contribution = parseInt(data.contributionvalue)
+                            _this.contribution = parseInt(data.contributionvalue);
                             
                         })
-                        _this.axios.post(_this.session.todaystepinfo, {'memberid': memberid}, function (json) {
-                            var data = json.data
-                            _this.stepHeat = data.distance
-                        })
+//                        _this.axios.post(_this.session.todaystepinfo, {'memberid': memberid}, function (json) {
+//                            var data = json.data
+//                            _this.stepHeat = data.distance
+//                        })
+                        _this.stepNum = _this.pedometer.getSteps();
+                        if(isNaN(_this.stepNum)){
+                            _this.stepNum = 0;
+                        }
+                        _this.stepHeat = (_this.stepNum*0.03175).toFixed(2);
                         _this.axios.post(_this.session.myTask, {'memberid': memberid}, function (json) {
                             if (json.dataList.length > 0) {
-                                _this.taskSteps = json.dataList[ 0 ].steps
+                                _this.taskSteps = json.dataList[0].steps
+                            }else{
+                                _this.taskSteps = 6000;
                             }
                             _this.axios.post(_this.session.getCoinUnit, null, function (json) {
                                 _this.getCoinUnit = json.data.getcoinunit
-                                _this.stepNum = _this.pedometer.getSteps();
-                                if(isNaN(_this.stepNum)){
-                                    _this.stepNum = 0;
-                                }
-                                if(isNaN(_this.activity)){
-                                    _this.activity = 0;
-                                }
                                 var steps = _this.stepNum<_this.taskSteps?_this.stepNum:_this.taskSteps;
-                                _this.rewardNum = (steps * _this.getCoinUnit * _this.activity).toFixed(4);
-                                _this.stepHeat = (steps*0.03175).toFixed(2);
+                                _this.rewardNum = (steps * _this.getCoinUnit * _this.activity).toFixed(8);
                                 _this.eCharts();
-
                             }, function (json) {
                                 _this.$Message.error(json.msg)
                             })
@@ -247,17 +250,23 @@
                 if (this.status == 'deactivated') {
                     return
                 }
-                this.stepNum = stepNum
-                var steps = this.stepNum < this.taskSteps ? this.stepNum : this.taskSteps
-                this.rewardNum = (steps * this.getCoinUnit * this.activity).toFixed(4)
-                this.stepHeat = (steps * 0.03175).toFixed(2)
-                this.isRunning = true
-                clearTimeout(this.timer)
-                var _this = this
-                this.timer = setTimeout(function () {
-                    _this.isRunning = false
-                }, 2000)
-                this.eCharts()
+                if (stepNum != this.stepNum){
+                        this.isRunning = true
+                    clearTimeout(this.timer)
+                    var _this = this
+                    this.timer = setTimeout(function () {
+                        _this.isRunning = false
+                    }, 2000)
+                }
+                if (stepNum >= 0 && stepNum != this.stepNum) {
+                    this.stepNum = stepNum
+                    var steps = this.stepNum < this.taskSteps ? this.stepNum : this.taskSteps;
+                    this.rewardNum = (steps * this.getCoinUnit * this.activity).toFixed(8)
+                    this.stepHeat = (stepNum * 0.03175).toFixed(2);
+                    this.eCharts()
+                }
+
+
             },
             eCharts() {
                 this.charts = this.$echarts.init(document.getElementById('trading-charts'))
@@ -363,20 +372,18 @@
                 position: absolute;
                 .lines {
                     width: 1px;
-                    height: 100px;
+                    height: 60px;
                     border-right: 2px dashed #ffffff;
                     margin-left: 374px;
                 }
                 .news-list {
-                    background-color: #17161a;
-                    width: 550px;
-                    margin-left: 100px;
+                    width: 500px;
+                    margin-left: 125px;
                     -webkit-border-radius: 15px;
                     -moz-border-radius: 15px;
                     border-radius: 15px;
-                    padding: 30px;
                     .news-list-item {
-                        color: #000;
+                        color: #fff;
                         font-size: 30px;
                         line-height: 30px;
                         width: 100%;

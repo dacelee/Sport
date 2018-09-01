@@ -4,7 +4,7 @@
             <div class="num">{{ contributionNum }}</div>
             <div class="label">当前贡献值</div>
         </div>
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
+        <div class="contribution-records-content">
             <div class="records-list-item" v-for="item in list">
                 <div class="left-details">
                     <div class="name">{{ item.name }}</div>
@@ -14,69 +14,51 @@
                     +{{ item.num }}
                 </div>
             </div>
-        </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
+        </div>
     </div>
 </template>
 
 <script>
     import users from '../../api/users.js'
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'contribution-records',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 page:1,
                 scrollHeight:0,
-                contributionNum: '150.1321315124',
+                contributionNum: '0',
                 list: [
-                    {
-                        name: '兑换初级任务',
-                        time: '2018-06-23 12:22',
-                        num: '10',
-                        type: -1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    },
-                    {
-                        name: '活跃奖励',
-                        time: '2018-06-22 12:22',
-                        num: '10',
-                        type: 1
-                    }
+
                 ]
             }
         },mounted(){
-            var headerHeight = $("header").outerHeight();
-            this.scrollHeight = $(window).height()-headerHeight-$(".current-contribution").height()-80;
+            var headerHeight = $("header").outerHeight(true);
+            $(".contribution-records-content").height($(window).height()-headerHeight-$(".current-contribution").outerHeight(true));
+        },
+        activated(){
             var _this = this;
             users.getCacheMyInfo(this, function (myInfo) {
                 _this.contributionNum = myInfo.contributionvalue;
-            })
-        },
-        activated(){
-            users.loadContributionvaluelog(this);
+            },true)
+//            users.loadContributionvaluelog(this);
+            this.page = 1;
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
         },
         methods: {
-            handleReachBottom () {
-                var _this = this;
-                return new Promise(function(resolve){
-                    users.loadContributionvaluelog(_this,resolve);
-                });
+            infiniteHandler($state) {
+                users.loadContributionvaluelog(this, $state);
             }
         }
     }
@@ -86,6 +68,7 @@
     .contribution-records {
         width: 690px;
         margin: 0 auto;
+    .contribution-records-content{overflow-y:scroll;-webkit-overflow-scrolling:touch;}
         .current-contribution {
             background-color: #333339;
             -webkit-border-radius: 8px;

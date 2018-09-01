@@ -32,10 +32,9 @@
         name: 'share-news',
         data(){
             return {
-                init:false,
                 uploadImgs:[],
                 formData:{
-                    isshare:0,
+                    isshare:1,
                     title:"",
                     content:"",
                     photos:"",
@@ -55,6 +54,7 @@
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
                     this.$Message.error({content:errMsg});
                 }else {
+
                     let _this = this;
                     this.formData.clubid = 0;
                     this.session.getMemberID(function (memberid) {
@@ -71,16 +71,13 @@
             }
         },
         activated() {
-            if(!this.init){
-                this.init = true;
-                this.uploadImgs=[];
-                this.formData={
-                    isshare:0,
-                    title:"",
-                    content:"",
-                    photos:"",
-                    videourl:""
-                }
+            this.uploadImgs=[];
+            this.formData={
+                isshare:0,
+                title:"",
+                content:"",
+                photos:"",
+                videourl:""
             }
         },
         deactivated(){

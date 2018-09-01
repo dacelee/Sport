@@ -36,13 +36,39 @@ function AppUtil() {
 var appUtil = new AppUtil();
 export default {
     listener:{},
+    loadFinish(context,pageCount,$state){
+        if($state){
+            $state.loaded();
+        }else{
+            if(context.$refs.infiniteLoading){
+                context.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
+            }
+        }
+        if (context.page<pageCount) {
+            context.page++;
+            //context.$refs.vueLoad.onBottomLoaded(true);
+        }else{
+            if($state){
+                $state.complete();
+            }else{
+                if(context.$refs.infiniteLoading){
+                    context.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+                }
+            }
+        }
+        if(pageCount<2){
+            //setTimeout(function(){
+            //    context.bottomStatus = "";
+            //},200);
+        }
+    },
     toastRemind: function (verifyQueue, errors) {
         return appUtil.toastRemind(verifyQueue, errors);
     },
     dateFormat: function (time,format) {
         return appUtil.dateFormat(time,format);
     },
-    actionSheet:function(callback){
+    actionSheet:function(callback,destinationType){
         var _this = this;
         api.actionSheet({
             title: '图片来源',
@@ -51,22 +77,24 @@ export default {
         }, function(ret, err){
             var index = ret.buttonIndex;
             if(index  == 1){
-                _this.picture(callback,'camera');
+                _this.picture(callback,'camera',destinationType);
             }else if( index == 2){
-                _this.picture(callback,'album');
+                _this.picture(callback,'album',destinationType);
             }else if( index == 3){
-                _this.picture(callback,'library');
+                _this.picture(callback,'library',destinationType);
             }
         });
+
     },
-    picture:function(callback,sourceType){
+    picture:function(callback,sourceType,destinationType){
         api.getPicture({
             sourceType: sourceType,
-            encodingType: 'png',
+            encodingType: 'jpg',
             mediaValue: 'pic',
-            destinationType: 'base64',
-            quality:90,
+            destinationType: destinationType,
+            quality:70,
             allowEdit: false,
+            targetWidth:1000,
             saveToPhotoAlbum: false
         }, function(ret, err){
             if(ret){
@@ -82,6 +110,32 @@ export default {
     },
     addApiCloudEventListener(name,listener){
         eval("this.listener."+name+"=listener");
+    },
+    getCacheImg(url,callback){
+        if(url.indexOf("http")==-1){
+            callback(url);
+            return;
+        }
+        api.imageCache({
+            url: url,
+            thumbnail:false
+        }, function(ret, err) {
+            if(ret.status){
+                var trans = api.require('trans');
+                trans.decodeImgToBase64({
+                    imgPath: ret.url
+                }, function(ret, err) {
+                    if (ret.status) {
+                        if(callback){
+                            callback("data:image/png;base64,"+ret.base64Str);
+                        }
+                        //alert(JSON.stringify(ret));
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            }
+        });
     },
     //getHeaderHeight:function(){
     //    if(session.isAPPRuntime()){
