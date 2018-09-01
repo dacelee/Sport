@@ -1,7 +1,7 @@
 <template>
     <div class="order-list">
         <l-tabs :list="statusList" :current="status" @change="changeRoute"/>
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="10">
+        <div class="order-list-content">
             <div class="order-list-item" v-for="item in list" v-if="status<3">
                 <div class="details details2">
                     <div class="base-info-name">{{ item.name }}</div>
@@ -26,19 +26,27 @@
                     {{ item.status }}
                 </div>
             </div>
-        </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
+        </div>
     </div>
 </template>
 
 <script>
     import coin from '../../api/coin.js'
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'order-list',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 status: '1',
                 page:1,
-                scrollHeight:0,
                 statusList: [
                     {
                         id: '1',
@@ -97,41 +105,44 @@
             changeRoute(res) {
                 this.status = res;
                 this.page=1;
-                coin.loadOrderList(this,this.status);
+                this.list = [];
+                this.$nextTick(function() {
+                    this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                });
+//                coin.loadOrderList(this,this.status);
             },
             showDetails(data) {
                 this.$router.push({name: 'transactionDetails', params: {id: data.id}})
             },
-            handleReachBottom () {
+            infiniteHandler ($state) {
                 var _this = this;
-                return new Promise(function(resolve) {
-                    coin.loadOrderList(_this,_this.status,resolve);
-                 });
-            },clear(id){
+                coin.loadOrderList(_this,_this.status,$state);
+            },
+            clear(id){
                 coin.mySaleCancelAction(this,id,true);
             }
         },
         activated () {
             this.page=1;
-            coin.loadOrderList(this,this.status);
+//            coin.loadOrderList(this,this.status);
         },
         mounted() {
             this.$nextTick(function () {
                 var headerHeight = $("header").outerHeight();
-                this.scrollHeight = $(window).height()-headerHeight-$(".l-tabs").height();
+                $(".order-list-content").height($(window).height()-headerHeight-$(".l-tabs").height());
             })
         }
     }
 </script>
 
 <style lang="scss">
-    .view-container .order-list {
-        padding-bottom: 0 !important;
-    }
+    .order-list .order-list-content{overflow-y:scroll;-webkit-overflow-scrolling:touch;}
+    .order-list-content .order-list-item:nth-last-child(2){margin-bottom: 0px}
     .order-list {
         width: 100%;
         height: 100%;
         background-color: #F5F5F5;
+
         .order-list-item {
             width: 100%;
             padding: 30px 30px 30px;
@@ -219,4 +230,5 @@
             }
         }
     }
+
 </style>

@@ -1,40 +1,46 @@
 <template>
     <div class="clubTeams2">
         <div class="club-list-container">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" >
-                <div class="club-list-item" v-for="item in list">
-                    <div class="left-img pull-left" >
-                        <img :src="item.imgPath" alt="">
+            <div class="club-list-item" v-for="item in list">
+                <div class="left-img pull-left">
+                    <img :src="item.imgPath" alt="">
+                </div>
+                <div class="right-container pull-left">
+                    <div class="left-basic-info text-white pull-left">
+                        <div class="name">{{ item.name }}
+                            <l-icon :name="item.level === 1 ? 'chuangjianren' : ''"/>
+                        </div>
+                        <div class="club-num-info">
+                            <div class="chengyuan-people pull-left">
+                                <l-icon :name="item.chengyuanIcon" class="text-center"/>
+                            </div>
+                            <div class="activity-count pull-left">活跃度:{{ item.activity }}</div>
+                            <div class="already pull-left">{{ item.already }}</div>
+                        </div>
                     </div>
-                    <div class="right-container pull-left">
-                        <div class="left-basic-info text-white pull-left">
-                            <div class="name">{{ item.name }}
-                                <l-icon
-                                    :name="item.level === 1 ? 'chuangjianren' : ''"/>
-                            </div>
-                            <div class="club-num-info">
-                           <div class="chengyuan-people pull-left">
-                           <l-icon :name="item.chengyuanIcon" class="text-center"/></div>
-                                <div class="activity-count pull-left">活跃度:{{ item.activity }}</div>
-                                <div class="already pull-left">{{ item.already }}</div>
-                            </div>
-                        </div>
-                       <div class="nearby-join" @click="join(item.memberid)">
-                         邀请
-                        </div>
+                    <div class="nearby-join" @click="join(item.memberid)">
+                        邀请
                     </div>
                 </div>
-            </Scroll>
-    </div>
+            </div>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
         </div>
+    </div>
 </template>
 <script>
     import team from '../../api/team.js'
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'nearbyUser',
+        components: {
+            InfiniteLoading
+        },
         data() {
             return {
-                scrollHeight:400,
                 page: 1,
                 x:0,
                 y:0,
@@ -44,15 +50,13 @@
         methods: {
             init(){
                 this.page = 1;
+                this.x=0;
                 this.list = [];
             },
-            handleReachBottom() {
-                var _this = this
-                return new Promise(function (resolve) {
-                    team.nearbyMemberList(_this,_this.x,_this.y,resolve);
-                })
+            infiniteHandler($state) {
+                this.loadData($state)
             },
-            loadData(){
+            loadData($state){
                 var _this = this
                 if(this.x ==0|| this.y==0){
                     this.amap.getLocation(this,function(ret){
@@ -63,11 +67,10 @@
                         _this.x = ret.lon;
                         _this.y = ret.lat;
                         _this.page = 1;
-                        team.nearbyMemberList(_this,_this.x,_this.y);
+                        team.nearbyMemberList(_this,_this.x,_this.y,$state);
                     },false);
                 }else{
-                    this.page = 1;
-                    team.nearbyMemberList(this,this.x,this.y);
+                    team.nearbyMemberList(this,this.x,this.y,$state);
                 }
             },
             join(memberid){
@@ -87,14 +90,14 @@
         },
         activated() {
 
-        }, mounted() {
+        },
+        mounted() {
             this.init();
-            this.loadData();
             var headerHeight = $("header").outerHeight(true);
             if($('.l-short-menu').length>0){
-                headerHeight+= $(".l-short-menu").outerHeight(true);
+                headerHeight+= $(".l-short-menu").outerHeight(true)+10;
             }
-            this.scrollHeight = $(window).height()-headerHeight-10;
+            $(".club-list-container").height( $(window).height()-headerHeight);
         }
     }
 </script>
@@ -105,7 +108,8 @@
         .club-list-container {
             width: calc(100% - 60px);
             margin: 0 auto;
-
+            overflow: scroll;
+            -webkit-overflow-scrolling:touch;
             .club-list-item {
                 width: 100%;
                 height: 159px;

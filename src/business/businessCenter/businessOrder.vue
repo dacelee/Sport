@@ -19,17 +19,17 @@
          </div>
        </div>
        <div class="totals">共{{list.length}}件商品</div>
-        <RadioGroup v-model="payType"  >
+        <RadioGroup v-model="payType" v-if="totalPrice>0" >
             <div class="payStylelist">
-                <div class="payList">
-                    <div class="pull-left">
-                        <l-icon name="wechat"/>
-                        微信支付
-                    </div>
-                    <div class="pull-right">
-                        <Radio label="1"><l-icon :name="payType!=1?'weigouxuan':'gouxuan'" /></Radio>
-                    </div>
-                </div>
+                <!--<div class="payList">-->
+                    <!--<div class="pull-left">-->
+                        <!--<l-icon name="wechat"/>-->
+                        <!--微信支付-->
+                    <!--</div>-->
+                    <!--<div class="pull-right">-->
+                        <!--<Radio label="1"><l-icon :name="payType!=1?'weigouxuan':'gouxuan'" /></Radio>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="payList">
                     <div class="pull-left">
                         <l-icon name="Shape"/>
@@ -66,7 +66,7 @@ export default {
         return {
             totalPrice:0,
             totalCoin:0,
-            payType:1,
+            payType:2,
             deliveryid:0,
             cartids:"",
             delivery:{
@@ -96,14 +96,20 @@ export default {
                 return;
             }
             var _this = this;
-            if(this.payType==1){
-                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"wxpay",function(orderno){
-                    _this.wxpay(orderno);
+            if(this.totalPrice==0){
+                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"",function(orderno){
+                    _this.$router.replace('orderCenter')
                 });
             }else{
-                goods.orderSubmitAction(this, this.deliveryid,this.cartids,"alipay",function(orderno){
-                    _this.alipay(orderno);
-                });
+                if(this.payType==1){
+                    goods.orderSubmitAction(this, this.deliveryid,this.cartids,"wxpay",function(orderno){
+                        _this.wxpay(orderno);
+                    });
+                }else{
+                    goods.orderSubmitAction(this, this.deliveryid,this.cartids,"alipay",function(orderno){
+                        _this.alipay(orderno);
+                    });
+                }
             }
 //            this.$router.replace('paySuccess')
         },
@@ -112,6 +118,10 @@ export default {
             this.$router.replace('orderCenter')
         },
         alipay(orderno){
+            if(orderno==""){
+                this.$router.replace('orderCenter');
+                return;
+            }
             var body = "购买";
             $(this.list).each(function(index,item){
                 body+=item.name+"|";

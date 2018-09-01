@@ -45,7 +45,7 @@
             }
         } ,verify: {
             userInfo: {
-                mobile: [{minLength:1,  message: "手机号码必须填写"},"mobile"],
+                mobile: [{minLength:11,  message: "手机号码格式错误"}],
                 loginpwd:[ {minLength:6, message: "新密码不得小于6位"}],
                 loginpwd2:[ {minLength:6, message: "确认密码不得小于6位"}],
                 smscode:[{minLength:1,  message: "验证码必须填写"}]
@@ -61,7 +61,7 @@
             submitForm() {
                 if(!this.$verify.check()){
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue,this.$verify.$errors);
-                    this.$toast(errMsg);
+                    _this.$Message.error(errMsg);
                 }else{
                     if(this.userInfo.loginpwd2!=this.userInfo.loginpwd){
                         _this.$Message.error("两次密码输入不一致");
@@ -72,7 +72,13 @@
                     this.axios.post(_this.session.findpwd,
                             param,function(data){
                                 _this.$Message.info("密码已经重置");
-                                _this.$router.replace('/login')
+                                _this.$router.replace('/login');
+                                _this.userInfo= {
+                                    mobile: "",
+                                    loginpwd: "",
+                                    loginpwd2: "",
+                                    smscode: ""
+                                };
                             },function(data){
                                 _this.$Message.error(data.msg);
                             });

@@ -61,9 +61,9 @@
         methods: {
             changeCountWay() {
                 var _this= this;
-                _this.session.getMemberID(function(memberid) {
-                    _this.mileage = _this.amap.getTodayMileage(_this,memberid);
-                });
+//                _this.session.getMemberID(function(memberid) {
+//                    _this.mileage = _this.amap.getTodayMileage(_this,memberid);
+//                });
                 this.totalStep = 0;
                 if(this.selected.id==1){
                     var startDay = moment().isoWeekday(1).format('YYYY/MM/DD 00:00:00');//周一日期
@@ -105,6 +105,7 @@
 //                        alert(_this.appUtil.dateFormat(item.addtime, "yyyy-MM-dd hh:ss"))
 //                    });
                     var seriesData = [];
+                    var totalStep = 0;
                     for(var i=0;i<=_this.totalDay;i++){
                         var time = _this.startDay.valueOf();
                         _this.startDay.add('days',1);
@@ -112,12 +113,14 @@
                         $(data).each(function(index,item){
                             if (time==item.addtime) {
                                 push = true;
-                                _this.totalStep+=parseInt(item.steps);
+                                totalStep+=parseInt(item.steps);
                                 seriesData.push(item.steps);
                                 return;
                             }
                         });
-                        _this.calories =  (_this.totalStep*0.03175).toFixed(2);
+                        _this.totalStep = totalStep>10000?((totalStep/10000).toFixed(1))+"万步":totalStep;
+                        _this.mileage =  (totalStep*0.3/1000).toFixed(2);
+                        _this.calories =  (totalStep*0.03175).toFixed(2);
                         if(!push){
                             seriesData.push(0);
                         }
@@ -125,6 +128,7 @@
                     if (seriesData.length == 0) {
                         return;
                     }
+
                     charts.setOption({
                         grid:{left:"15%"},
                         xAxis: {

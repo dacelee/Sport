@@ -11,12 +11,12 @@
                           hide-info ></Progress>
             </template>
         </div>
-        <template v-if="limit > 1 && uploadSuccessList.length < limit">
+        <template v-if="limit > 1 && uploadList.length < limit">
             <div class="upload-box" @click="getPicture()">
                 <div class="upload-pic">
                     <l-icon name="shangchuantupian"/>
                 </div>
-                <div class="select-upload-label">上传图片 {{uploadSuccessList.length}}/{{limit}}</div>
+                <div class="select-upload-label">上传图片 {{uploadList.length}}/{{limit}}</div>
             </div>
         </template>
         <template v-else>
@@ -34,6 +34,10 @@
             imgHeight:{type:String,defult:"100%"},
             uploadImgs:{
                 type: Array
+            },
+            url:{
+                type:String,
+                default:"/my/uploadimg"
             },
             sourceType:{
                 type:String,
@@ -96,12 +100,15 @@
                 success:0
             }
         },
+        mounted() {
+
+        },
         watch: {
-            uploadImgs:function (imgs, oldVal) {
+            uploadImgs:function (imgs) {
                 var _this= this;
+                _this.uploadList = [];
                 if(imgs.length==0){
-                    _this.uploadList = [];
-                    return;
+                    this.uploadSuccessList = [];
                 }
                 $(imgs).each(function(index,url){
                     if(url&&url!=null&&url!=""){
@@ -145,127 +152,195 @@
             getPicture(){
                 var _this = this;
                 if (_this.session.isAPPRuntime()) {
+                    var destinationType = "url";
+                    if(_this.noClip){
+                        destinationType = "base64";
+                    }
                     if(_this.sourceType=="all"){
                         _this.appUtil.actionSheet(function (ret) {
-                            if (ret.data) {
-                                _this.imageClip(ret.base64Data);
-                            } else {
-    //                            _this.$Message.error("获取图片失败");
+                            if(_this.noClip){
+                                _this.upload(ret.base64Data);
+                                _this.imageClipEnd();
+                                return;
                             }
-                        });
+                            if (ret.data) {
+                                _this.imageClip2(ret.data);
+//                                _this.imageClip(ret.base64Data);
+                            } else {
+                               _this.$Message.info("操作取消");
+                            }
+                        },destinationType);
                     }else{
                         _this.appUtil.picture(function (ret) {
-                            if (ret.data) {
-                                _this.imageClip(ret.base64Data);
-                            } else {
-                                //                            _this.$Message.error("获取图片失败");
+                            if(_this.noClip){
+                                _this.upload(ret.base64Data);
+                                _this.imageClipEnd();
+                                return;
                             }
-                        },_this.sourceType);
+                            if (ret.data) {
+                                _this.imageClip2(ret.data);
+                            } else {
+                                _this.$Message.info("操作取消");
+                            }
+                        },_this.sourceType,destinationType);
                     }
                 }
             },
-            imageClip(base64Data){
+            imageClip2(url){
                 var _this = this;
-                var w = api.winWidth;
-                var clipW = _this.width;
-                var clipH = _this.height;
-                var oldW = _this.width;
-                if(_this.width > w*0.8){
-                    clipW = w*0.8;
-                    clipH = _this.height*(clipW/oldW)
-                }
-                if(_this.width<_this.height){
-                    var h = api.winHeight;
-                    var oldH = _this.height;
-                    if(_this.height> h*0.8){
-                        clipH = h*0.8
-                        clipW = _this.width*(clipW/oldH)
+                this.imageClipStart();
+                this.listener();
+                api.openWin({
+                    name: 'imageClip',
+                    url: 'widget://html/imageClip.html',
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: api.winWidth,
+                        h: api.winHeight
+                    },
+                    animation:{
+                        type:"fade",                //动画类型（详见动画类型常量）
+                        subType:"from_right",       //动画子类型（详见动画子类型常量）
+                        duration:100                //动画过渡时间，默认300毫秒
+                    },
+                    pageParam: {
+                        url: url,
+                        width:_this.width,
+                        height:_this.height
                     }
-                }
-                var  context = "listener_"+Date.now() + _this.tempIndex++;
-                _this.listener(context);
-                _this.imageClipStart();
-                if(!_this.noClip){
-                    _this.$router.push({
-                        name: 'imageClip',
-                        params:{"base64": base64Data},
-                        query: {"context": context,"width":clipW,"height":clipH}
-                    });
-                }else{
-                    api.sendEvent({
-                        name: 'clip_success_'+context,
-                        extra: {
-                            base64: base64Data
-                        }
-                    });
-                }
+                });
 
             },
-            listener(context){
+//            imageClip(base64Data){
+//                var _this = this;
+//                var w = api.winWidth;
+//                var clipW = _this.width;
+//                var clipH = _this.height;
+//                var oldW = _this.width;
+//                if(_this.width > w*0.8){
+//                    clipW = w*0.8;
+//                    clipH = _this.height*(clipW/oldW)
+//                }
+//                if(_this.width<_this.height){
+//                    var h = api.winHeight;
+//                    var oldH = _this.height;
+//                    if(_this.height> h*0.8){
+//                        clipH = h*0.8
+//                        clipW = _this.width*(clipW/oldH)
+//                    }
+//                }
+//                var  context = "listener_"+Date.now() + _this.tempIndex++;
+//                _this.listener(context);
+//                _this.imageClipStart();
+//                if(!_this.noClip){
+//                    _this.$router.push({
+//                        name: 'imageClip',
+//                        params:{"base64": base64Data},
+//                        query: {"context": context,"width":clipW,"height":clipH}
+//                    });
+//                }else{
+//                    api.sendEvent({
+//                        name: 'clip_success_'+context,
+//                        extra: {
+//                            base64: base64Data
+//                        }
+//                    });
+//                }
+//            },
+//            listener(context){
+//                var _this = this;
+//                if (this.session.isAPPRuntime()) {
+//                    api.addEventListener({
+//                        name: 'clip_end_'+ context
+//                    }, function (ret, err) {
+//                        _this.imageClipEnd();
+//                        api.removeEventListener({
+//                            name: 'clip_end_'+ context
+//                        });
+//                    });
+//                    api.addEventListener({
+//                        name: 'clip_success_'+ context
+//                    }, function (ret, err) {
+//                        api.removeEventListener({
+//                            name: 'clip_success_'+ context
+//                        });
+//                        api.removeEventListener({
+//                            name: 'clip_success_'+ context
+//                        });
+//                        if (ret) {
+//                            var base64 = ret.value.base64;
+//                            _this.upload(base64)
+//                        }
+//                    });
+//                }
+//            },
+            listener(){
                 var _this = this;
-                if (this.session.isAPPRuntime()) {
-                    api.addEventListener({
-                        name: 'clip_end_'+ context
-                    }, function (ret, err) {
-                        _this.imageClipEnd();
-                        api.removeEventListener({
-                            name: 'clip_end_'+ context
-                        });
+                api.addEventListener({
+                    name: 'clip_success'
+                }, function (ret, err) {
+                    api.removeEventListener({
+                        name: 'clip_success'
                     });
-                    api.addEventListener({
-                        name: 'clip_success_'+ context
-                    }, function (ret, err) {
-                        api.removeEventListener({
-                            name: 'clip_success_'+ context
-                        });
-                        api.removeEventListener({
-                            name: 'clip_success_'+ context
-                        });
-                        if (ret) {
-                            var base64 = ret.value.base64;
-                            _this.uploadFile = {url: base64, showProgress: true, percentage: 0,status:"",error:""}
-                            _this.uploadFile.uid = Date.now() + this.tempIndex++;
-                            if (_this.limit > 1) {
-                                _this.uploadList.push(_this.uploadFile);
-                            } else {
-                                _this.uploadList = [_this.uploadFile];
-                            }
-                            _this.uploadFile.percentage = 0;
-                            _this.progressStatus = "active";
-                            //上传图片
-                            var config = { onUploadProgress:function (progressEvent) {
-                                    if (progressEvent.lengthComputable) {
-                                        var complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
-                                        _this.uploadFile.percentage = complete;
-    //                                    _this.$Message.info(complete);
-                                    }
-                                }
-                            }
-                            var action = _this.axios.host+"/my/uploadimg";
-                            axios.post(action,qs.stringify({"base64":base64,"doc":"png"}), config).then(function(res){
-                                if (res.data.code === 1) {
-                                    _this.uploadFile.status  ="finished";
-                                    _this.uploadFile.imgUrl = res.data.data.imgpath;
-                                    _this.handleSuccess(_this.uploadFile);
-                                }else{
-                                    _this.$Message.error(res.data.msg);
-                                }
-                            },function(res){
-//                                _this.uploadFile.status  ="finished";
-                                _this.progressStatus = "wrong";
-                                _this.uploadFile.error = "上传出错";
-                                _this.onError("图片上传出错");
-                                setTimeout(function(){
-                                    const fileList = _this.uploadList;
-                                    _this.uploadList.splice(fileList.indexOf(_this.uploadFile), 1);
-                                },3000)
-                            });
-                        } else {
-                            _this.onError("图片上传出错");
-//                            alert(JSON.stringify(err));
-                        }
-                    });
+                    _this.imageClipEnd();
+                    if (ret) {
+                        var base64 = ret.value.base64;
+                        _this.upload(base64)
+                    }
+                });
+            },
+            upload(base64){
+                var _this = this;
+                _this.uploadFile = {url: base64, showProgress: true, percentage: 0,status:"",error:""}
+                _this.uploadFile.uid = Date.now() + this.tempIndex++;
+                if (_this.limit > 1) {
+                    _this.uploadList.push(_this.uploadFile);
+                } else {
+                    _this.uploadList = [_this.uploadFile];
                 }
+                _this.uploadFile.percentage = 0;
+                _this.progressStatus = "active";
+                //上传图片
+                var config = { onUploadProgress:function (progressEvent) {
+                    if (progressEvent.lengthComputable) {
+                        var complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+                        _this.uploadFile.percentage = complete;
+                        //                                    _this.$Message.info(complete);
+                    }
+                },
+                    timeout: 30000
+                }
+                var action = _this.axios.host+_this.url;
+                var loginUser = $api.getStorage('loginUser');
+                var params = {"base64":base64,"doc":"jpg"};
+                if(loginUser&&loginUser!=null&&loginUser.idcode!=null){
+                    params.idcode = loginUser.idcode;
+                    //params.idcode = 'c5838dedfa0b4463b29d203495c73780'
+                }
+                axios.post(action,qs.stringify(params), config).then(function(res){
+                    if (res.data.code === 1) {
+                        _this.uploadFile.status  ="finished";
+                        _this.uploadFile.imgUrl = res.data.data.imgpath;
+                        _this.handleSuccess(_this.uploadFile);
+                    }else{
+                        _this.$Message.error(res.data.msg);
+                        _this.progressStatus = "wrong";
+                        setTimeout(function(){
+                            const fileList = _this.uploadList;
+                            _this.uploadList.splice(fileList.indexOf(_this.uploadFile), 1);
+                        },3000)
+                    }
+                },function(res){
+//                                _this.uploadFile.status  ="finished";
+                    _this.progressStatus = "wrong";
+                    _this.uploadFile.error = "上传出错";
+                    _this.onError("图片上传出错");
+                    setTimeout(function(){
+                        const fileList = _this.uploadList;
+                        _this.uploadList.splice(fileList.indexOf(_this.uploadFile), 1);
+                    },3000)
+                });
             }
         }
     }

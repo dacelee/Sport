@@ -25,18 +25,18 @@
                 userInfo: {
                     phone: '',
                     password: '',
-                    ip:'',
-                    deviceId:'',
-                }
+                },
+                ip:'0.0.0.0',
+                deviceId:'866788032348404',
             }
         }, verify: {
             userInfo: {
-                phone: [ {minLength: 1, message: '手机号码必须填写'}, 'mobile' ],
+                phone: [ {minLength: 11, message: '手机号码格式错误'} ],
                 password: [ {minLength: 6, message: '密码不得小于6位'} ]
             }
         }, mounted() {
             if (this.session.isLogin()) {
-                _this.$router.replace('/')
+                this.$router.replace('/')
             }
         },
         activated(){
@@ -45,23 +45,28 @@
         , methods: {
             login() {
                 var _this = this;
-                var ipAddress = api.require('ipAddress');
-                ipAddress.getIp(
-                        {isNetIp: true},
-                        function (ret, err) {
-                            //                                alert(JSON.stringify(ret) + "   " + JSON.stringify(err));
-                            if (ret.status) {
-                                _this.ip = ret.ip;
-                            }
-                        });
                 this.deviceId = api.deviceId;
+//                alert(api.deviceId)
                 if (!this.$verify.check()) {
                     var errMsg = this.appUtil.toastRemind(this.$verify.verifyQueue, this.$verify.$errors)
                     this.$Message.error(errMsg)
                 }
                 else {
+                    var ipAddress = api.require('ipAddress');
+                    ipAddress.getIp(
+                        {isNetIp: true},
+                        function (ret, err) {
+                            if (ret.status) {
+                                _this.ip = ret.ip;
+                            }
+                            _this.load();
+                        });
+                }
+            },
+            load(){
                 //登录
-                _this.axios.post(_this.session.login, {
+                var _this = this;
+                this.axios.post(_this.session.login, {
                             'mobile': _this.userInfo.phone,
                             'loginpwd': _this.userInfo.password,
                             "bindmobile": _this.deviceId,
@@ -75,7 +80,6 @@
                         }, function (json) {
                             _this.$Message.error(json.msg)
                         });
-                }
             },
             register(){
                 this.$router.push('/register')

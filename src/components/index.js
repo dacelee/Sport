@@ -11,7 +11,7 @@ import tabs from './tabs'
 import selectOption from './selectOption'
 import imageUpload from './imageUpload'
 import alert from './alert'
-
+import loadmore_bottom from './loadmore_bottom'
 export default {
     install: function (Vue) {
         Vue.component('l-footerMenu', footerMenu)
@@ -27,5 +27,6 @@ export default {
         Vue.component('l-selectOption', selectOption)
         Vue.component('l-imageUpload', imageUpload)
         Vue.component('l-alert', alert)
+        Vue.component('l-loadmore_bottom', loadmore_bottom)
     }
 }

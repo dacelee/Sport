@@ -45,6 +45,8 @@
             bottom: 0;
             left: 0;
             width: 100%;
+            max-height: 45vh;
+            overflow-y:scroll;
             .select-list-item {
                 font-size: 30px;
                 line-height: 30px;

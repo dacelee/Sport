@@ -1,18 +1,20 @@
 <template>
     <div class="feedback">
-        <div class="feedback-type-select">
-            <div class="left-label">
-                问题类型
+        <div class="con">
+            <div class="feedback-type-select">
+                <div class="left-label">
+                    问题类型
+                </div>
+                <div class="current-type" @click="showTypeList = true">
+                    {{ type.name }}
+                    <l-icon name="fanhui"/>
+                </div>
             </div>
-            <div class="current-type" @click="showTypeList = true">
-                {{ type.name }}
-                <l-icon name="fanhui"/>
-            </div>
-        </div>
-        <div class="feedback-container">
-            <div class="label">内容</div>
-            <div class="input-container">
-                <textarea placeholder="在此输入内容" v-model="content" v-verify="content"/>
+            <div class="feedback-container">
+                <div class="label">内容</div>
+                <div class="input-container">
+                    <textarea placeholder="在此输入内容" v-model="content" v-verify="content"/>
+                </div>
             </div>
         </div>
         <div class="btn" @click="submit">提交</div>
@@ -74,16 +76,19 @@
             }
         },
         mounted() {
-            _this = this
-            let docHeight = $(document).height()
-            $(window).resize(function () {
-                if ($(document).height() < docHeight) {
-                    $('.btn').css('position', 'static')
-                }
-                else {
-                    $('.btn').css('position', 'absolute')
-                }
-            })
+            this.$nextTick(function(){
+                $(".feedback .con").css('height', window.screen.height - $("header").outerHeight(true)-$(".feedback .btn").outerHeight(true));
+            });
+//            _this = this
+//            let docHeight = $(document).height()
+//            $(window).resize(function () {
+//                if ($(document).height() < docHeight) {
+//                    $('.btn').css('position', 'static')
+//                }
+//                else {
+//                    $('.btn').css('position', 'absolute')
+//                }
+//            })
         }
     }
 </script>
@@ -134,9 +139,6 @@
             }
         }
         .btn {
-            position: absolute;
-            bottom: 0;
-            left: 0;
             width: 100%;
             text-align: center;
             background-color: #F8C513;

@@ -4,7 +4,6 @@
             <l-search placeholder="搜索" v-model="filterName"  @change="change"/>
         </div>
         <div class="club-list-container">
-            <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  >
             <div class="club-list-item" v-for="item in list"  @click="toDetails(item)">
                 <div class="left-img pull-left">
                     <img :src="item.imgPath" alt="">
@@ -27,7 +26,11 @@
                     </div>
                 </div>
             </div>
-            </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
         </div>
         <l-footerMenu :currentRoute="route"/>
     </div>
@@ -35,59 +38,29 @@
 <script>
     import citys from '../../api/citys.js'
     import club from '../../api/club.js'
-    let _this
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'club-list',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 route: 'club',
-                scrollHeight:20,
                 filterName: '',
                 x:0,
                 y:0,
                 page:1,
-                list: [
-//                    {
-//                        id:6,
-//                        imgPath: 'static/img/club/1.jpg',
-//                        name: '旋风无敌小队',
-//                        peopleCount: 12350,
-//                        activity: 8987,
-//                        status: 0,
-//                        distance: '500m'
-//                    },
-//                    {
-//                    id:2,
-//                        imgPath: 'static/img/club/2.jpg',
-//                        name: '夜跑都市人',
-//                        peopleCount: 4210,
-//                        activity: 3511,
-//                        status: 1,
-//                        distance: '1.5km'
-//                    },
-////                    {
-////                        imgPath: 'static/img/club/3.jpg',
-////                        name: '酷跑狂人',
-////                        peopleCount: 147,
-////                        activity: 131,
-////                        status: 2,
-////                        distance: '500m'
-////                    },
-////                    {
-////                        imgPath: 'static/img/club/4.jpg',
-////                        name: '减肥跑步俱乐部',
-////                        peopleCount: 312,
-////                        activity: 224,
-////                        status: 3,
-////                        distance: '3.4km'
-////                    }
-                ]
+                list: []
             }
         },
         methods: {
             change(){
                 this.page = 1;
-                this.loadData();
+                this.list = [];
+                this.$nextTick(function() {
+                    this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+                });
             },
             editEvent() {
                 this.$router.push('createClub')
@@ -95,41 +68,54 @@
             toDetails(item) {
                 this.$router.push({name: 'clubDetails', query: {id: item.id}})
             },
-            loadData(){
-                let _this = this
-                if(this.x==0||this.y==0){
-                    this.$Message.error("定位失败");
-                    return;
-                }
-                _this.page = 1;
-                club.loadClub(_this,_this.filterName,_this.x,_this.y);
-            },
-            handleReachBottom () {
+            infiniteHandler ($state) {
                 var _this = this;
-                return new Promise(function(resolve){
-                    club.loadClub(_this,_this.filterName,_this.x,_this.y,resolve);
-                });
+                if(this.x!=0||this.y!=0) {
+                    club.loadClub(_this, _this.filterName, _this.x, _this.y, $state);
+                }
             }
+        },
+        beforeRouteLeave(to, from, next) {
+            // 进入详情
+            if (to.name === "clubDetails") {
+                // 获得滚动距离
+                let scrollTop =   $(".club-list-container").scrollTop();
+                // 设置缓存
+                this.session.appCache("messageScrollTop", scrollTop);
+            } else {
+                // 如果去其他页移除缓存
+                this.session.rmCache("messageScrollTop");
+            }
+            next();
         },
         activated() {
             var _this = this;
-//            this.loadData();
+//            return;
             //获取位置
             this.amap.getLocation(this,function (ret) {
                 if (ret.status) {
-                    _this.x = ret.lon;
-                    _this.y = ret.lat;
-                    _this.loadData();
+                    if(_this.x!=ret.lon||_this.y!=ret.lat){
+                        _this.x = ret.lon;
+                        _this.y = ret.lat;
+                    }
                 } else {
-                    _this.$Message.error("定位失败,请开启GPS");
+                    _this.$Message.error("定位失败");
+                }
+                let scrollTop = _this.session.appCache("messageScrollTop");
+                // 判断来源
+                if (scrollTop) {
+                    // 需要缓存的页面,滚动
+                    $(".club-list-container").scrollTop(scrollTop);
+                }else{
+                    _this.page = 1;
+                    _this.list = [];
+                    _this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
                 }
             }, false);
         },
         mounted() {
-            _this = this;
             var headerHeight = $("header").outerHeight(true);
-            this.scrollHeight = $(window).height()-headerHeight-$(".search-area").outerHeight(true)-50;
-
+            $(".club-list-container").height($(window).height()-headerHeight-$(".search-area").outerHeight(true)-50);
         }
     }
 </script>
@@ -159,6 +145,7 @@
     .club-list-container {
         width: calc(100% - 60px);
         margin: 0 auto;
+       overflow-y:scroll;
     .club-list-item {
         width: 100%;
         height: 159px;

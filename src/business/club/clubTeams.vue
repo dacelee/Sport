@@ -29,6 +29,11 @@
                 </div>
             </div>
            </CheckboxGroup>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
         </div>
         
     </div>
@@ -36,8 +41,12 @@
 
 <script>
     import club from '../../api/club.js'
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'clubTeams',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 page: 1,
@@ -114,12 +123,22 @@
                 this.delModel = false;
                 this.list = [];
                 this.memberids = [];
+            },
+            infiniteHandler($state) {
+                var clubid = this.$route.query.id;
+                club.loadMemberList(this,clubid,this.filterName,$state);
             }
+        },
+        mounted() {
+            this.page = 1
+            this.scrollHeight = $(window).height() - $('header').outerHeight(true) - $('.search-area').outerHeight(true)
+            $(".club-list-container").height(this.scrollHeight);
         },
         activated() {
             this.init();
-            var clubid = this.$route.query.id;
-            club.loadMemberList(this,clubid,this.filterName);
+            this.$nextTick(function() {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
         }
     }
 </script>
@@ -148,6 +167,7 @@
         .club-list-container {
             width: calc(100% - 60px);
             margin: 0 auto;
+           overflow-y:scroll;
             .club-list-item {
                 width: 100%;
                 height: 159px;

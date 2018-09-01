@@ -97,7 +97,7 @@
             buy(id) {
                 if (id == 'ok') {
                     if (this.password == '') {
-                        this.$Message.error('请输入交易秘密')
+                        this.$Message.error('请输入交易密码')
                         return
                     }
                     this.session.getMemberID(function (memberid) {

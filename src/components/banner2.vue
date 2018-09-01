@@ -2,7 +2,9 @@
 <template>
     <div class="banner">
         <swiper :options="swiperOption" ref="mySwiper">
-            <swiper-slide v-for="(slide, index) in list" :key="index" >  <img :src="slide.logo" @click="showDetail(slide.id)"></swiper-slide>
+            <swiper-slide v-for="(slide, index) in list" :key="index" >
+                <img :src="slide.logo" @click="showDetail(slide.id)">
+            </swiper-slide>
             <div class="swiper-pagination" slot="pagination"></div>
         </swiper>
     </div>
@@ -10,6 +12,7 @@
 <script>
     import { swiper, swiperSlide} from 'vue-awesome-swiper'
     import 'swiper/dist/css/swiper.css'
+    import citys from '../api/citys.js'
     export default {
         name: 'banner',
         components: {
@@ -46,7 +49,7 @@
                 list: [],
             }
         },
-        mounted() {
+        activated() {
             this.getBannerData()
         },
         computed: {
@@ -60,18 +63,80 @@
 //                _this.list = [ 'static/img/home/head.png', 'static/img/home/head2.png', 'static/img/home/head.png' ]
 //                _this.swiperOption.loopedSlides =  _this.list.length;
 //                this.swiper.init();
-                this.axios.post(this.action, {'topN': 3}, function (json) {
-                    var flash = json.dataList;
-                    _this.list = [];
-                    $(flash).each(function (index, item) {
-                        _this.list.push(item);
+                if( this.list.length!=0){
+                    return;
+                }
+                if(this.action=="/msg/flash"){
+                    _this.axios.post(_this.action, {
+                        'topN': 3,
+                    }, function (json) {
+                        var flash = json.dataList;
+                        _this.list = [];
+                        $(flash).each(function (index, item) {
+                            _this.list.push(item);
+                        })
+                        _this.swiper.init();
+                    }, function (json) {
+                        _this.$Message.error(json.msg)
+                    });
+                    setTimeout(function(){
+                        citys.bulidJSONCity(function (json) {
+                            if (json.code == 1) {
+                                _this.amap.getLocation(_this, function (ret) {
+                                    if (!ret.status) {
+//                                        _this.$Message.error("定位失败");
+                                        return;
+                                    }
+                                    var dbData = citys.locationToDBData(_this, ret);
+                                    if (dbData != null) {
+                                        _this.axios.post(_this.action, {
+                                            'topN': 3,
+                                            cityid: dbData.cityid
+                                        }, function (json) {
+                                            var flash = json.dataList;
+                                            _this.list = [];
+                                            $(flash).each(function (index, item) {
+                                                _this.list.push(item);
+                                            })
+                                            _this.swiper.init();
+                                            _this.editmemberposition(dbData,ret.lon,ret.lat);
+                                        }, function (json) {
+                                            _this.$Message.error(json.msg)
+                                        })
+                                    }
+                                }, true)
+                            }
+                        });
+                    },1300);
+                }else{
+                    this.axios.post(this.action, {'topN': 3}, function (json) {
+                        var flash = json.dataList;
+                        _this.list = [];
+                        $(flash).each(function (index, item) {
+                            _this.list.push(item);
+                        })
+                        _this.swiper.init();
+                    },function(json){
+                        _this.$Message.error(json.msg)
                     })
-                    _this.swiper.init();
-//
-                })
+                }
+
             },
             showDetail(id){
-               this.$router.push({name: 'articleDetails', params: {id: id}})
+               this.$router.push({name: 'guide', params: {id: id}})
+            },
+            editmemberposition(dbData,lon,lat){
+                var _this = this;
+                _this.axios.post("/member/editmemberposition", {
+                    'reg_x': lat,
+                    'reg_y': lon,
+                    'reg_proid':dbData.proid,
+                    'reg_cityid': dbData.cityid,
+                    'reg_areaid':dbData.areaid
+                }, function (json) {
+
+                }, function (json) {
+                })
             }
 
         }

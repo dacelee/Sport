@@ -27,7 +27,6 @@
             }
         },
         verify: {
-            password1: [{minLength: 1, message: "原密码必须填写"},{minLength: 6, message: "原密码不得小于6位"}],
             password2: [{minLength: 1, message: "新密码必须填写"},{minLength: 6, message: "新密码不得小于6位"}],
             password3: [{minLength: 1, message: "确认新密码必须填写"}]
         },

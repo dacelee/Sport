@@ -7,7 +7,6 @@
     </div>
 </template>
 <script>
-    let _this
     import myTeam from './myTeam'
     import nearbyTeam from './nearbyTeam'
     import nearbyUser from './nearbyUser'
@@ -40,7 +39,11 @@
         },
         methods: {
             changeTabs(res) {
+                var   _this = this;
                 _this.currentMenu = res;
+                if(res!='myTeam'){
+                    _this.$emit('changeRightTitle',"");
+                }
             },
             changeData(teamId,manager){
                 if(!manager){
@@ -56,11 +59,11 @@
                 }
             },
             editEvent() {
-                _this.$router.push({name:'createTeam',query:{teamid:this.teamId}})
+                this.$router.push({name:'createTeam',query:{teamid:this.teamId}})
             }
         },
         mounted() {
-            _this = this
+
         }
     }
 </script>

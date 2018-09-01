@@ -1,6 +1,5 @@
 <template>
     <div class="nearby-team">
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight" :distance-to-edge="0">
             <div class="nearby-team-item" v-for="item in list">
                 <div class="nearby-name"> <div class="team-logo"><img :src="item.logo"/></div>{{ item.name }}</div>
                 <div class="nearby-info pull-left">
@@ -15,14 +14,22 @@
                 </div>
                 <div class="nearby-join pull-left" @click="join(item.id)">加入</div>
             </div>
-        </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
     </div>
 </template>
 <script>
     let _this;
     import citys from '../../api/citys.js'
+    import InfiniteLoading from 'vue-infinite-loading';
     export default {
         name: 'nearby-team',
+        components: {
+            InfiniteLoading
+        },
         data() {
             return {
                 scrollHeight:400,
@@ -49,33 +56,33 @@
         }, mounted() {
             _this = this
             var headerHeight = $("header").outerHeight(true);
-            this.scrollHeight = $(window).height()-headerHeight-90;
-            this.nearbyTeam();
+            $(".nearby-team").height( $(window).height()-headerHeight-$(".l-short-menu").outerHeight(true)-10);
+//            this.nearbyTeam();
         }, methods: {
-            handleReachBottom() {
+            infiniteHandler($state) {
                 var _this = this
-                return new Promise(function (resolve) {
-                    _this.nearbyTeam(resolve);
-                })
+                _this.nearbyTeam($state);
             },
-            nearbyTeam(resolve){
+            nearbyTeam($state){
                 //附近组队
+                var _this = this
                 if(_this.param.x ==0|| _this.param.y==0){
                     this.amap.getLocation(this,function(ret){
                         if(!ret.status){
-                            _this.$Message.error("定位失败,请开启GPS后再试试");
+                            _this.$Message.error("定位失败");
                             return;
                         }
                         _this.param.x = ret.lon;
                         _this.param.y = ret.lat;
-                        _this.loadData(resolve);
+                        _this.loadData($state);
                     },false);
                 }else{
-                    this.loadData(resolve);
+                    this.loadData($state);
                 }
             },
-            loadData(resolve){
-                _this.param.page = _this.page;
+            loadData($state){
+                var _this = this
+                this.param.page = this.page;
                 this.axios.post(this.session.nearReam, this.param, function (json) {
                     if(_this.page==1){
                         _this.list = [];
@@ -89,13 +96,11 @@
                             personalCount: item.memberCount
                         });
                     });
-                    if(json.dataList.length>0){
-                        _this.page++;
-                    }
+                    _this.appUtil.loadFinish(_this,json.pageCount,$state);
                 }, function (json) {
                     _this.list = []
                     _this.$Message.error(json.msg)
-                }, resolve);
+                });
             },
             join(id){
                this.session.getMemberID(function(memberid){

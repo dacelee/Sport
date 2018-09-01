@@ -3,12 +3,12 @@
         <div class="personalCenter-head-info">
             <div class="left-head-photo pull-left">
                 <img :src="headPhoto" alt="" v-if="headPhoto">
-                <l-icon :name="headIcons" v-if="!headPhoto"/>
             </div>
             <div class="right-user-info pull-left">
-                <div class="user-name">{{ userName }}</div>
-                <div class="user-id">ID:{{ idNum }}</div>
+                <div class="user-name">{{ userName }}  </div>
+                <div class="user-id">ID:{{ idNum }}<div style="float: right">版本:{{version}}</div></div>
                 <div class="user-description">{{ description }}</div>
+
             </div>
         </div>
         <div class="user-basic-info">
@@ -62,9 +62,9 @@
         name: 'personal-center',
         data() {
             return {
+                version:'',
                 route: 'personalCenter',
                 headPhoto: '', // 有头像用这个，把用户的头像路径存储到此字段即可
-                headIcons: 'morentouxiangnv', // 没头像调用对应的Icons即可,男用 morentouxiangnan  女用 morentouxiangnv
                 userName: '',
                 idNum: 0,
                 description: '',
@@ -133,9 +133,15 @@
                         id: 'teamRecruitment',
                         name: '团队招募',
                         icons: 'tuanduizhaomu'
-                    }
+                    },
+
                 ],
                 helpList: [
+                    {
+                        id: 'myArticle',
+                        name: '我的文章',
+                        icons: 'wodejiaoyi'
+                    },
                     {
                         id: 'userGuide',
                         name: '新手入门',
@@ -149,6 +155,7 @@
                 ]
             }
         }, activated() {
+            this.version = api.appVersion;
             this.loadMyInfo()
         },
         methods: {
@@ -167,7 +174,17 @@
                     _this.description = data.personality;
                     _this.basicList[0].value= data.memberlevel;
                     _this.basicList[1].value= data.activity+"+"+data.activityadd;
-                    _this.personalMenuList[1].note = data.isrealauth==1?"已认证":"";
+                    var note = '未认证';
+                    if(data.isrealauth==1){
+                        note = '已认证';
+                    }else if(data.isrealauth==2){
+                        note = '冻结';
+                    }else if(data.isrealauth==3){
+                        note = '审核中';
+                    }else if(data.isrealauth==4){
+                        note = '已拒绝';
+                    }
+                    _this.personalMenuList[1].note = note;
                     _this.basicList[2].value= data.contributionvalue;
                     _this.candyNum =  data.cointotal.toFixed(4);
                 },true);

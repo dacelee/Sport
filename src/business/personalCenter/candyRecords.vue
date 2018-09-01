@@ -4,7 +4,7 @@
             <div class="num">{{ candyNum }}</div>
             <div class="label">当前糖果</div>
         </div>
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
+        <div class="candy-records-content">
             <div class="records-list-item" v-for="item in list">
                 <div class="left-details">
                     <div class="name">{{ item.name }}</div>
@@ -13,42 +13,51 @@
                 <div class="right-num" :class="{'payOut':item.num < 0}">{{ item.num }}
                 </div>
             </div>
-       </Scroll>
+            <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+                 <span slot="no-more">
+                      暂无更多数据
+                 </span>
+            </infinite-loading>
+        </div>
     </div>
 </template>
 
 <script>
     import coin from '../../api/coin.js'
     import users from '../../api/users.js'
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'candy-records',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
                 page:1,
                 candyNum: '0',
-                scrollHeight:0,
                 list: [
 
                 ]
             }
-        },mounted(){
-            var headerHeight = $("header").outerHeight();
-            this.scrollHeight = $(window).height()-headerHeight-$(".current-candy").height()-80;
-            var _this = this;
-            users.getCacheMyInfo(this, function (myInfo) {
-                _this.candyNum = myInfo.cointotal;
-            })
+        },
+        mounted(){
+            var headerHeight = $("header").outerHeight(true);
+            $(".candy-records-content").height($(window).height()-headerHeight-$(".current-candy").outerHeight(true));
         },
         activated(){
             this.page = 1;
-            coin.loadCoinlog(this);
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
+            var _this = this;
+            users.getCacheMyInfo(this, function (myInfo) {
+                _this.candyNum = myInfo.cointotal;
+            },true)
         },
         methods: {
-            handleReachBottom () {
-                var _this = this;
-                return new Promise(function(resolve){
-                    coin.loadCoinlog(_this,resolve);
-                });
+            infiniteHandler ($state) {
+                coin.loadCoinlog(this,$state);
             }
         }
     }
@@ -58,6 +67,7 @@
     .candy-records {
         width: 690px;
         margin: 0 auto;
+        .candy-records-content{overflow-y:scroll;-webkit-overflow-scrolling:touch;}
         .current-candy {
             background-color: #333339;
             -webkit-border-radius: 8px;

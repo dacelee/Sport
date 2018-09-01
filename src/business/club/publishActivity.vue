@@ -25,7 +25,7 @@
             <!--</div>-->
             <!--<div class="select-upload-label">上传图片 0/1</div>-->
             <!--</div>-->
-            <l-imageUpload   :limit="4"  :action="'http://api.bozhiyue.com/my/uploadimg'"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos"/>
+            <l-imageUpload   :limit="4"  :onSuccess="uploadPhotosSuccess"  :onRemove = "removePhotos" :uploadImgs="imgs"/>
         </div>
         <div class="save-btn text-center" @click="publish">发布</div>
     </div>
@@ -37,13 +37,13 @@
         name: 'publishActivity',
         data(){
             return {
-                init:false,
                 formData:{
                     isshare:0,
                     title:"",
                     content:"",
                     photos:""
-                }
+                },
+                imgs:[]
             }
         },
         verify: {
@@ -79,17 +79,15 @@
         mounted() {
         },
         activated() {
-            if(!this.init){
-                this.init = true;
-                this.formData={
-                    isshare:0,
-                    title:"",
-                    content:"",
-                    photos:""
-                }
+            this.formData = {
+                isshare: 0,
+                title: "",
+                content: "",
+                photos: ""
             }
-
+            this.imgs=[];
         }
+
     }
 </script>
 

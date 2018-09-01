@@ -69,7 +69,7 @@
                     _this.level= data.memberlevel;
                     _this.contribution =  data.contributionvalue;
                     users.loadMemberLevel(_this,_this.contribution);
-                });
+                },true);
             }
         }
     }

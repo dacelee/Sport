@@ -21,15 +21,15 @@
        <div class="totals">共{{goodsList.length}}件商品</div>
         <RadioGroup v-model="payType"  >
             <div class="payStylelist">
-                <div class="payList">
-                    <div class="pull-left">
-                        <l-icon name="wechat"/>
-                        微信支付
-                    </div>
-                    <div class="pull-right">
-                        <Radio label="1"><l-icon :name="payType!=1?'weigouxuan':'gouxuan'" /></Radio>
-                    </div>
-                </div>
+                <!--<div class="payList">-->
+                    <!--<div class="pull-left">-->
+                        <!--<l-icon name="wechat"/>-->
+                        <!--微信支付-->
+                    <!--</div>-->
+                    <!--<div class="pull-right">-->
+                        <!--<Radio label="1"><l-icon :name="payType!=1?'weigouxuan':'gouxuan'" /></Radio>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="payList">
                     <div class="pull-left">
                         <l-icon name="Shape"/>
@@ -66,7 +66,7 @@ export default {
         return {
             totalPrice:0,
             totalCoin:0,
-            payType:1,
+            payType:2,
             orderId:"",
             orderno:"",
             unorderno:"",//重新支付

@@ -18,6 +18,7 @@
             <div class="register-form-item">
                 <input type="text" placeholder="推荐人" v-model="userInfo.inviter" >
             </div>
+            <div class="agree" @click="agree">  <l-icon name="gouxuan"/>  用户协议</div>
             <div class="register-form-item register-btn">
                 <div class="btn-register text-center" @click="submitForm">提&emsp;交</div>
             </div>
@@ -45,7 +46,7 @@
             }
         } ,verify: {
             userInfo: {
-                mobile: [{minLength:1,  message: "手机号码必须填写"},"mobile"],
+                mobile: [{minLength:11,  message: "手机号码格式错误"}],
                 loginpwd:[ {minLength:6, message: "密码不得小于6位"}],
                 smscode:[{minLength:1,  message: "验证码必须填写"}]
             }
@@ -100,6 +101,9 @@
                         _this.$Message.error(data.msg);
                     });
                 }
+            },
+            agree(){
+                this.$router.push('agree')
             }
         }
     }
@@ -115,6 +119,7 @@
         top: 0;
         left: 0;
         background-size: cover;
+    .agree{float: left;}
     .head-title {
         background-color: transparent;
     }

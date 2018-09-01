@@ -1,39 +1,44 @@
 <template>
     <div class="activity-list">
-        <Scroll :on-reach-bottom="handleReachBottom" :height="scrollHeight"  :distance-to-edge="10">
-            <div class="activity-list-item" v-for="item in list">
-                <div class="item-bg">
-                    <img :src="item.imgPath" alt="">
+        <div class="activity-list-item" v-for="item in list">
+            <div class="item-bg">
+                <img :src="item.imgPath" alt="">
+            </div>
+            <div class="item-container-bg" @click="detail(item.id)">
+                <div class="item-head">
+                    <div class="item-type pull-left text-center" v-if="item.type === 2">
+                        赛事
+                    </div>
+                    <div class="item-type-desc pull-left" v-if="item.type === 2">
+                        {{ item.typeDesc }}
+                    </div>
                 </div>
-                <div class="item-container-bg" @click="detail(item.id)">
-                    <div class="item-head">
-                        <div class="item-type pull-left text-center" v-if="item.type === 2">
-                            赛事
-                        </div>
-                        <div class="item-type-desc pull-left" v-if="item.type === 2">
-                            {{ item.typeDesc }}
-                        </div>
-                    </div>
-                    <div class="item-container text-center">
-                        <div class="item-title">{{ item.name }}</div>
-                        <div class="item-personal-num">{{ item.personNum }}人参与</div>
-                    </div>
-                    <div class="item-status text-center" :class="{'running':item.status === 1,'coming':item.status === 2}">
-                        {{ item.status === 0 ? '已结束' : item.status === 1 ? '正在进行' : '即将开始' }}
-                    </div>
+                <div class="item-container text-center">
+                    <div class="item-title">{{ item.name }}</div>
+                    <div class="item-personal-num">{{ item.personNum }}人参与</div>
+                </div>
+                <div class="item-status text-center" :class="{'running':item.status === 1,'coming':item.status === 2}">
+                    {{ item.status === 0 ? '已结束' : item.status === 1 ? '正在进行' : '即将开始' }}
                 </div>
             </div>
-        </Scroll>
+        </div>
+        <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
+             <span slot="no-more">
+                  暂无更多数据
+             </span>
+        </infinite-loading>
     </div>
 </template>
 
 <script>
-    let _this;
+    import InfiniteLoading from 'vue-infinite-loading'
     export default {
         name: 'activity',
+        components: {
+            InfiniteLoading,
+        },
         data() {
             return {
-                scrollHeight:'300',
                 page:1,
                 list: [
 //                    {
@@ -45,61 +50,39 @@
 //                        status: 0,
 //                        imgPath: 'static/img/doing/1.png'
 //                    },
-//                    {
-//                        id: (Math.random() * 100).toFixed(0),
-//                        type: 1,
-//                        typeDesc: '',
-//                        name: '乐跑步2.0，全新训练模块带你飞',
-//                        personNum: 412131,
-//                        status: 1,
-//                        imgPath: 'static/img/doing/2.jpg'
-//                    },
-//                    {
-//                        id: (Math.random() * 100).toFixed(0),
-//                        type: 1,
-//                        typeDesc: '',
-//                        name: '北京线上马拉松，"全"看你怎么跑',
-//                        personNum: 24213,
-//                        status: 2,
-//                        imgPath: 'static/img/doing/1.jpg'
-//                    }
+//
                 ]
             }
         },mounted(){
-            _this = this;
-            this.loadData();
-            this.scrollHeight = $(window).height() - $("header").outerHeight()-80;
-        },methods:{
-            handleReachBottom () {
-                return new Promise(resolve => {
-                            loadData(resolve);
-                });
-            },
-            loadData(resolve){
+            $(".activity-list").height($(window).height() - $("header").outerHeight(true)-80);
+        },activated(){
+            this.page = 1;
+            this.list = [];
+            this.$nextTick(function () {
+                this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+            });
+        },
+        methods:{
+            infiniteHandler($state) {
+                var _this = this;
                 this.axios.post(this.session.articleList, {"page": _this.page,"pageSize":10,"type":2}, function (json) {
-                    if(resolve){
-                        resolve();
-                    }
-
                     if(_this.page==1){
                         _this.list = [];
                     }
-                    _this.page++;
                     $(json.dataList).each(function(index,item){
                         _this.list.push( {
                             id: item.id,
                             type: 1,
                             typeDesc: '',
                             name: item.title,
-                            personNum: 24213,
+                            personNum: item.clicks,
                             imgPath:item.logo,
                             status: 2
                         });
                     });
+                    _this.appUtil.loadFinish(_this,json.pageCount,$state);
                 },function(json){
-                    if(resolve){
-                        resolve();
-                    }
+
                 });
             },
             detail(id){

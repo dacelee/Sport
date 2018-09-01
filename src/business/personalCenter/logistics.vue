@@ -11,41 +11,47 @@
     </div>
 </template>
 <script>
+    import goods from '../../api/goods.js'
     export default {
         name: 'logistics',
         data() {
             return {
                 list: [
                     {
-                        dateTime: '昨天 14:32',
-                        info: '[代收点]您的快件已存放至菜鸟驿站，地址：湖南省长沙市你猜区你猜栋你猜号',
-                        status: '待取件',
+                        dateTime: '',
+                        info: '物流信息查询中...',
+                        status: '',
                     },
-                    {
-                        dateTime: '昨天 14:00',
-                        info: '配送员[你大爷]正在开始派件，请您耐心等候',
-                        status: '派件中'
-                    },
-                    {
-                        dateTime: '昨天 04:00',
-                        info: '[长沙市]快递公司已收入，准备派送员进行派件',
-                        status: '待派件'
-                    },
-                    {
-                        dateTime: '昨天 05:00',
-                        info: '随便搞段文字描述一下算了',
-                        status: '运输中'
-                    },
-                    {
-                        dateTime: '04-03 01:00',
-                        info: '随便搞段文字了，不晓得描述了',
-                        status: '已取件'
-                    },
-                    {
-                        dateTime: '04-02 14:32',
-                        info: '随便搞段文字了，不晓得描述了',
-                        status: '待取件'
-                    }
+//                    {
+//                        dateTime: '昨天 14:32',
+//                        info: '[代收点]您的快件已存放至菜鸟驿站，地址：湖南省长沙市你猜区你猜栋你猜号',
+//                        status: '待取件',
+//                    },
+//                    {
+//                        dateTime: '昨天 14:00',
+//                        info: '配送员[你大爷]正在开始派件，请您耐心等候',
+//                        status: '派件中'
+//                    },
+//                    {
+//                        dateTime: '昨天 04:00',
+//                        info: '[长沙市]快递公司已收入，准备派送员进行派件',
+//                        status: '待派件'
+//                    },
+//                    {
+//                        dateTime: '昨天 05:00',
+//                        info: '随便搞段文字描述一下算了',
+//                        status: '运输中'
+//                    },
+//                    {
+//                        dateTime: '04-03 01:00',
+//                        info: '随便搞段文字了，不晓得描述了',
+//                        status: '已取件'
+//                    },
+//                    {
+//                        dateTime: '04-02 14:32',
+//                        info: '随便搞段文字了，不晓得描述了',
+//                        status: '待取件'
+//                    }
                 ]
             }
         },
@@ -70,7 +76,8 @@
         background-color: #f5f5f5;
         color: #666666;
         .logistics-list {
-            margin-top: 40px;
+           padding-top: 20px;
+            padding-bottom: 50px;
         }
         .logistics-list-item {
             position: relative;

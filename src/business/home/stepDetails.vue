@@ -69,7 +69,7 @@
                 this.$router.push('/')
             },
             editEvent() {
-                this.$router.push({name: 'stepsShare'})
+                this.$router.push({name: 'toDayStep'})
 //                this.showShareList = true
                 var _this = this;
 //                users.shareAction(this,function(json,memberid){
@@ -84,7 +84,7 @@
 //                    });
 //                });
 
-            }
+            },
         }
     }
 </script>

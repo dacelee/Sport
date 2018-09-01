@@ -16,7 +16,6 @@
         </div>
     </div>
 </template>
-
 <script>
     import team from '../../api/team.js'
     export default {

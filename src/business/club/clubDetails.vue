@@ -48,9 +48,20 @@
                 <!--<img src="/static/img/news/2.jpg" />-->
                 <div class="word" v-html="intor"></div>
             </div>
-            <div class="save-btn text-center" v-if="auth_license!=''&&!mycreate&&!jioned" @click="joinClub">申请加入</div>
+            <div class="save-btn text-center" v-if="jioned&&!mycreate" @click="quitClub">
+                退出俱乐部
+            </div>
+            <div class="save-btn text-center" v-if="!mycreate&&!jioned&&!jionedother" @click="joinClub">申请加入</div>
             <!--<div class='text-center word1'>俱乐部创建人没认证，底部按钮显示申请认证</div>-->
-            <div class="save-btn text-center" v-if="auth_license==''&&mycreate" @click="clubCertification">申请实体认证</div>
+            <div class="save-btn" v-if="mycreate">
+                <div class="del text-center" v-if="jioned" @click="delClub">
+                    删除
+                </div>
+                <div class="update text-center" v-if="jioned" @click="updateClub">
+                    修改
+                </div>
+                <div class=" text-center" v-if="isunderline!=1" @click="clubCertification">申请实体认证</div>
+            </div>
             <!--<div class='text-center word2'>已加入，已认证，底部无按钮 并且无发布活</div>-->
         </div>
     </div>
@@ -60,8 +71,7 @@
     export default {
         name: 'clubDetails',
         data() {
-            return {
-                router: 'clubDetails',
+            return {router: 'clubDetails',
                 headPhoto: '',
                 clubName: '',
                 idNum: '',
@@ -70,9 +80,9 @@
                 InfoValue2: [ '地区', '人数', '总活跃度' ],
                 intor:"",
                 jioned:false,
-                auth_license:"",
-                mycreate:false,
-            }
+                jionedother:false,
+                isunderline:0,
+                mycreate:false};
         },
         methods: {
             goToPage(router) {
@@ -90,6 +100,12 @@
             loadData(){
                 var clubid = this.$route.query.id;
                 club.showDetail(this,clubid);
+                club.checkClubMemberAction(this,clubid);
+
+            },
+            updateClub(){
+                var clubid = this.$route.query.id;
+                this.$router.push({name:'createClub',query:{id:clubid}});
             },
             clubCertification(){
                 var clubid = this.$route.query.id;
@@ -98,15 +114,32 @@
             joinClub(){
                 var clubid = this.$route.query.id;
                 club.joinClubAction(this,clubid);
+            },quitClub(){
+                var clubid = this.$route.query.id;
+                club.quitClubAction(this,clubid);
+            },delClub(){
+                var clubid = this.$route.query.id;
+                club.delClubAction(this,clubid);
+            },
+            initDate(){
+                this.headPhoto = ''
+                this.clubName = '加载中...'
+                this.idNum = ''
+                this.createTime = '0'
+                this.InfoValue1 = ['', 0, 0]
+                this.intor = ""
+                this.jioned = false
+                this.jionedother = false
+                this.isunderline = 0
+                this.mycreate = false
             }
         },
-        beforeUpdate(){
-//            this.loadData();
+        deactivated(){
+            this.initDate()
         },
         activated() {
             this.loadData();
-            var clubid = this.$route.query.id;
-            club.checkClubMemberAction(this,clubid);
+
         }
     }
 </script>
@@ -144,6 +177,9 @@
     }
     .user-id {
         margin-bottom: 3px;
+        height: 40px;
+        width: 100%;
+        overflow: hidden;
     }
     .user-description {
         overflow: hidden;
@@ -223,6 +259,7 @@
     .save-btn{
         width:100%;
         height:90px;
+        line-height: 90px;
         color:#FF25252B;
         background-color: #F8C513;
         color: #000;
@@ -232,7 +269,9 @@
         align-items:Center;
         position: fixed;
         bottom: 0px;
-
+        .del{background-color: #EF533B;color: #FFF;}
+        .update{background-color: #333339;color: #FFF;}
+        div{flex: 1;height: 100%;}
     }
     .word1{margin:50px 0;font-size:30px;}
     .word2{margin:50px auto; width:60%;font-size:34px;}
