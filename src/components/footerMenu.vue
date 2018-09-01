@@ -1,6 +1,6 @@
 <template>
     <div class="footer-menu">
-        <div v-for="item in menuList" class="pull-left menu-list-item text-center"
+        <div v-for="item in menuList" class="menu-list-item text-center"
              :class="{'active':currentRoute === item.id}" @click="changeRoute(item.id)">
             <div class="footer-menu-icons">
                 <l-icon :name="currentRoute === item.id ? item.icons + '-active':item.icons"/>
@@ -71,13 +71,13 @@
     .footer-menu {
         position: fixed;
         bottom: 0;
-        display: flex;
-        justify-content: space-around;
         padding: 10px 40px 10px;
         width: 100%;
         background: #404049;
-        z-index: 10cc;
+        z-index: 10;
         .menu-list-item {
+            width: 20%;
+            display: inline-block;
             .icons {
                 font-size: 44px;
                 height: 44px;
